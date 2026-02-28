@@ -32,11 +32,11 @@ A mobile-first web app for TSEB (Threshold Singers East Bay), a volunteer bedsid
 - `gigs` — Scheduled singing sessions
 - `gig_singers` — Which singers are assigned to which gigs (with anchor flag)
 
-## Pipeline Stages
+## Institution Status
 
-Institutions flow through: `initial_contact` → `in_conversation` → `site_visit` → `active`
+Single `status` field (no separate pipeline_stage). Institutions flow through: `initial_contact` → `in_conversation` → `site_visit` → `active`
 
-Side tracks: `on_hold`, `eliminated`
+Side tracks: `on_hold`, `previous`, `inactive`
 
 ## Conventions
 
@@ -56,10 +56,11 @@ Side tracks: `on_hold`, `eliminated`
 2. Read it via `fd.get('name')` in the corresponding `submit*()` function in `app.js`
 3. If it maps to a new column, add the column in a new SQL migration file
 
-### Add a new pipeline stage
-1. Update the `CHECK` constraint on `institutions.pipeline_stage` in schema
-2. Add a new `<div class="pipeline-col">` with matching `id` in `index.html`
-3. Add the stage key to the `stages` object in `loadOutreach()` in `app.js`
+### Add a new status value
+1. Update the `CHECK` constraint on `institutions.status` in schema (new migration file)
+2. Add option to status `<select>` dropdowns in both add and edit institution modals in `index.html`
+3. If it's a pipeline stage, add a `<div class="pipeline-col">` with matching `id` in `index.html` and add the stage key to the `stages` object in `loadOutreach()` in `app.js`
+4. Add the badge mapping in `statusBadge()` in `app.js`
 
 ### Restrict access to specific volunteers
 Modify the RLS policies in `001_schema.sql` to check `auth.jwt() ->> 'email'` against a whitelist instead of just `auth.role() = 'authenticated'`.

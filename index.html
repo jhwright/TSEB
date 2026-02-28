@@ -464,7 +464,7 @@
         <div class="form-grid">
           <div class="form-group full"><label>Name</label><input type="text" name="name" required placeholder="e.g. Mercy Retirement & Care"></div>
           <div class="form-group"><label>Type</label><select name="institution_type"><option value="">Select...</option><option value="hospital">Hospital</option><option value="hospice">Hospice</option><option value="nursing_snf">Nursing/SNF</option><option value="memory_care">Memory Care</option><option value="senior_center">Senior Center</option><option value="nicu">NICU</option><option value="retirement">Retirement</option><option value="other">Other</option></select></div>
-          <div class="form-group"><label>Status</label><select name="status"><option value="outreach">Outreach</option><option value="pending">Pending</option><option value="active">Active</option><option value="previous">Previous</option><option value="eliminated">Eliminated</option></select></div>
+          <div class="form-group"><label>Status</label><select name="status"><option value="initial_contact">Initial Contact</option><option value="in_conversation">In Conversation</option><option value="site_visit">Site Visit</option><option value="active">Active</option><option value="on_hold">On Hold</option><option value="previous">Previous</option><option value="inactive">Inactive</option></select></div>
           <div class="form-group full"><label>Address</label><input type="text" name="address" placeholder="Street, City"></div>
           <div class="form-group"><label>Contact First Name</label><input type="text" name="contact_first_name"></div>
           <div class="form-group"><label>Contact Last Name</label><input type="text" name="contact_last_name"></div>
@@ -538,15 +538,14 @@
         <div class="form-grid">
           <div class="form-group full"><label>Name</label><input type="text" name="name" required></div>
           <div class="form-group"><label>Type</label><select name="institution_type"><option value="">Select...</option><option value="hospital">Hospital</option><option value="hospice">Hospice</option><option value="nursing_snf">Nursing/SNF</option><option value="memory_care">Memory Care</option><option value="senior_center">Senior Center</option><option value="nicu">NICU</option><option value="retirement">Retirement</option><option value="other">Other</option></select></div>
-          <div class="form-group"><label>Status</label><select name="status"><option value="outreach">Outreach</option><option value="pending">Pending</option><option value="active">Active</option><option value="previous">Previous</option><option value="eliminated">Eliminated</option></select></div>
+          <div class="form-group"><label>Status</label><select name="status"><option value="initial_contact">Initial Contact</option><option value="in_conversation">In Conversation</option><option value="site_visit">Site Visit</option><option value="active">Active</option><option value="on_hold">On Hold</option><option value="previous">Previous</option><option value="inactive">Inactive</option></select></div>
           <div class="form-group full"><label>Address</label><input type="text" name="address" placeholder="Street, City"></div>
-          <div class="form-group"><label>Pipeline Stage</label><select name="pipeline_stage"><option value="initial_contact">Initial Contact</option><option value="in_conversation">In Conversation</option><option value="site_visit">Site Visit</option><option value="active">Active</option><option value="on_hold">On Hold</option><option value="eliminated">Eliminated</option></select></div>
           <div class="form-group"><label>TSEB Outreacher</label><select name="outreacher_id" data-singer-list data-placeholder="Assign..."></select></div>
           <div class="form-group"><label>Recurrence</label><select name="recurrence"><option value="">None</option><option value="weekly">Weekly</option><option value="biweekly">Every other week</option><option value="2x_month">2x/month</option><option value="monthly">Monthly</option></select></div>
           <div class="form-group"><label>Next Step</label><input type="text" name="next_step" placeholder="What to do next..."></div>
           <div class="form-group"><label>Next Step Due</label><input type="date" name="next_step_due"></div>
           <div class="form-group full"><label>Notes</label><textarea name="notes" rows="3" placeholder="General notes..."></textarea></div>
-          <div class="form-group full elimination-reason-group" style="display:none;"><label>Elimination Reason</label><textarea name="elimination_reason" rows="2" placeholder="Why eliminated..."></textarea></div>
+          <div class="form-group full inactive-reason-group" style="display:none;"><label>Inactive Reason</label><textarea name="inactive_reason" rows="2" placeholder="Why inactive..."></textarea></div>
         </div>
         <div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal('edit-institution-modal')">Cancel</button><button type="submit" class="btn btn-primary">Save Changes</button></div>
       </form>
@@ -572,7 +571,7 @@
             <textarea name="next_step" rows="2" placeholder="What needs to happen next?" style="margin-top:4px;"></textarea>
             <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;">
               <div class="form-group" style="flex:1; min-width:140px;"><label>Due Date</label><input type="date" name="next_step_due"></div>
-              <div class="form-group" style="flex:1; min-width:140px;"><label>Move to Stage</label><select name="new_stage"><option value="">No change</option><option value="initial_contact">Initial Contact</option><option value="in_conversation">In Conversation</option><option value="site_visit">Site Visit</option><option value="active">Active Venue</option><option value="on_hold">On Hold</option><option value="eliminated">Eliminated</option></select></div>
+              <div class="form-group" style="flex:1; min-width:140px;"><label>Move to Stage</label><select name="new_stage"><option value="">No change</option><option value="initial_contact">Initial Contact</option><option value="in_conversation">In Conversation</option><option value="site_visit">Site Visit</option><option value="active">Active Venue</option><option value="on_hold">On Hold</option><option value="inactive">Inactive</option></select></div>
             </div>
           </div>
         </div>

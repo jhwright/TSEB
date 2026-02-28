@@ -145,9 +145,9 @@ function isSoon(d) {
 
 function statusBadge(status) {
   const map = {
-    active: 'badge-active', outreach: 'badge-outreach', in_conversation: 'badge-outreach',
-    site_visit: 'badge-pending', pending: 'badge-pending', previous: 'badge-inactive',
-    eliminated: 'badge-eliminated', on_hold: 'badge-inactive', initial_contact: 'badge-outreach'
+    active: 'badge-active', initial_contact: 'badge-outreach', in_conversation: 'badge-outreach',
+    site_visit: 'badge-pending', on_hold: 'badge-inactive', previous: 'badge-inactive',
+    inactive: 'badge-eliminated'
   };
   const label = status.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
   return `<span class="badge ${map[status] || 'badge-inactive'}">${label}</span>`;
@@ -164,7 +164,7 @@ function recurrenceLabel(r) {
 async function loadDashboard() {
   const [{ count: activeCount }, { count: outreachCount }, { count: singerCount }, { data: upcomingGigs }] = await Promise.all([
     sb.from('institutions').select('*', { count: 'exact', head: true }).eq('status', 'active'),
-    sb.from('institutions').select('*', { count: 'exact', head: true }).in('status', ['outreach', 'pending']),
+    sb.from('institutions').select('*', { count: 'exact', head: true }).in('status', ['initial_contact', 'in_conversation', 'site_visit']),
     sb.from('singers').select('*', { count: 'exact', head: true }),
     sb.from('gigs').select('*, institution:institutions(name), gig_singers(singer_id, is_anchor)')
       .gte('gig_date', new Date().toISOString().split('T')[0])
@@ -201,7 +201,7 @@ async function loadDashboard() {
   const { data: followups } = await sb.from('institutions')
     .select('*, outreacher:singers!institutions_outreacher_id_fkey(first_name)')
     .not('next_step', 'is', null)
-    .not('status', 'in', '("active","eliminated","previous")')
+    .not('status', 'in', '("active","inactive","previous","on_hold")')
     .order('next_step_due', { ascending: true, nullsFirst: false })
     .limit(5);
 
@@ -266,7 +266,7 @@ async function loadOutreach() {
   };
 
   data.forEach(i => {
-    const stage = stages[i.pipeline_stage];
+    const stage = stages[i.status];
     if (stage) stage.items.push(i);
   });
 
@@ -294,7 +294,7 @@ async function loadOutreach() {
   });
 
   // Follow-ups table
-  const followups = data.filter(i => i.next_step && !['active','eliminated'].includes(i.status))
+  const followups = data.filter(i => i.next_step && !['active','inactive'].includes(i.status))
     .sort((a, b) => {
       if (!a.next_step_due) return 1;
       if (!b.next_step_due) return -1;
@@ -348,8 +348,8 @@ async function showInstitutionDetail(id) {
       </div>
       <div class="detail-panel-body">
         ${inst.next_step ? `
-          <div class="next-step-banner" ${!overdue && inst.pipeline_stage === 'site_visit' ? 'style="background:var(--ok-light); border-color:#8ed1a8;"' : ''}>
-            <div class="nsb-label" ${inst.pipeline_stage === 'site_visit' ? 'style="color:var(--ok);"' : ''}>Next Step</div>
+          <div class="next-step-banner" ${!overdue && inst.status === 'site_visit' ? 'style="background:var(--ok-light); border-color:#8ed1a8;"' : ''}>
+            <div class="nsb-label" ${inst.status === 'site_visit' ? 'style="color:var(--ok);"' : ''}>Next Step</div>
             ${esc(inst.next_step)}
             <div class="nsb-due">Due: ${fmtDate(inst.next_step_due)} ${overdue ? `· <strong style="color:var(--danger)">${daysOverdue} days overdue</strong>` : ''}</div>
           </div>
@@ -689,7 +689,7 @@ async function submitLogActivity(form) {
   const updates = {};
   if (nextStep) updates.next_step = nextStep;
   if (nextDue) updates.next_step_due = nextDue;
-  if (newStage) updates.pipeline_stage = newStage;
+  if (newStage) updates.status = newStage;
 
   if (Object.keys(updates).length) {
     await sb.from('institutions').update(updates).eq('id', institutionId);
@@ -802,18 +802,17 @@ async function editInstitution(id) {
   form.querySelector('[name="institution_type"]').value = inst.institution_type || '';
   form.querySelector('[name="status"]').value = inst.status || '';
   form.querySelector('[name="address"]').value = inst.address || '';
-  form.querySelector('[name="pipeline_stage"]').value = inst.pipeline_stage || '';
   form.querySelector('[name="recurrence"]').value = inst.recurrence || '';
   form.querySelector('[name="next_step"]').value = inst.next_step || '';
   form.querySelector('[name="next_step_due"]').value = inst.next_step_due || '';
   form.querySelector('[name="notes"]').value = inst.notes || '';
-  form.querySelector('[name="elimination_reason"]').value = inst.elimination_reason || '';
+  form.querySelector('[name="inactive_reason"]').value = inst.inactive_reason || '';
 
-  // Show/hide elimination reason based on status
-  const elimGroup = modal.querySelector('.elimination-reason-group');
-  elimGroup.style.display = inst.status === 'eliminated' ? '' : 'none';
+  // Show/hide inactive reason based on status
+  const inactiveGroup = modal.querySelector('.inactive-reason-group');
+  inactiveGroup.style.display = inst.status === 'inactive' ? '' : 'none';
   form.querySelector('[name="status"]').addEventListener('change', function() {
-    elimGroup.style.display = this.value === 'eliminated' ? '' : 'none';
+    inactiveGroup.style.display = this.value === 'inactive' ? '' : 'none';
   });
 
   // Populate singer dropdown then set value
@@ -836,13 +835,12 @@ async function submitEditInstitution(form) {
     institution_type: fd.get('institution_type') || null,
     status: fd.get('status'),
     address: fd.get('address') || null,
-    pipeline_stage: fd.get('pipeline_stage'),
     outreacher_id: fd.get('outreacher_id') || null,
     recurrence: fd.get('recurrence') || null,
     next_step: fd.get('next_step') || null,
     next_step_due: fd.get('next_step_due') || null,
     notes: fd.get('notes') || null,
-    elimination_reason: fd.get('elimination_reason') || null
+    inactive_reason: fd.get('inactive_reason') || null
   }).eq('id', id);
 
   if (error) { alert('Error: ' + error.message); return; }
