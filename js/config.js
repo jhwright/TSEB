@@ -1,4 +1,3 @@
 // TSEB Supabase Configuration
-// Replace these with your actual Supabase project values
-const SUPABASE_URL = 'https://YOUR_PROJECT_ID.supabase.co';
-const SUPABASE_ANON_KEY = 'YOUR_ANON_KEY_HERE';
+const SUPABASE_URL = 'https://vezlljkdmgibkbszlgvl.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlemxsamtkbWdpYmtic3psZ3ZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIzMDI5OTgsImV4cCI6MjA4Nzg3ODk5OH0.AZvWAn0nImLjlWw9gUVMeCDGGEGrdakTRkZuTmRbt4g';
