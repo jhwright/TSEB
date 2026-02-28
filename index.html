@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TSEB Bedside Singing Manager</title>
+<style>
+  :root {
+    --bg: #f5f5f0;
+    --card: #fff;
+    --accent: #4a6741;
+    --accent-light: #e8efe6;
+    --accent-hover: #3a5331;
+    --text: #2c2c2c;
+    --muted: #6b6b6b;
+    --border: #ddd;
+    --danger: #c0392b;
+    --danger-light: #fdecea;
+    --warn: #e67e22;
+    --warn-light: #fef5e7;
+    --info: #2980b9;
+    --info-light: #ebf5fb;
+    --ok: #27ae60;
+    --ok-light: #eafaf1;
+    --r: 8px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08);
+    --shadow-lg: 0 4px 12px rgba(0,0,0,0.1);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif; background:var(--bg); color:var(--text); line-height:1.5; padding-bottom:72px; }
+
+  /* ===== LOGIN ===== */
+  .login-screen { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; padding:24px; text-align:center; }
+  .login-screen h1 { font-size:28px; color:var(--accent); margin-bottom:4px; }
+  .login-screen .subtitle { color:var(--muted); margin-bottom:32px; font-size:15px; }
+  .login-screen .btn-google { display:inline-flex; align-items:center; gap:10px; padding:12px 24px; background:#fff; border:1px solid var(--border); border-radius:var(--r); font-size:15px; cursor:pointer; box-shadow:var(--shadow); transition:all .15s; }
+  .login-screen .btn-google:hover { box-shadow:var(--shadow-lg); }
+  .login-screen .btn-google svg { width:20px; height:20px; }
+
+  /* ===== HEADER ===== */
+  header { background:var(--accent); color:#fff; padding:0 16px; height:48px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; box-shadow:0 2px 8px rgba(0,0,0,.15); }
+  header h1 { font-size:16px; font-weight:600; }
+  header h1 span { font-weight:300; opacity:.8; }
+  .sign-out-btn { background:none; border:1px solid rgba(255,255,255,.3); color:#fff; padding:4px 10px; border-radius:4px; font-size:11px; cursor:pointer; }
+  .sign-out-btn:hover { background:rgba(255,255,255,.1); }
+
+  /* ===== BOTTOM TAB BAR (mobile-first) ===== */
+  .tabs { position:fixed; bottom:0; left:0; right:0; background:#fff; border-top:1px solid var(--border); display:flex; z-index:100; padding:0; }
+  .tab { flex:1; padding:8px 0 6px; text-align:center; font-size:10px; font-weight:500; color:var(--muted); cursor:pointer; border-top:2px solid transparent; display:flex; flex-direction:column; align-items:center; gap:2px; transition:all .15s; }
+  .tab svg { width:20px; height:20px; stroke:currentColor; fill:none; stroke-width:1.8; }
+  .tab.active { color:var(--accent); border-top-color:var(--accent); }
+
+  /* ===== MAIN ===== */
+  main { padding:12px; }
+  .page { display:none; }
+  .page.active { display:block; }
+
+  /* ===== PAGE HEADER ===== */
+  .page-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+  .page-header h2 { font-size:18px; font-weight:600; }
+
+  /* ===== BUTTONS ===== */
+  .btn { display:inline-flex; align-items:center; gap:4px; padding:8px 14px; font-size:13px; font-weight:500; border:none; border-radius:var(--r); cursor:pointer; transition:all .15s; white-space:nowrap; }
+  .btn-primary { background:var(--accent); color:#fff; }
+  .btn-primary:hover { background:var(--accent-hover); }
+  .btn-secondary { background:#fff; color:var(--text); border:1px solid var(--border); }
+  .btn-sm { padding:5px 10px; font-size:12px; }
+  .btn-icon { width:36px; height:36px; padding:0; display:flex; align-items:center; justify-content:center; border-radius:50%; }
+
+  /* ===== SEARCH & FILTERS ===== */
+  .toolbar { display:flex; flex-direction:column; gap:8px; margin-bottom:12px; }
+  .search-box { width:100%; padding:10px 12px 10px 36px; border:1px solid var(--border); border-radius:var(--r); font-size:14px; background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%236b6b6b' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85zm-5.242.156a5 5 0 1 1 0-10 5 5 0 0 1 0 10z'/%3E%3C/svg%3E") 10px center no-repeat; }
+  .search-box:focus { outline:none; border-color:var(--accent); }
+  .filter-row { display:flex; gap:8px; overflow-x:auto; -webkit-overflow-scrolling:touch; }
+  select.filter { padding:8px 10px; border:1px solid var(--border); border-radius:var(--r); font-size:13px; background:#fff; white-space:nowrap; flex-shrink:0; }
+
+  /* ===== CARDS ===== */
+  .card { background:var(--card); border:1px solid var(--border); border-radius:var(--r); box-shadow:var(--shadow); overflow:hidden; }
+
+  /* ===== TABLE (scrollable on mobile) ===== */
+  .table-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+  table { width:100%; border-collapse:collapse; font-size:13px; min-width:500px; }
+  th { text-align:left; padding:8px 10px; background:#fafaf8; font-weight:600; font-size:11px; text-transform:uppercase; letter-spacing:.4px; color:var(--muted); border-bottom:1px solid var(--border); white-space:nowrap; }
+  td { padding:8px 10px; border-bottom:1px solid #f0f0f0; vertical-align:top; }
+  tr:last-child td { border-bottom:none; }
+
+  /* ===== BADGES ===== */
+  .badge { display:inline-block; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600; letter-spacing:.3px; white-space:nowrap; }
+  .badge-active { background:var(--ok-light); color:var(--ok); }
+  .badge-outreach { background:var(--warn-light); color:var(--warn); }
+  .badge-pending { background:var(--info-light); color:var(--info); }
+  .badge-inactive { background:#f0f0f0; color:#888; }
+  .badge-eliminated { background:var(--danger-light); color:var(--danger); }
+
+  /* ===== STAT CARDS ===== */
+  .stats { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-bottom:16px; }
+  .stat-card { background:#fff; border:1px solid var(--border); border-radius:var(--r); padding:12px; text-align:center; }
+  .stat-card .number { font-size:24px; font-weight:700; color:var(--accent); }
+  .stat-card .label { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.4px; }
+
+  /* ===== GIG LIST ===== */
+  .gig-list { list-style:none; }
+  .gig-list li { display:flex; align-items:center; gap:10px; padding:10px 12px; border-bottom:1px solid #f0f0f0; }
+  .gig-list li:last-child { border-bottom:none; }
+  .gig-date { min-width:40px; text-align:center; }
+  .gig-date .month { font-size:10px; text-transform:uppercase; color:var(--accent); font-weight:700; }
+  .gig-date .day { font-size:20px; font-weight:700; }
+  .gig-info { flex:1; min-width:0; }
+  .gig-info .gig-venue { font-weight:600; font-size:14px; }
+  .gig-info .gig-singers { font-size:12px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .gig-info .gig-time { font-size:12px; color:var(--muted); }
+  .gig-recur { font-size:10px; padding:2px 8px; background:var(--accent-light); border-radius:10px; color:var(--accent); font-weight:500; flex-shrink:0; }
+
+  /* ===== SINGER CHIPS ===== */
+  .singer-chips { display:flex; flex-wrap:wrap; gap:4px; }
+  .singer-chip { display:inline-block; background:var(--accent-light); color:var(--accent); padding:2px 8px; border-radius:10px; font-size:11px; font-weight:500; }
+
+  /* ===== PIPELINE (stacked on mobile) ===== */
+  .pipeline { display:flex; flex-direction:column; gap:10px; margin-bottom:16px; }
+  .pipeline-col { background:#fafaf8; border:1px solid var(--border); border-radius:var(--r); }
+  .pipeline-col-header { padding:8px 12px; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.4px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
+  .pipeline-col-header .count { background:#fff; border:1px solid var(--border); border-radius:10px; padding:0 7px; font-size:11px; }
+  .pipeline-col-body { padding:6px; }
+  .pipeline-card { background:#fff; border:1px solid var(--border); border-radius:6px; padding:10px; margin-bottom:6px; cursor:pointer; font-size:13px; transition:box-shadow .15s; }
+  .pipeline-card:hover { box-shadow:var(--shadow-lg); }
+  .pipeline-card:last-child { margin-bottom:0; }
+  .pipeline-card .pc-name { font-weight:600; }
+  .pipeline-card .pc-type { font-size:11px; color:var(--muted); }
+  .pipeline-card .pc-meta { display:flex; justify-content:space-between; align-items:center; margin-top:6px; font-size:11px; flex-wrap:wrap; gap:4px; }
+  .pc-date { color:var(--muted); }
+  .pc-date.overdue { color:var(--danger); font-weight:600; }
+  .pc-date.soon { color:var(--warn); font-weight:600; }
+
+  /* ===== MODALS (full-screen on mobile) ===== */
+  .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.4); z-index:200; }
+  .modal-overlay.open { display:flex; justify-content:center; align-items:flex-end; }
+  .modal { background:#fff; border-radius:16px 16px 0 0; width:100%; max-height:90vh; overflow-y:auto; }
+  .modal-header { padding:14px 16px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; background:#fff; z-index:1; }
+  .modal-header h3 { font-size:16px; }
+  .modal-close { background:none; border:none; font-size:22px; cursor:pointer; color:var(--muted); padding:4px 8px; }
+  .modal-body { padding:16px; }
+
+  /* ===== FORMS ===== */
+  .form-grid { display:grid; grid-template-columns:1fr; gap:12px; }
+  .form-group { display:flex; flex-direction:column; gap:4px; }
+  .form-group.full { grid-column:1/-1; }
+  .form-group label { font-size:11px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:.3px; }
+  .form-group input, .form-group select, .form-group textarea { padding:10px; border:1px solid var(--border); border-radius:6px; font-size:14px; font-family:inherit; }
+  .form-group textarea { resize:vertical; min-height:60px; }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 2px var(--accent-light); }
+  .form-actions { display:flex; gap:8px; margin-top:14px; padding-top:14px; border-top:1px solid var(--border); }
+  .form-actions .btn { flex:1; justify-content:center; }
+
+  /* ===== DETAIL SLIDE-OVER (full screen on mobile) ===== */
+  .detail-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.3); z-index:200; }
+  .detail-overlay.open { display:flex; justify-content:flex-end; }
+  .detail-panel { width:100%; background:#fff; height:100%; overflow-y:auto; }
+  .detail-panel-header { padding:14px 16px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:flex-start; position:sticky; top:0; background:#fff; z-index:1; }
+  .detail-panel-header h3 { font-size:16px; }
+  .detail-panel-header .subtitle { font-size:12px; color:var(--muted); }
+  .detail-panel-body { padding:16px; }
+
+  /* ===== CONTACT CARD ===== */
+  .contact-card { background:#fafaf8; border:1px solid var(--border); border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:13px; }
+  .contact-card .cc-name { font-weight:600; }
+  .contact-card .cc-title { color:var(--muted); font-size:12px; }
+  .contact-card .cc-info { margin-top:4px; font-size:12px; }
+  .contact-card .cc-info a { color:var(--info); text-decoration:none; }
+
+  /* ===== NEXT STEP BANNER ===== */
+  .next-step-banner { background:var(--warn-light); border:1px solid #f5c98a; border-radius:6px; padding:10px 12px; margin-bottom:12px; font-size:13px; }
+  .next-step-banner .nsb-label { font-size:11px; font-weight:700; text-transform:uppercase; color:var(--warn); margin-bottom:2px; }
+  .next-step-banner .nsb-due { font-size:12px; color:var(--muted); margin-top:2px; }
+
+  /* ===== QUICK ACTIONS ===== */
+  .quick-actions { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px; }
+
+  /* ===== TIMELINE ===== */
+  .timeline { position:relative; padding-left:20px; }
+  .timeline::before { content:''; position:absolute; left:6px; top:4px; bottom:4px; width:2px; background:var(--border); }
+  .timeline-item { position:relative; padding-bottom:14px; font-size:13px; }
+  .timeline-item:last-child { padding-bottom:0; }
+  .timeline-item::before { content:''; position:absolute; left:-17px; top:5px; width:8px; height:8px; border-radius:50%; background:var(--border); border:2px solid #fff; }
+  .timeline-item.action::before { background:var(--accent); }
+  .timeline-item.note::before { background:var(--info); }
+  .timeline-item.status-change::before { background:var(--warn); }
+  .timeline-item .tl-date { font-size:11px; color:var(--muted); font-weight:500; }
+  .timeline-item .tl-author { font-size:11px; color:var(--accent); font-weight:600; }
+  .timeline-item .tl-content { margin-top:2px; }
+
+  /* ===== DETAIL SECTION ===== */
+  .detail-section { margin-bottom:16px; }
+  .detail-section h4 { font-size:11px; text-transform:uppercase; letter-spacing:.4px; color:var(--muted); margin-bottom:6px; }
+
+  /* ===== VIEW TOGGLE ===== */
+  .view-toggle { display:flex; border:1px solid var(--border); border-radius:var(--r); overflow:hidden; }
+  .view-toggle button { padding:6px 12px; border:none; background:#fff; font-size:12px; cursor:pointer; border-right:1px solid var(--border); }
+  .view-toggle button:last-child { border-right:none; }
+  .view-toggle button.active { background:var(--accent); color:#fff; }
+
+  /* ===== SCHEDULE LIST VIEW ===== */
+  .sched-view { display:none; }
+  .sched-view.active { display:block; }
+  .sched-day-group { margin-bottom:16px; }
+  .sched-day-label { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.4px; color:var(--muted); padding:6px 0; border-bottom:1px solid var(--border); margin-bottom:4px; display:flex; justify-content:space-between; }
+  .sched-day-label .sched-day-date { color:var(--text); }
+  .sched-gig { background:#fff; border:1px solid var(--border); border-radius:var(--r); padding:12px; margin-bottom:6px; display:flex; gap:12px; align-items:flex-start; }
+  .sched-gig-time { min-width:56px; font-size:13px; font-weight:600; color:var(--accent); }
+  .sched-gig-body { flex:1; min-width:0; }
+  .sched-gig-venue { font-weight:600; font-size:14px; }
+  .sched-gig-meta { font-size:12px; color:var(--muted); margin-top:2px; }
+  .sched-gig-singers { margin-top:6px; }
+  .sched-gig-actions { flex-shrink:0; display:flex; flex-direction:column; gap:4px; align-items:flex-end; }
+  .sched-gig .singer-role { font-size:10px; color:var(--muted); display:block; }
+
+  /* ===== INSTITUTION MOBILE CARDS ===== */
+  .inst-card { background:#fff; border:1px solid var(--border); border-radius:var(--r); padding:12px; margin-bottom:8px; cursor:pointer; }
+  .inst-card .inst-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px; }
+  .inst-card .inst-name { font-weight:600; font-size:14px; }
+  .inst-card .inst-loc { font-size:12px; color:var(--muted); }
+  .inst-card .inst-contact { font-size:12px; color:var(--muted); margin-top:4px; }
+  .inst-card .inst-bottom { display:flex; justify-content:space-between; align-items:center; margin-top:8px; }
+
+  /* ===== SINGER MOBILE CARDS ===== */
+  .singer-card { background:#fff; border:1px solid var(--border); border-radius:var(--r); padding:12px; margin-bottom:8px; }
+  .singer-card .sc-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+  .singer-card .sc-name { font-weight:600; font-size:15px; }
+  .singer-card .sc-venues { margin-top:6px; }
+  .singer-card .sc-venues-label { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.3px; margin-bottom:3px; }
+  .singer-card .sc-note { font-size:12px; color:var(--muted); margin-top:6px; font-style:italic; }
+
+  /* ===== TRIO ASSIGN (mobile) ===== */
+  .trio-grid { display:flex; flex-direction:column; gap:8px; margin-top:4px; }
+  .trio-grid select { width:100%; }
+
+  /* ===== LOADING SPINNER ===== */
+  .loading { text-align:center; padding:40px; color:var(--muted); font-size:14px; }
+
+  /* ============ TABLET+ (min 640px) ============ */
+  @media(min-width:640px) {
+    body { padding-bottom:0; }
+    .tabs { position:sticky; top:48px; bottom:auto; border-top:none; border-bottom:1px solid var(--border); flex-direction:row; padding:0 16px; }
+    .tab { flex:none; flex-direction:row; padding:12px 18px; font-size:13px; border-top:none; border-bottom:2px solid transparent; gap:6px; }
+    .tab.active { border-bottom-color:var(--accent); }
+    .tab svg { width:16px; height:16px; }
+    main { padding:20px; max-width:900px; margin:0 auto; }
+    .form-grid { grid-template-columns:1fr 1fr; }
+    .modal-overlay.open { align-items:flex-start; justify-content:center; padding-top:60px; }
+    .modal { border-radius:12px; max-width:600px; max-height:80vh; }
+    .detail-panel { width:520px; max-width:90vw; box-shadow:-4px 0 20px rgba(0,0,0,.12); }
+    .pipeline { flex-direction:row; }
+    .pipeline-col { flex:1; min-width:0; }
+    .trio-grid { flex-direction:row; }
+    .trio-grid select { flex:1; }
+    .stats { grid-template-columns:repeat(4,1fr); }
+  }
+
+  /* ============ DESKTOP (min 1024px) ============ */
+  @media(min-width:1024px) {
+    main { max-width:1200px; padding:24px; }
+    .page-header h2 { font-size:22px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ==================== LOGIN SCREEN ==================== -->
+<div class="login-screen" id="login-screen">
+  <h1>TSEB</h1>
+  <div class="subtitle">Bedside Singing Manager</div>
+  <button class="btn-google" onclick="signInWithGoogle()">
+    <svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18A10.96 10.96 0 001 12c0 1.77.42 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+    Sign in with Google
+  </button>
+</div>
+
+<!-- ==================== APP CONTENT (hidden until auth) ==================== -->
+<div id="app-content" style="display:none;">
+
+<header>
+  <h1>TSEB <span>Bedside Singing</span></h1>
+  <button class="sign-out-btn" onclick="signOut()">Sign Out</button>
+</header>
+
+<!-- TAB BAR -->
+<nav class="tabs">
+  <div class="tab active" data-page="dashboard">
+    <svg viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1h-2z"/></svg>
+    Home
+  </div>
+  <div class="tab" data-page="outreach">
+    <svg viewBox="0 0 24 24"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+    Outreach
+  </div>
+  <div class="tab" data-page="institutions">
+    <svg viewBox="0 0 24 24"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+    Venues
+  </div>
+  <div class="tab" data-page="singers">
+    <svg viewBox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+    Singers
+  </div>
+  <div class="tab" data-page="schedule">
+    <svg viewBox="0 0 24 24"><path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+    Schedule
+  </div>
+</nav>
+
+<main>
+
+<!-- ==================== DASHBOARD ==================== -->
+<section class="page active" id="dashboard">
+  <div class="page-header"><h2>Dashboard</h2></div>
+  <div class="stats" id="dash-stats"><div class="loading">Loading...</div></div>
+
+  <h3 style="margin-bottom:8px; font-size:15px;">Upcoming Gigs</h3>
+  <div class="card">
+    <ul class="gig-list" id="dash-gigs"><li class="loading">Loading...</li></ul>
+  </div>
+
+  <h3 style="margin:16px 0 8px; font-size:15px;">Follow-ups Due</h3>
+  <div class="card" style="padding:0;">
+    <div id="dash-followups"><div class="loading">Loading...</div></div>
+  </div>
+</section>
+
+<!-- ==================== OUTREACH ==================== -->
+<section class="page" id="outreach">
+  <div class="page-header">
+    <h2>Outreach</h2>
+    <button class="btn btn-primary btn-sm" onclick="openModal('log-activity-modal')">+ Log</button>
+  </div>
+
+  <div class="toolbar">
+    <input class="search-box" id="outreach-search" placeholder="Search institutions...">
+  </div>
+
+  <!-- Pipeline -->
+  <div class="pipeline">
+    <div class="pipeline-col">
+      <div class="pipeline-col-header" style="color:var(--info); border-top:3px solid var(--info);">Initial Contact <span class="count">0</span></div>
+      <div class="pipeline-col-body" id="pipe-initial"></div>
+    </div>
+    <div class="pipeline-col">
+      <div class="pipeline-col-header" style="color:var(--warn); border-top:3px solid var(--warn);">In Conversation <span class="count">0</span></div>
+      <div class="pipeline-col-body" id="pipe-conversation"></div>
+    </div>
+    <div class="pipeline-col">
+      <div class="pipeline-col-header" style="color:var(--accent); border-top:3px solid var(--accent);">Site Visit <span class="count">0</span></div>
+      <div class="pipeline-col-body" id="pipe-sitevisit"></div>
+    </div>
+    <div class="pipeline-col">
+      <div class="pipeline-col-header" style="color:var(--ok); border-top:3px solid var(--ok);">Active <span class="count">0</span></div>
+      <div class="pipeline-col-body" id="pipe-active"></div>
+    </div>
+  </div>
+
+  <!-- Follow-ups table -->
+  <h3 style="margin-bottom:8px; font-size:14px;">Follow-ups Needing Attention</h3>
+  <div class="card">
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th></th><th>Institution</th><th>Outreacher</th><th>Next Step</th><th>Due</th><th></th></tr></thead>
+      <tbody id="outreach-followups"></tbody>
+    </table>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== INSTITUTIONS ==================== -->
+<section class="page" id="institutions">
+  <div class="page-header">
+    <h2>Venues</h2>
+    <button class="btn btn-primary btn-sm" onclick="openModal('institution-modal')">+ Add</button>
+  </div>
+
+  <div class="toolbar">
+    <input class="search-box" id="inst-search" placeholder="Search venues...">
+  </div>
+
+  <div id="inst-list"><div class="loading">Loading...</div></div>
+</section>
+
+<!-- ==================== SINGERS ==================== -->
+<section class="page" id="singers">
+  <div class="page-header">
+    <h2>Singers</h2>
+    <button class="btn btn-primary btn-sm" onclick="openModal('singer-modal')">+ Add</button>
+  </div>
+
+  <div class="toolbar">
+    <input class="search-box" id="singer-search" placeholder="Search singers...">
+  </div>
+
+  <div id="singers-list"><div class="loading">Loading...</div></div>
+</section>
+
+<!-- ==================== SCHEDULE ==================== -->
+<section class="page" id="schedule">
+  <div class="page-header">
+    <h2>Schedule</h2>
+    <div style="display:flex; gap:6px; align-items:center;">
+      <div class="view-toggle" id="sched-toggle">
+        <button data-view="sched-list" class="active">List</button>
+        <button data-view="sched-cal">Cal</button>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="openModal('gig-modal')">+ Gig</button>
+    </div>
+  </div>
+
+  <!-- LIST VIEW (default) -->
+  <div class="sched-view active" id="sched-list">
+    <div id="sched-list-content"><div class="loading">Loading...</div></div>
+  </div>
+
+  <!-- CALENDAR VIEW (placeholder) -->
+  <div class="sched-view" id="sched-cal">
+    <div class="card" style="padding:24px; text-align:center; color:var(--muted);">Calendar view coming soon</div>
+  </div>
+</section>
+
+</main>
+
+<!-- ==================== DYNAMIC DETAIL PANEL ==================== -->
+<div class="detail-overlay" id="dynamic-detail"></div>
+
+<!-- ==================== MODALS ==================== -->
+
+<!-- Add Institution -->
+<div class="modal-overlay" id="institution-modal">
+  <div class="modal">
+    <div class="modal-header"><h3>Add Institution</h3><button class="modal-close" onclick="closeModal('institution-modal')">&times;</button></div>
+    <div class="modal-body">
+      <form onsubmit="event.preventDefault(); submitInstitution(this);">
+        <div class="form-grid">
+          <div class="form-group full"><label>Name</label><input type="text" name="name" required placeholder="e.g. Mercy Retirement & Care"></div>
+          <div class="form-group"><label>Type</label><select name="institution_type"><option value="">Select...</option><option value="hospital">Hospital</option><option value="hospice">Hospice</option><option value="nursing_snf">Nursing/SNF</option><option value="memory_care">Memory Care</option><option value="senior_center">Senior Center</option><option value="nicu">NICU</option><option value="retirement">Retirement</option><option value="other">Other</option></select></div>
+          <div class="form-group"><label>Status</label><select name="status"><option value="outreach">Outreach</option><option value="pending">Pending</option><option value="active">Active</option><option value="previous">Previous</option><option value="eliminated">Eliminated</option></select></div>
+          <div class="form-group full"><label>Address</label><input type="text" name="address" placeholder="Street, City"></div>
+          <div class="form-group"><label>Contact First Name</label><input type="text" name="contact_first_name"></div>
+          <div class="form-group"><label>Contact Last Name</label><input type="text" name="contact_last_name"></div>
+          <div class="form-group"><label>Contact Title</label><input type="text" name="contact_title" placeholder="Volunteer Coord."></div>
+          <div class="form-group"><label>Contact Phone</label><input type="tel" name="contact_phone"></div>
+          <div class="form-group"><label>Contact Email</label><input type="email" name="contact_email"></div>
+          <div class="form-group"><label>TSEB Outreacher</label><select name="outreacher_id" data-singer-list data-placeholder="Assign..."></select></div>
+          <div class="form-group"><label>Next Step</label><input type="text" name="next_step" placeholder="What to do first..."></div>
+          <div class="form-group"><label>Next Step Due</label><input type="date" name="next_step_due"></div>
+        </div>
+        <div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal('institution-modal')">Cancel</button><button type="submit" class="btn btn-primary">Save</button></div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Add Singer -->
+<div class="modal-overlay" id="singer-modal">
+  <div class="modal">
+    <div class="modal-header"><h3>Add Singer</h3><button class="modal-close" onclick="closeModal('singer-modal')">&times;</button></div>
+    <div class="modal-body">
+      <form onsubmit="event.preventDefault(); submitSinger(this);">
+        <div class="form-grid">
+          <div class="form-group"><label>First Name</label><input type="text" name="first_name" required></div>
+          <div class="form-group"><label>Role</label><select name="role"><option value="singer">Singer</option><option value="outreacher">Outreacher</option><option value="both">Singer + Outreacher</option></select></div>
+          <div class="form-group"><label>Availability</label><select name="availability"><option value="available">Available</option><option value="limited">Limited</option><option value="unavailable">Unavailable</option></select></div>
+          <div class="form-group"><label>Preferred Days</label><input type="text" name="preferred_days" placeholder="Tue, Thu"></div>
+          <div class="form-group full"><label>Notes</label><textarea name="notes" placeholder="Constraints, recovery status..."></textarea></div>
+        </div>
+        <div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal('singer-modal')">Cancel</button><button type="submit" class="btn btn-primary">Save</button></div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Schedule Gig -->
+<div class="modal-overlay" id="gig-modal">
+  <div class="modal">
+    <div class="modal-header"><h3>Schedule Gig</h3><button class="modal-close" onclick="closeModal('gig-modal')">&times;</button></div>
+    <div class="modal-body">
+      <form onsubmit="event.preventDefault(); submitGig(this);">
+        <div class="form-grid">
+          <div class="form-group full"><label>Venue</label><select name="institution_id" data-institution-list required></select></div>
+          <div class="form-group"><label>Date</label><input type="date" name="gig_date" required></div>
+          <div class="form-group"><label>Time</label><input type="time" name="gig_time"></div>
+          <div class="form-group"><label>Recurrence</label><select name="recurrence"><option value="one_time">One-time</option><option value="weekly">Weekly</option><option value="biweekly">Every other week</option><option value="2x_month">2x/month</option><option value="monthly">Monthly</option></select></div>
+          <div class="form-group"><label>End Recurrence</label><input type="date" name="recurrence_end"></div>
+          <div class="form-group full">
+            <label>Assign Singers (trio)</label>
+            <div class="trio-grid">
+              <select name="singer1" data-singer-list data-placeholder="Singer 1 (anchor)..."></select>
+              <select name="singer2" data-singer-list data-placeholder="Singer 2..."></select>
+              <select name="singer3" data-singer-list data-placeholder="Singer 3..."></select>
+            </div>
+          </div>
+          <div class="form-group full"><label>Notes</label><textarea name="gig_notes" placeholder="Room details, special instructions..."></textarea></div>
+        </div>
+        <div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal('gig-modal')">Cancel</button><button type="submit" class="btn btn-primary">Schedule</button></div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Log Activity -->
+<div class="modal-overlay" id="log-activity-modal">
+  <div class="modal">
+    <div class="modal-header"><h3>Log Activity</h3><button class="modal-close" onclick="closeModal('log-activity-modal')">&times;</button></div>
+    <div class="modal-body">
+      <form onsubmit="event.preventDefault(); submitLogActivity(this);">
+        <div class="form-grid">
+          <div class="form-group full"><label>Institution</label><select name="institution_id" data-institution-list required></select></div>
+          <div class="form-group"><label>Activity Type</label><select name="activity_type"><option value="phone_call">Phone Call</option><option value="voicemail">Left Voicemail</option><option value="email_sent">Email Sent</option><option value="email_received">Email Received</option><option value="in_person">In-Person Meeting</option><option value="site_visit">Site Visit</option><option value="first_sing">First Sing</option><option value="status_change">Status Change</option><option value="note">Note</option></select></div>
+          <div class="form-group"><label>Date</label><input type="date" name="activity_date" required></div>
+          <div class="form-group"><label>Outreacher</label><select name="singer_id" data-singer-list data-placeholder="Who?"></select></div>
+          <div class="form-group"><label>Contact Person</label><input type="text" name="contact_person" placeholder="Who at facility?"></div>
+          <div class="form-group full"><label>What happened?</label><textarea name="description" rows="3" required placeholder="Describe the interaction..."></textarea></div>
+          <div class="form-group full" style="background:var(--warn-light); padding:12px; border-radius:6px;">
+            <label style="color:var(--warn);">Set Next Step</label>
+            <textarea name="next_step" rows="2" placeholder="What needs to happen next?" style="margin-top:4px;"></textarea>
+            <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;">
+              <div class="form-group" style="flex:1; min-width:140px;"><label>Due Date</label><input type="date" name="next_step_due"></div>
+              <div class="form-group" style="flex:1; min-width:140px;"><label>Move to Stage</label><select name="new_stage"><option value="">No change</option><option value="initial_contact">Initial Contact</option><option value="in_conversation">In Conversation</option><option value="site_visit">Site Visit</option><option value="active">Active Venue</option><option value="on_hold">On Hold</option><option value="eliminated">Eliminated</option></select></div>
+            </div>
+          </div>
+        </div>
+        <div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal('log-activity-modal')">Cancel</button><button type="submit" class="btn btn-primary">Save</button></div>
+      </form>
+    </div>
+  </div>
+</div>
+
+</div><!-- /app-content -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+<script>
+  // Tab switching
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById(tab.dataset.page).classList.add('active');
+    });
+  });
+  function openModal(id) {
+    document.getElementById(id).classList.add('open');
+    // Set today's date on activity date field
+    const dateInput = document.querySelector(`#${id} input[name="activity_date"]`);
+    if (dateInput && !dateInput.value) dateInput.value = new Date().toISOString().split('T')[0];
+    // Populate institution dropdowns on open
+    populateInstitutionDropdowns();
+  }
+  function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+  // Close modals/details on backdrop click
+  document.addEventListener('click', e => {
+    if (e.target.classList.contains('modal-overlay')) e.target.classList.remove('open');
+    if (e.target.classList.contains('detail-overlay')) e.target.classList.remove('open');
+  });
+  // Schedule view toggle
+  document.querySelectorAll('#sched-toggle button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#sched-toggle button').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.sched-view').forEach(v => v.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.view).classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>
