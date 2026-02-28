@@ -856,11 +856,13 @@ function populateSingerDropdowns() {
 }
 
 async function populateInstitutionDropdowns() {
-  const { data } = await sb.from('institutions').select('id, name').order('name');
+  const { data } = await sb.from('institutions').select('id, name, status').order('name');
   document.querySelectorAll('select[data-institution-list]').forEach(sel => {
     const currentVal = sel.value;
+    const activeOnly = sel.hasAttribute('data-active-only');
+    const filtered = activeOnly ? (data || []).filter(i => i.status === 'active') : (data || []);
     sel.innerHTML = '<option value="">Select...</option>' +
-      (data || []).map(i => `<option value="${i.id}">${esc(i.name)}</option>`).join('');
+      filtered.map(i => `<option value="${i.id}">${esc(i.name)}</option>`).join('');
     if (currentVal) sel.value = currentVal;
   });
 }
