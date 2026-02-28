@@ -467,6 +467,111 @@ async function loadSchedule() {
       </div>`;
     }).join('') || '<p style="padding:16px; color:var(--muted);">No upcoming gigs scheduled.</p>';
   }
+
+  // Also load calendar view
+  loadCalendar(new Date().getFullYear(), new Date().getMonth());
+}
+
+// ============================================================
+// CALENDAR VIEW
+// ============================================================
+let calMonth = new Date().getMonth();
+let calYear = new Date().getFullYear();
+let calGigsCache = [];
+
+async function loadCalendar(year, month) {
+  calYear = year;
+  calMonth = month;
+
+  // Fetch gigs for the visible month range (include overflow days)
+  const first = new Date(year, month, 1);
+  const last = new Date(year, month + 1, 0);
+  // Expand to cover partial weeks
+  const startDay = new Date(first);
+  startDay.setDate(startDay.getDate() - first.getDay());
+  const endDay = new Date(last);
+  endDay.setDate(endDay.getDate() + (6 - last.getDay()));
+
+  const { data: gigs } = await sb.from('gigs')
+    .select('*, institution:institutions(name), gig_singers(singer_id, is_anchor)')
+    .gte('gig_date', startDay.toISOString().split('T')[0])
+    .lte('gig_date', endDay.toISOString().split('T')[0])
+    .order('gig_time');
+
+  calGigsCache = gigs || [];
+  renderCalendar();
+}
+
+function renderCalendar() {
+  const container = document.getElementById('cal-container');
+  if (!container) return;
+
+  const today = new Date().toISOString().split('T')[0];
+  const first = new Date(calYear, calMonth, 1);
+  const last = new Date(calYear, calMonth + 1, 0);
+  const monthLabel = first.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+  // Build gigs-by-date map
+  const gigsByDate = {};
+  calGigsCache.forEach(g => {
+    if (!gigsByDate[g.gig_date]) gigsByDate[g.gig_date] = [];
+    gigsByDate[g.gig_date].push(g);
+  });
+
+  // Navigation
+  let html = `<div class="cal-nav">
+    <button onclick="calPrev()">&lsaquo; Prev</button>
+    <span class="cal-month-label">${monthLabel}</span>
+    <button onclick="calNext()">Next &rsaquo;</button>
+  </div>`;
+
+  // Grid header
+  html += '<div class="cal-grid">';
+  ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].forEach(d => {
+    html += `<div class="cal-hdr">${d}</div>`;
+  });
+
+  // Fill cells starting from the Sunday before the 1st
+  const cursor = new Date(first);
+  cursor.setDate(cursor.getDate() - first.getDay());
+
+  while (cursor <= last || cursor.getDay() !== 0) {
+    const dateStr = cursor.toISOString().split('T')[0];
+    const isOther = cursor.getMonth() !== calMonth;
+    const isToday = dateStr === today;
+    const classes = ['cal-cell'];
+    if (isOther) classes.push('other-month');
+    if (isToday) classes.push('today');
+
+    const dayGigs = gigsByDate[dateStr] || [];
+    const dots = dayGigs.map(g => {
+      const timeAttr = g.gig_time ? `data-time="${g.gig_time.slice(0, 5)}"` : '';
+      const timeClass = g.gig_time ? ' has-time' : '';
+      return `<div class="cal-dot${timeClass}" ${timeAttr}>${esc(g.institution?.name || '')}</div>`;
+    }).join('');
+
+    html += `<div class="${classes.join(' ')}">
+      <div class="cal-day-num">${cursor.getDate()}</div>
+      <div class="cal-dots">${dots}</div>
+    </div>`;
+
+    cursor.setDate(cursor.getDate() + 1);
+  }
+
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+function calPrev() {
+  let m = calMonth - 1, y = calYear;
+  if (m < 0) { m = 11; y--; }
+  loadCalendar(y, m);
+}
+
+function calNext() {
+  let m = calMonth + 1, y = calYear;
+  if (m > 11) { m = 0; y++; }
+  loadCalendar(y, m);
 }
 
 // ============================================================
