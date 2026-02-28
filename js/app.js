@@ -255,7 +255,7 @@ let outreachData = null;
 async function loadOutreach() {
   const { data } = await sb.from('institutions')
     .select('*, outreacher:singers!institutions_outreacher_id_fkey(first_name)')
-    .not('status', 'in', '("previous")')
+    .not('status', 'in', '("previous","inactive")')
     .order('next_step_due', { ascending: true, nullsFirst: false });
 
   if (!data) return;
