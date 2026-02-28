@@ -874,6 +874,23 @@ async function populateInstitutionDropdowns() {
 }
 
 // ============================================================
+// BUG REPORT
+// ============================================================
+function submitBugReport(form) {
+  const fd = new FormData(form);
+  const desc = fd.get('description') || '';
+  const expected = fd.get('expected') || '';
+  const reporter = fd.get('reporter') || 'Anonymous';
+  const subject = encodeURIComponent('TSEB Bug Report');
+  const body = encodeURIComponent(
+    `Bug Report from: ${reporter}\n\nWhat happened:\n${desc}\n\nExpected behavior:\n${expected}\n\nPage: ${location.href}\nTime: ${new Date().toISOString()}\nUA: ${navigator.userAgent}`
+  );
+  window.open(`mailto:jhwright@gmail.com?subject=${subject}&body=${body}`, '_self');
+  closeModal('bug-report-modal');
+  form.reset();
+}
+
+// ============================================================
 // SEARCH & FILTER (client-side)
 // ============================================================
 function setupSearch(inputSelector, containerSelector, cardSelector) {

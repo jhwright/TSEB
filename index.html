@@ -308,7 +308,10 @@
 
 <header>
   <h1>TSEB <span>Bedside Singing</span></h1>
-  <button class="sign-out-btn" onclick="signOut()">Sign Out</button>
+  <div style="display:flex; gap:8px; align-items:center;">
+    <button class="sign-out-btn" style="position:static;" onclick="openModal('bug-report-modal')" title="Report a bug">&#128027;</button>
+    <button class="sign-out-btn" style="position:static;" onclick="signOut()">Sign Out</button>
+  </div>
 </header>
 
 <!-- TAB BAR -->
@@ -576,6 +579,23 @@
           </div>
         </div>
         <div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal('log-activity-modal')">Cancel</button><button type="submit" class="btn btn-primary">Save</button></div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Bug Report -->
+<div class="modal-overlay" id="bug-report-modal">
+  <div class="modal">
+    <div class="modal-header"><h3>Report a Bug</h3><button class="modal-close" onclick="closeModal('bug-report-modal')">&times;</button></div>
+    <div class="modal-body">
+      <form onsubmit="event.preventDefault(); submitBugReport(this);">
+        <div class="form-grid">
+          <div class="form-group full"><label>What happened?</label><textarea name="description" rows="4" required placeholder="Describe what went wrong..."></textarea></div>
+          <div class="form-group full"><label>What were you trying to do?</label><textarea name="expected" rows="3" placeholder="What did you expect to happen?"></textarea></div>
+          <div class="form-group full"><label>Your name (optional)</label><input type="text" name="reporter"></div>
+        </div>
+        <div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal('bug-report-modal')">Cancel</button><button type="submit" class="btn btn-primary">Send Report</button></div>
       </form>
     </div>
   </div>
