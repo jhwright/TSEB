@@ -615,9 +615,13 @@ function renderCalendar() {
     if (isToday) classes.push('today');
 
     const dayGigs = gigsByDate[dateStr] || [];
+    const totalRows = totalCells / 7;
+    const currentRow = Math.floor(i / 7);
+    const isBottomRows = currentRow >= totalRows - 2;
     const dots = dayGigs.map(g => {
       const timeAttr = g.gig_time ? `data-time="${g.gig_time.slice(0, 5)}"` : '';
       const timeClass = g.gig_time ? ' has-time' : '';
+      const aboveClass = isBottomRows ? ' tt-above' : '';
       const singers = (g.gig_singers || []).map(gs => {
         const n = singerName(gs.singer_id);
         return gs.is_anchor ? n + ' (anchor)' : n;
@@ -632,7 +636,7 @@ function renderCalendar() {
         ${singers.length ? '<div class="tt-singers">' + singers.map(s => esc(s)).join(', ') + '</div>' : ''}
         ${g.notes ? '<div class="tt-notes">' + esc(g.notes) + '</div>' : ''}
       </div>`;
-      return `<div class="cal-dot${timeClass}" ${timeAttr} onclick="event.stopPropagation(); showGigDetail('${g.id}')">${esc(g.institution?.name || '')}${tooltip}</div>`;
+      return `<div class="cal-dot${timeClass}${aboveClass}" ${timeAttr} onclick="event.stopPropagation(); showGigDetail('${g.id}')">${esc(g.institution?.name || '')}${tooltip}</div>`;
     }).join('');
 
     html += `<div class="${classes.join(' ')}">

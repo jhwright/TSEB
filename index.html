@@ -220,7 +220,9 @@
   .cal-nav button { background:none; border:1px solid var(--border); border-radius:var(--r); padding:6px 12px; cursor:pointer; font-size:13px; color:var(--text); }
   .cal-nav button:hover { background:var(--accent-light); }
   .cal-month-label { font-weight:700; font-size:15px; }
-  .cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:1px; background:var(--border); border:1px solid var(--border); border-radius:var(--r); overflow:hidden; }
+  .cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:1px; background:var(--border); border:1px solid var(--border); border-radius:var(--r); }
+  .cal-grid > .cal-hdr:first-child { border-top-left-radius:var(--r); }
+  .cal-grid > .cal-hdr:nth-child(7) { border-top-right-radius:var(--r); }
   .cal-hdr { background:var(--accent); color:#fff; text-align:center; font-size:11px; font-weight:600; padding:6px 0; text-transform:uppercase; }
   .cal-cell { background:#fff; min-height:64px; padding:4px; position:relative; cursor:default; }
   .cal-cell.other-month { background:#fafaf8; color:var(--muted); }
@@ -233,6 +235,7 @@
   .cal-cell { overflow:visible; }
   .cal-tooltip { display:none; position:absolute; left:0; top:100%; z-index:30; background:#fff; border:1px solid var(--border); border-radius:var(--r); padding:8px 10px; font-size:12px; line-height:1.4; color:var(--text); white-space:normal; min-width:180px; max-width:240px; box-shadow:0 4px 12px rgba(0,0,0,.15); pointer-events:none; }
   .cal-dot:hover .cal-tooltip { display:block; }
+  .cal-dot.tt-above .cal-tooltip { top:auto; bottom:100%; }
   .cal-tooltip strong { display:block; margin-bottom:2px; }
   .cal-tooltip .tt-singers { color:var(--muted); margin-top:2px; }
   .cal-tooltip .tt-notes { font-style:italic; color:var(--muted); margin-top:4px; }
