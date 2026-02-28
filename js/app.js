@@ -201,7 +201,7 @@ async function loadDashboard() {
   const { data: followups } = await sb.from('institutions')
     .select('*, outreacher:singers!institutions_outreacher_id_fkey(first_name)')
     .not('next_step', 'is', null)
-    .not('status', 'in', '("active","inactive","previous","on_hold")')
+    .not('status', 'in', '(active,inactive,previous,on_hold)')
     .order('next_step_due', { ascending: true, nullsFirst: false })
     .limit(5);
 
@@ -253,11 +253,12 @@ async function loadInstitutions() {
 let outreachData = null;
 
 async function loadOutreach() {
-  const { data } = await sb.from('institutions')
+  const { data, error } = await sb.from('institutions')
     .select('*, outreacher:singers!institutions_outreacher_id_fkey(first_name)')
-    .not('status', 'in', '("previous","inactive")')
+    .not('status', 'in', '(previous,inactive)')
     .order('next_step_due', { ascending: true, nullsFirst: false });
 
+  if (error) { console.error('loadOutreach error:', error); return; }
   if (!data) return;
   outreachData = data;
 
@@ -356,15 +357,40 @@ const stageMap = {
   'pipe-active': 'active'
 };
 
+let kanbanDragId = null;
+
+// Set up drop targets once (not on every render)
+let kanbanDropSetup = false;
+function setupKanbanDropTargets() {
+  if (kanbanDropSetup) return;
+  kanbanDropSetup = true;
+
+  document.querySelectorAll('.pipeline-col-body').forEach(col => {
+    col.addEventListener('dragover', e => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; col.classList.add('drag-over'); });
+    col.addEventListener('dragleave', e => { if (!col.contains(e.relatedTarget)) col.classList.remove('drag-over'); });
+    col.addEventListener('drop', async e => {
+      e.preventDefault();
+      col.classList.remove('drag-over');
+      const newStatus = stageMap[col.id];
+      if (!kanbanDragId || !newStatus) return;
+      const id = kanbanDragId;
+      kanbanDragId = null;
+      const { error } = await sb.from('institutions').update({ status: newStatus }).eq('id', id);
+      if (error) { alert('Error: ' + error.message); return; }
+      loadOutreach();
+    });
+  });
+}
+
 function setupKanbanDrag() {
-  let dragId = null;
+  setupKanbanDropTargets();
 
   document.querySelectorAll('.pipeline-card[draggable]').forEach(card => {
     card.addEventListener('dragstart', e => {
-      dragId = card.dataset.id;
+      kanbanDragId = card.dataset.id;
       card.classList.add('dragging');
       e.dataTransfer.effectAllowed = 'move';
-      // Prevent click from firing after drop
+      e.dataTransfer.setData('text/plain', card.dataset.id);
       card._dragged = false;
       setTimeout(() => { card._dragged = true; }, 0);
     });
@@ -378,34 +404,21 @@ function setupKanbanDrag() {
     }, true);
   });
 
-  document.querySelectorAll('.pipeline-col-body').forEach(col => {
-    col.addEventListener('dragover', e => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; col.classList.add('drag-over'); });
-    col.addEventListener('dragleave', e => { if (!col.contains(e.relatedTarget)) col.classList.remove('drag-over'); });
-    col.addEventListener('drop', async e => {
-      e.preventDefault();
-      col.classList.remove('drag-over');
-      const newStatus = stageMap[col.id];
-      if (!dragId || !newStatus) return;
-      const { error } = await sb.from('institutions').update({ status: newStatus }).eq('id', dragId);
-      if (error) { alert('Error: ' + error.message); return; }
-      dragId = null;
-      loadOutreach();
-    });
-  });
-
   // Touch support for mobile
-  let touchCard = null, touchClone = null, touchStartY = 0, touchMoved = false;
+  let touchCard = null, touchClone = null, touchStartX = 0, touchStartY = 0, touchMoved = false;
   document.querySelectorAll('.pipeline-card[draggable]').forEach(card => {
     card.addEventListener('touchstart', e => {
       touchMoved = false;
+      touchStartX = e.touches[0].clientX;
       touchStartY = e.touches[0].clientY;
     }, { passive: true });
     card.addEventListener('touchmove', e => {
+      const dx = Math.abs(e.touches[0].clientX - touchStartX);
       const dy = Math.abs(e.touches[0].clientY - touchStartY);
-      if (!touchCard && dy < 10) return; // not a drag yet
+      if (!touchCard && dx < 10 && dy < 10) return; // not a drag yet
       if (!touchCard) {
         touchCard = card;
-        dragId = card.dataset.id;
+        kanbanDragId = card.dataset.id;
         touchClone = card.cloneNode(true);
         touchClone.style.cssText = 'position:fixed;z-index:1000;opacity:.7;pointer-events:none;width:' + card.offsetWidth + 'px;';
         document.body.appendChild(touchClone);
@@ -427,15 +440,15 @@ function setupKanbanDrag() {
       touchCard.classList.remove('dragging');
       const dropTarget = document.querySelector('.pipeline-col-body.drag-over');
       document.querySelectorAll('.pipeline-col-body').forEach(b => b.classList.remove('drag-over'));
-      if (dropTarget && dragId) {
+      if (dropTarget && kanbanDragId) {
         const newStatus = stageMap[dropTarget.id];
         if (newStatus) {
-          const { error } = await sb.from('institutions').update({ status: newStatus }).eq('id', dragId);
+          const { error } = await sb.from('institutions').update({ status: newStatus }).eq('id', kanbanDragId);
           if (error) alert('Error: ' + error.message);
           else loadOutreach();
         }
       }
-      touchCard = null; touchClone = null; dragId = null;
+      touchCard = null; touchClone = null; kanbanDragId = null;
       // Suppress the click that follows touchend after a drag
       if (touchMoved) {
         card.addEventListener('click', ev => { ev.stopImmediatePropagation(); ev.preventDefault(); }, { once: true, capture: true });
