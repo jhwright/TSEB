@@ -191,7 +191,7 @@ async function loadDashboard() {
       const time = g.gig_time ? g.gig_time.slice(0, 5) : '';
       return `<li>
         <div class="gig-date"><div class="month">${dt.toLocaleDateString('en-US',{month:'short'})}</div><div class="day">${dt.getDate()}</div></div>
-        <div class="gig-info"><div class="gig-venue">${esc(g.institution?.name)}</div><div class="gig-singers">${esc(singers)}</div><div class="gig-time">${time}</div></div>
+        <div class="gig-info"><div class="gig-venue">${esc(g.institution?.name)}</div><div class="gig-singers">${esc(singers)}</div><div class="gig-time">${time}</div>${g.notes ? `<div style="font-size:12px; color:var(--muted); font-style:italic; margin-top:2px;">${esc(g.notes)}</div>` : ''}</div>
         ${g.recurrence ? `<span class="gig-recur">${recurrenceLabel(g.recurrence)}</span>` : ''}
       </li>`;
     }).join('');
@@ -618,7 +618,17 @@ function renderCalendar() {
     const dots = dayGigs.map(g => {
       const timeAttr = g.gig_time ? `data-time="${g.gig_time.slice(0, 5)}"` : '';
       const timeClass = g.gig_time ? ' has-time' : '';
-      return `<div class="cal-dot${timeClass}" ${timeAttr} onclick="event.stopPropagation(); showGigDetail('${g.id}')">${esc(g.institution?.name || '')}</div>`;
+      const singers = (g.gig_singers || []).map(gs => {
+        const n = singerName(gs.singer_id);
+        return gs.is_anchor ? n + ' (anchor)' : n;
+      });
+      const tooltip = `<div class="cal-tooltip">
+        <strong>${esc(g.institution?.name || '')}</strong>
+        ${g.gig_time ? '<div>' + g.gig_time.slice(0, 5) + ' · ' + recurrenceLabel(g.recurrence) + '</div>' : '<div>' + recurrenceLabel(g.recurrence) + '</div>'}
+        ${singers.length ? '<div class="tt-singers">' + singers.map(s => esc(s)).join(', ') + '</div>' : ''}
+        ${g.notes ? '<div class="tt-notes">' + esc(g.notes) + '</div>' : ''}
+      </div>`;
+      return `<div class="cal-dot${timeClass}" ${timeAttr} onclick="event.stopPropagation(); showGigDetail('${g.id}')">${esc(g.institution?.name || '')}${tooltip}</div>`;
     }).join('');
 
     html += `<div class="${classes.join(' ')}">
@@ -770,9 +780,69 @@ function openLogForInstitution(id) {
   openModal('log-activity-modal');
 }
 
-function editInstitution(id) {
-  // TODO: populate edit form
-  alert('Edit form coming soon - for now use Log Activity to update next step');
+async function editInstitution(id) {
+  const { data: inst } = await sb.from('institutions').select('*').eq('id', id).single();
+  if (!inst) return;
+
+  // Close the detail panel
+  document.getElementById('dynamic-detail').classList.remove('open');
+
+  const modal = document.getElementById('edit-institution-modal');
+  const form = modal.querySelector('form');
+  form.querySelector('[name="id"]').value = inst.id;
+  form.querySelector('[name="name"]').value = inst.name || '';
+  form.querySelector('[name="institution_type"]').value = inst.institution_type || '';
+  form.querySelector('[name="status"]').value = inst.status || '';
+  form.querySelector('[name="address"]').value = inst.address || '';
+  form.querySelector('[name="pipeline_stage"]').value = inst.pipeline_stage || '';
+  form.querySelector('[name="recurrence"]').value = inst.recurrence || '';
+  form.querySelector('[name="next_step"]').value = inst.next_step || '';
+  form.querySelector('[name="next_step_due"]').value = inst.next_step_due || '';
+  form.querySelector('[name="notes"]').value = inst.notes || '';
+  form.querySelector('[name="elimination_reason"]').value = inst.elimination_reason || '';
+
+  // Show/hide elimination reason based on status
+  const elimGroup = modal.querySelector('.elimination-reason-group');
+  elimGroup.style.display = inst.status === 'eliminated' ? '' : 'none';
+  form.querySelector('[name="status"]').addEventListener('change', function() {
+    elimGroup.style.display = this.value === 'eliminated' ? '' : 'none';
+  });
+
+  // Populate singer dropdown then set value
+  await populateInstitutionDropdowns();
+  const outreacherSel = form.querySelector('[name="outreacher_id"]');
+  // Rebuild the singer list for this dropdown
+  const placeholder = outreacherSel.dataset.placeholder || 'Assign...';
+  outreacherSel.innerHTML = `<option value="">${placeholder}</option>` +
+    singersCache.map(s => `<option value="${s.id}">${esc(s.first_name)}</option>`).join('');
+  outreacherSel.value = inst.outreacher_id || '';
+
+  openModal('edit-institution-modal');
+}
+
+async function submitEditInstitution(form) {
+  const fd = new FormData(form);
+  const id = fd.get('id');
+  const { error } = await sb.from('institutions').update({
+    name: fd.get('name'),
+    institution_type: fd.get('institution_type') || null,
+    status: fd.get('status'),
+    address: fd.get('address') || null,
+    pipeline_stage: fd.get('pipeline_stage'),
+    outreacher_id: fd.get('outreacher_id') || null,
+    recurrence: fd.get('recurrence') || null,
+    next_step: fd.get('next_step') || null,
+    next_step_due: fd.get('next_step_due') || null,
+    notes: fd.get('notes') || null,
+    elimination_reason: fd.get('elimination_reason') || null
+  }).eq('id', id);
+
+  if (error) { alert('Error: ' + error.message); return; }
+  closeModal('edit-institution-modal');
+  form.reset();
+  loadAll();
+  // Reopen the detail panel to show updated info
+  showInstitutionDetail(id);
 }
 
 function populateSingerDropdowns() {
