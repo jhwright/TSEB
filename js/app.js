@@ -255,7 +255,6 @@ let outreachData = null;
 async function loadOutreach() {
   const { data, error } = await sb.from('institutions')
     .select('*, outreacher:singers!institutions_outreacher_id_fkey(first_name)')
-    .not('status', 'in', '(previous,inactive)')
     .order('next_step_due', { ascending: true, nullsFirst: false });
 
   if (error) { console.error('loadOutreach error:', error); return; }
@@ -287,7 +286,10 @@ function renderOutreach(data) {
     initial_contact: { el: 'pipe-initial', items: [] },
     in_conversation: { el: 'pipe-conversation', items: [] },
     site_visit: { el: 'pipe-sitevisit', items: [] },
-    active: { el: 'pipe-active', items: [] }
+    active: { el: 'pipe-active', items: [] },
+    on_hold: { el: 'pipe-onhold', items: [] },
+    previous: { el: 'pipe-previous', items: [] },
+    inactive: { el: 'pipe-inactive', items: [] }
   };
 
   data.forEach(i => {
@@ -354,7 +356,10 @@ const stageMap = {
   'pipe-initial': 'initial_contact',
   'pipe-conversation': 'in_conversation',
   'pipe-sitevisit': 'site_visit',
-  'pipe-active': 'active'
+  'pipe-active': 'active',
+  'pipe-onhold': 'on_hold',
+  'pipe-previous': 'previous',
+  'pipe-inactive': 'inactive'
 };
 
 let kanbanDragId = null;
