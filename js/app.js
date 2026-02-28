@@ -463,6 +463,7 @@ async function loadSchedule() {
               <div class="sched-gig-meta">${recurrenceLabel(g.recurrence)}${g.institution?.address ? ' · ' + esc(g.institution.address) : ''}</div>
               ${contactLine ? `<div class="sched-gig-contact" style="font-size:12px; color:var(--muted); margin-top:2px;">${contactLine}</div>` : ''}
               <div class="sched-gig-singers"><div class="singer-chips">${singers.map(s => `<span class="singer-chip">${s}</span>`).join('')}</div></div>
+              ${g.notes ? `<div style="font-size:12px; color:var(--muted); margin-top:4px; font-style:italic;">${esc(g.notes)}</div>` : ''}
             </div>
             <div class="sched-gig-actions">${g.recurrence ? `<span class="gig-recur">${recurrenceLabel(g.recurrence)}</span>` : ''}</div>
           </div>`;
