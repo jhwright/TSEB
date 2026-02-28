@@ -427,7 +427,7 @@ async function loadSchedule() {
   const end = endDate.toISOString().split('T')[0];
 
   const { data: gigs } = await sb.from('gigs')
-    .select('*, institution:institutions(name, address), gig_singers(singer_id, is_anchor)')
+    .select('*, institution:institutions(id, name, address, institution_type, contacts(first_name, last_name, job_title, phone, email, is_primary)), gig_singers(singer_id, is_anchor)')
     .gte('gig_date', today)
     .lte('gig_date', end)
     .order('gig_date')
@@ -454,11 +454,14 @@ async function loadSchedule() {
             const name = singerName(gs.singer_id);
             return gs.is_anchor ? `${name} <span class="singer-role">anchor</span>` : name;
           });
-          return `<div class="sched-gig">
+          const primary = (g.institution?.contacts || []).find(c => c.is_primary);
+          const contactLine = primary ? `${esc((primary.first_name || '') + ' ' + (primary.last_name || '')).trim()}${primary.phone ? ' · <a href="tel:' + primary.phone + '">' + esc(primary.phone) + '</a>' : ''}` : '';
+          return `<div class="sched-gig" style="cursor:pointer;" onclick="showGigDetail('${g.id}')">
             <div class="sched-gig-time">${g.gig_time ? g.gig_time.slice(0, 5) : '—'}</div>
             <div class="sched-gig-body">
               <div class="sched-gig-venue">${esc(g.institution?.name)}</div>
               <div class="sched-gig-meta">${recurrenceLabel(g.recurrence)}${g.institution?.address ? ' · ' + esc(g.institution.address) : ''}</div>
+              ${contactLine ? `<div class="sched-gig-contact" style="font-size:12px; color:var(--muted); margin-top:2px;">${contactLine}</div>` : ''}
               <div class="sched-gig-singers"><div class="singer-chips">${singers.map(s => `<span class="singer-chip">${s}</span>`).join('')}</div></div>
             </div>
             <div class="sched-gig-actions">${g.recurrence ? `<span class="gig-recur">${recurrenceLabel(g.recurrence)}</span>` : ''}</div>
@@ -470,6 +473,68 @@ async function loadSchedule() {
 
   // Also load calendar view
   loadCalendar(new Date().getFullYear(), new Date().getMonth());
+}
+
+// ============================================================
+// GIG DETAIL
+// ============================================================
+async function showGigDetail(gigId) {
+  const [{ data: gig }, ] = await Promise.all([
+    sb.from('gigs')
+      .select('*, institution:institutions(id, name, address, institution_type, notes, contacts(first_name, last_name, job_title, phone, email, is_primary)), gig_singers(singer_id, is_anchor)')
+      .eq('id', gigId).single()
+  ]);
+  if (!gig) return;
+
+  const inst = gig.institution || {};
+  const contacts = (inst.contacts || []).sort((a, b) => (b.is_primary ? 1 : 0) - (a.is_primary ? 1 : 0));
+  const singers = (gig.gig_singers || []).map(gs => {
+    const name = singerName(gs.singer_id);
+    return gs.is_anchor ? `<span class="singer-chip">${name} <span class="singer-role">anchor</span></span>` : `<span class="singer-chip">${name}</span>`;
+  });
+  const dt = new Date(gig.gig_date + 'T00:00:00');
+  const dateLabel = dt.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+
+  const panel = document.getElementById('dynamic-detail');
+  panel.innerHTML = `
+    <div class="detail-panel">
+      <div class="detail-panel-header">
+        <div>
+          <h3>${esc(inst.name || 'Unknown Venue')}</h3>
+          <div class="subtitle">${dateLabel}${gig.gig_time ? ' at ' + gig.gig_time.slice(0, 5) : ''} · ${recurrenceLabel(gig.recurrence)}</div>
+        </div>
+        <button class="modal-close" onclick="document.getElementById('dynamic-detail').classList.remove('open')">&times;</button>
+      </div>
+      <div class="detail-panel-body">
+        ${inst.address ? `
+          <div class="detail-section"><h4>Address</h4><p style="font-size:13px;">${esc(inst.address)}</p></div>
+        ` : ''}
+        ${contacts.length ? `
+          <div class="detail-section"><h4>Contacts</h4>
+            ${contacts.map(c => `
+              <div class="contact-card">
+                <div class="cc-name">${esc(c.first_name || '')} ${esc(c.last_name || '')}${c.is_primary ? ' <span style="font-size:10px; color:var(--accent);">PRIMARY</span>' : ''}</div>
+                ${c.job_title ? `<div class="cc-title">${esc(c.job_title)}</div>` : ''}
+                <div class="cc-info">
+                  ${c.phone ? `<a href="tel:${c.phone}">${esc(c.phone)}</a>` : ''}
+                  ${c.phone && c.email ? ' · ' : ''}
+                  ${c.email ? `<a href="mailto:${c.email}">${esc(c.email)}</a>` : ''}
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        ` : ''}
+        ${singers.length ? `
+          <div class="detail-section"><h4>Singers</h4><div class="singer-chips">${singers.join('')}</div></div>
+        ` : ''}
+        ${gig.notes ? `<div class="detail-section"><h4>Notes</h4><p style="font-size:13px;">${esc(gig.notes)}</p></div>` : ''}
+        <div style="margin-top:16px;">
+          <button class="btn btn-secondary btn-sm" onclick="showInstitutionDetail('${inst.id}')">View Full Institution</button>
+        </div>
+      </div>
+    </div>
+  `;
+  panel.classList.add('open');
 }
 
 // ============================================================
@@ -494,19 +559,23 @@ async function loadCalendar(year, month) {
 
   const { data: gigs } = await sb.from('gigs')
     .select('*, institution:institutions(name), gig_singers(singer_id, is_anchor)')
-    .gte('gig_date', startDay.toISOString().split('T')[0])
-    .lte('gig_date', endDay.toISOString().split('T')[0])
+    .gte('gig_date', localDateStr(startDay))
+    .lte('gig_date', localDateStr(endDay))
     .order('gig_time');
 
   calGigsCache = gigs || [];
   renderCalendar();
 }
 
+function localDateStr(d) {
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+
 function renderCalendar() {
   const container = document.getElementById('cal-container');
   if (!container) return;
 
-  const today = new Date().toISOString().split('T')[0];
+  const today = localDateStr(new Date());
   const first = new Date(calYear, calMonth, 1);
   const last = new Date(calYear, calMonth + 1, 0);
   const monthLabel = first.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
@@ -531,12 +600,13 @@ function renderCalendar() {
     html += `<div class="cal-hdr">${d}</div>`;
   });
 
-  // Fill cells starting from the Sunday before the 1st
-  const cursor = new Date(first);
+  // Fill cells — compute exact cell count to avoid infinite loop
+  const cursor = new Date(calYear, calMonth, 1);
   cursor.setDate(cursor.getDate() - first.getDay());
+  const totalCells = Math.ceil((first.getDay() + last.getDate()) / 7) * 7;
 
-  while (cursor <= last || cursor.getDay() !== 0) {
-    const dateStr = cursor.toISOString().split('T')[0];
+  for (let i = 0; i < totalCells; i++) {
+    const dateStr = localDateStr(cursor);
     const isOther = cursor.getMonth() !== calMonth;
     const isToday = dateStr === today;
     const classes = ['cal-cell'];
@@ -547,7 +617,7 @@ function renderCalendar() {
     const dots = dayGigs.map(g => {
       const timeAttr = g.gig_time ? `data-time="${g.gig_time.slice(0, 5)}"` : '';
       const timeClass = g.gig_time ? ' has-time' : '';
-      return `<div class="cal-dot${timeClass}" ${timeAttr}>${esc(g.institution?.name || '')}</div>`;
+      return `<div class="cal-dot${timeClass}" ${timeAttr} onclick="event.stopPropagation(); showGigDetail('${g.id}')">${esc(g.institution?.name || '')}</div>`;
     }).join('');
 
     html += `<div class="${classes.join(' ')}">
