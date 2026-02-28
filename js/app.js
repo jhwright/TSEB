@@ -1,7 +1,6 @@
 // TSEB Bedside Singing Manager - Supabase Client
 // Replaces hardcoded HTML with live data from Supabase
 
-const { createClient } = supabase;
 let sb;
 let currentUser = null;
 let singersCache = [];
@@ -10,6 +9,8 @@ let singersCache = [];
 // INIT
 // ============================================================
 async function init() {
+  if (typeof supabase === 'undefined') throw new Error('Supabase CDN failed to load');
+  const { createClient } = supabase;
   sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   // Check existing session
@@ -634,7 +635,11 @@ function setupSearch(inputSelector, containerSelector, cardSelector) {
 
 // Run on load
 document.addEventListener('DOMContentLoaded', () => {
-  init();
+  init().catch(err => {
+    const status = document.getElementById('login-status');
+    if (status) status.textContent = 'Error: ' + err.message;
+    console.error('TSEB init failed:', err);
+  });
   setupSearch('#inst-search', '#inst-list', '.inst-card');
   setupSearch('#singer-search', '#singers-list', '.singer-card');
 });
