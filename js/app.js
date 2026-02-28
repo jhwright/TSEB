@@ -250,6 +250,8 @@ async function loadInstitutions() {
 // ============================================================
 // OUTREACH PIPELINE
 // ============================================================
+let outreachData = null;
+
 async function loadOutreach() {
   const { data } = await sb.from('institutions')
     .select('*, outreacher:singers!institutions_outreacher_id_fkey(first_name)')
@@ -257,7 +259,29 @@ async function loadOutreach() {
     .order('next_step_due', { ascending: true, nullsFirst: false });
 
   if (!data) return;
+  outreachData = data;
 
+  // Populate outreacher filter
+  const filterEl = document.getElementById('outreach-filter');
+  if (filterEl) {
+    const currentVal = filterEl.value;
+    const outreachers = [...new Set(data.filter(i => i.outreacher).map(i => i.outreacher.first_name))].sort();
+    filterEl.innerHTML = '<option value="">All Outreachers</option>' +
+      outreachers.map(n => `<option value="${esc(n)}">${esc(n)}</option>`).join('');
+    filterEl.value = currentVal;
+  }
+
+  renderOutreach(data);
+}
+
+function filterOutreach() {
+  if (!outreachData) return;
+  const filterVal = document.getElementById('outreach-filter')?.value || '';
+  const filtered = filterVal ? outreachData.filter(i => i.outreacher && i.outreacher.first_name === filterVal) : outreachData;
+  renderOutreach(filtered);
+}
+
+function renderOutreach(data) {
   const stages = {
     initial_contact: { el: 'pipe-initial', items: [] },
     in_conversation: { el: 'pipe-conversation', items: [] },
