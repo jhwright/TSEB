@@ -20,7 +20,7 @@ A mobile-first web app for TSEB (Threshold Singers East Bay), a volunteer bedsid
 - **No build tools** — Volunteers need to maintain this. Supabase CDN loaded via script tag.
 - **Mobile-first CSS** — Base styles target phones. `@media(min-width:640px)` for tablet, `1024px` for desktop.
 - **Volunteer trust model** — RLS allows all authenticated users full CRUD. No per-user permissions.
-- **Google OAuth only** — All volunteers have Google accounts. No password management.
+- **Magic link auth** — Volunteers enter their email and click a link to log in. No passwords.
 - **First names only** for singers — Privacy preference of the organization.
 
 ## Database Tables

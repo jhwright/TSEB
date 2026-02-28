@@ -44,12 +44,29 @@ function showApp() {
   loadAll();
 }
 
-async function signInWithGoogle() {
-  const { error } = await sb.auth.signInWithOAuth({
-    provider: 'google',
-    options: { redirectTo: window.location.origin + window.location.pathname }
+async function signInWithMagicLink() {
+  const email = document.getElementById('login-email').value.trim();
+  if (!email) { alert('Please enter your email address'); return; }
+
+  const btn = document.getElementById('login-btn');
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+
+  const { error } = await sb.auth.signInWithOtp({
+    email,
+    options: { emailRedirectTo: window.location.origin + window.location.pathname }
   });
-  if (error) alert('Login failed: ' + error.message);
+
+  if (error) {
+    alert('Login failed: ' + error.message);
+    btn.disabled = false;
+    btn.textContent = 'Send Magic Link';
+  } else {
+    document.getElementById('login-form').innerHTML = `
+      <div style="color:var(--ok); font-weight:600; font-size:15px; margin-bottom:8px;">Check your email</div>
+      <div style="color:var(--muted); font-size:14px;">We sent a login link to <strong>${esc(email)}</strong></div>
+    `;
+  }
 }
 
 async function signOut() {
