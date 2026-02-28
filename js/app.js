@@ -559,7 +559,7 @@ async function loadCalendar(year, month) {
   endDay.setDate(endDay.getDate() + (6 - last.getDay()));
 
   const { data: gigs } = await sb.from('gigs')
-    .select('*, institution:institutions(name), gig_singers(singer_id, is_anchor)')
+    .select('*, institution:institutions(name, address, contacts(first_name, last_name, phone, is_primary)), gig_singers(singer_id, is_anchor)')
     .gte('gig_date', localDateStr(startDay))
     .lte('gig_date', localDateStr(endDay))
     .order('gig_time');
@@ -622,8 +622,12 @@ function renderCalendar() {
         const n = singerName(gs.singer_id);
         return gs.is_anchor ? n + ' (anchor)' : n;
       });
+      const primary = (g.institution?.contacts || []).find(c => c.is_primary);
+      const contactStr = primary ? esc((primary.first_name || '') + ' ' + (primary.last_name || '')).trim() + (primary.phone ? ' · ' + esc(primary.phone) : '') : '';
       const tooltip = `<div class="cal-tooltip">
         <strong>${esc(g.institution?.name || '')}</strong>
+        ${g.institution?.address ? '<div style="color:var(--muted);">' + esc(g.institution.address) + '</div>' : ''}
+        ${contactStr ? '<div style="color:var(--muted);">' + contactStr + '</div>' : ''}
         ${g.gig_time ? '<div>' + g.gig_time.slice(0, 5) + ' · ' + recurrenceLabel(g.recurrence) + '</div>' : '<div>' + recurrenceLabel(g.recurrence) + '</div>'}
         ${singers.length ? '<div class="tt-singers">' + singers.map(s => esc(s)).join(', ') + '</div>' : ''}
         ${g.notes ? '<div class="tt-notes">' + esc(g.notes) + '</div>' : ''}
