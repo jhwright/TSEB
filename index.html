@@ -123,9 +123,11 @@
   .pipeline-col { background:#fafaf8; border:1px solid var(--border); border-radius:var(--r); }
   .pipeline-col-header { padding:8px 12px; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.4px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
   .pipeline-col-header .count { background:#fff; border:1px solid var(--border); border-radius:10px; padding:0 7px; font-size:11px; }
-  .pipeline-col-body { padding:6px; }
+  .pipeline-col-body { padding:6px; min-height:40px; }
   .pipeline-card { background:#fff; border:1px solid var(--border); border-radius:6px; padding:10px; margin-bottom:6px; cursor:pointer; font-size:13px; transition:box-shadow .15s; }
   .pipeline-card:hover { box-shadow:var(--shadow-lg); }
+  .pipeline-card.dragging { opacity:.4; }
+  .pipeline-col-body.drag-over { background:var(--accent-light); border-radius:4px; min-height:40px; }
   .pipeline-card:last-child { margin-bottom:0; }
   .pipeline-card .pc-name { font-weight:600; }
   .pipeline-card .pc-type { font-size:11px; color:var(--muted); }
@@ -361,10 +363,6 @@
   <div class="page-header">
     <h2>Outreach</h2>
     <button class="btn btn-primary btn-sm" onclick="openModal('log-activity-modal')">+ Log</button>
-  </div>
-
-  <div class="toolbar">
-    <input class="search-box" id="outreach-search" placeholder="Search institutions...">
   </div>
 
   <!-- Pipeline -->

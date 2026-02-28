@@ -282,7 +282,7 @@ async function loadOutreach() {
       const dateClass = overdue ? 'overdue' : soon ? 'soon' : '';
       const dateText = overdue ? 'Overdue' : fmtDateShort(i.next_step_due);
       const activeStyle = key === 'active' ? 'border-left:3px solid var(--ok);' : '';
-      return `<div class="pipeline-card" style="${activeStyle}" onclick="showInstitutionDetail('${i.id}')">
+      return `<div class="pipeline-card" style="${activeStyle}" draggable="true" data-id="${i.id}" onclick="showInstitutionDetail('${i.id}')">
         <div class="pc-name">${esc(i.name)}</div>
         ${i.institution_type ? `<div class="pc-type">${esc(i.institution_type.replace(/_/g,' '))}</div>` : ''}
         <div class="pc-meta">
@@ -318,6 +318,106 @@ async function loadOutreach() {
       </tr>`;
     }).join('');
   }
+
+  setupKanbanDrag();
+}
+
+// ============================================================
+// KANBAN DRAG & DROP
+// ============================================================
+const stageMap = {
+  'pipe-initial': 'initial_contact',
+  'pipe-conversation': 'in_conversation',
+  'pipe-sitevisit': 'site_visit',
+  'pipe-active': 'active'
+};
+
+function setupKanbanDrag() {
+  let dragId = null;
+
+  document.querySelectorAll('.pipeline-card[draggable]').forEach(card => {
+    card.addEventListener('dragstart', e => {
+      dragId = card.dataset.id;
+      card.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      // Prevent click from firing after drop
+      card._dragged = false;
+      setTimeout(() => { card._dragged = true; }, 0);
+    });
+    card.addEventListener('dragend', () => {
+      card.classList.remove('dragging');
+      document.querySelectorAll('.pipeline-col-body').forEach(b => b.classList.remove('drag-over'));
+    });
+    // Suppress click if it was a drag
+    card.addEventListener('click', e => {
+      if (card._dragged) { e.stopImmediatePropagation(); card._dragged = false; }
+    }, true);
+  });
+
+  document.querySelectorAll('.pipeline-col-body').forEach(col => {
+    col.addEventListener('dragover', e => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; col.classList.add('drag-over'); });
+    col.addEventListener('dragleave', e => { if (!col.contains(e.relatedTarget)) col.classList.remove('drag-over'); });
+    col.addEventListener('drop', async e => {
+      e.preventDefault();
+      col.classList.remove('drag-over');
+      const newStatus = stageMap[col.id];
+      if (!dragId || !newStatus) return;
+      const { error } = await sb.from('institutions').update({ status: newStatus }).eq('id', dragId);
+      if (error) { alert('Error: ' + error.message); return; }
+      dragId = null;
+      loadOutreach();
+    });
+  });
+
+  // Touch support for mobile
+  let touchCard = null, touchClone = null, touchStartY = 0, touchMoved = false;
+  document.querySelectorAll('.pipeline-card[draggable]').forEach(card => {
+    card.addEventListener('touchstart', e => {
+      touchMoved = false;
+      touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+    card.addEventListener('touchmove', e => {
+      const dy = Math.abs(e.touches[0].clientY - touchStartY);
+      if (!touchCard && dy < 10) return; // not a drag yet
+      if (!touchCard) {
+        touchCard = card;
+        dragId = card.dataset.id;
+        touchClone = card.cloneNode(true);
+        touchClone.style.cssText = 'position:fixed;z-index:1000;opacity:.7;pointer-events:none;width:' + card.offsetWidth + 'px;';
+        document.body.appendChild(touchClone);
+        card.classList.add('dragging');
+        touchMoved = true;
+      }
+      e.preventDefault();
+      const t = e.touches[0];
+      touchClone.style.left = (t.clientX - 20) + 'px';
+      touchClone.style.top = (t.clientY - 20) + 'px';
+      document.querySelectorAll('.pipeline-col-body').forEach(b => {
+        const r = b.getBoundingClientRect();
+        b.classList.toggle('drag-over', t.clientX >= r.left && t.clientX <= r.right && t.clientY >= r.top && t.clientY <= r.bottom);
+      });
+    }, { passive: false });
+    card.addEventListener('touchend', async e => {
+      if (!touchCard) return;
+      if (touchClone) touchClone.remove();
+      touchCard.classList.remove('dragging');
+      const dropTarget = document.querySelector('.pipeline-col-body.drag-over');
+      document.querySelectorAll('.pipeline-col-body').forEach(b => b.classList.remove('drag-over'));
+      if (dropTarget && dragId) {
+        const newStatus = stageMap[dropTarget.id];
+        if (newStatus) {
+          const { error } = await sb.from('institutions').update({ status: newStatus }).eq('id', dragId);
+          if (error) alert('Error: ' + error.message);
+          else loadOutreach();
+        }
+      }
+      touchCard = null; touchClone = null; dragId = null;
+      // Suppress the click that follows touchend after a drag
+      if (touchMoved) {
+        card.addEventListener('click', ev => { ev.stopImmediatePropagation(); ev.preventDefault(); }, { once: true, capture: true });
+      }
+    });
+  });
 }
 
 // ============================================================
