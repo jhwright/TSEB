@@ -120,10 +120,10 @@
 
   /* ===== PIPELINE (stacked on mobile) ===== */
   .pipeline { display:flex; flex-direction:column; gap:10px; margin-bottom:16px; }
-  .pipeline-col { background:#fafaf8; border:1px solid var(--border); border-radius:var(--r); }
+  .pipeline-col { background:#fafaf8; border:1px solid var(--border); border-radius:var(--r); display:flex; flex-direction:column; }
   .pipeline-col-header { padding:8px 12px; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.4px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
   .pipeline-col-header .count { background:#fff; border:1px solid var(--border); border-radius:10px; padding:0 7px; font-size:11px; }
-  .pipeline-col-body { padding:6px; min-height:40px; }
+  .pipeline-col-body { padding:6px; min-height:80px; flex:1; }
   .pipeline-card { background:#fff; border:1px solid var(--border); border-radius:6px; padding:10px; margin-bottom:6px; cursor:grab; font-size:13px; transition:box-shadow .15s; -webkit-user-select:none; user-select:none; }
   .pipeline-card:hover { box-shadow:var(--shadow-lg); }
   .pipeline-card.dragging { opacity:.4; }

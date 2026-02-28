@@ -398,6 +398,18 @@ function setupKanbanDrag() {
       card.classList.remove('dragging');
       document.querySelectorAll('.pipeline-col-body').forEach(b => b.classList.remove('drag-over'));
     });
+    // Allow drops on cards to bubble to column body
+    card.addEventListener('dragover', e => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      const col = card.closest('.pipeline-col-body');
+      if (col) col.classList.add('drag-over');
+    });
+    card.addEventListener('drop', e => {
+      e.preventDefault();
+      const col = card.closest('.pipeline-col-body');
+      if (col) col.dispatchEvent(new DragEvent('drop', { dataTransfer: e.dataTransfer, bubbles: false }));
+    });
     // Suppress click if it was a drag
     card.addEventListener('click', e => {
       if (card._dragged) { e.stopImmediatePropagation(); card._dragged = false; }
