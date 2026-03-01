@@ -4,6 +4,11 @@
 let sb;
 let currentUser = null;
 let singersCache = [];
+let instPage = 0;
+let singerPage = 0;
+const PAGE_SIZE = 10;
+let instFullData = [];
+let singerFullData = [];
 
 // ============================================================
 // INIT
@@ -210,15 +215,13 @@ async function loadDashboard() {
     fuList.innerHTML = followups.map(i => {
       const overdue = isOverdue(i.next_step_due);
       const soon = isSoon(i.next_step_due);
-      const bg = overdue ? 'background:var(--danger-light)' : soon ? 'background:var(--warn-light)' : '';
-      const dateColor = overdue ? 'color:var(--danger); font-weight:600' : soon ? 'color:var(--warn); font-weight:600' : '';
-      return `<div style="display:flex; align-items:center; gap:10px; padding:10px 12px; border-bottom:1px solid #f0f0f0; ${bg}">
-        <div style="flex:1; min-width:0;">
-          <div style="font-weight:600; font-size:13px;">${esc(i.name)}</div>
-          <div style="font-size:12px; color:var(--muted);">${esc(i.next_step)}</div>
-        </div>
-        ${i.outreacher ? singerChip(i.outreacher.first_name) : ''}
-        <span style="font-size:11px; white-space:nowrap; ${dateColor}">${overdue ? 'Overdue' : fmtDateShort(i.next_step_due)}</span>
+      const dateBadgeClass = overdue ? 'badge-eliminated' : soon ? 'badge-outreach' : 'badge-pending';
+      const dateText = overdue ? 'Overdue' : fmtDateShort(i.next_step_due);
+      return `<div class="card" style="padding:12px; margin-bottom:8px; position:relative;">
+        <span class="badge ${dateBadgeClass}" style="position:absolute; top:10px; right:10px;">${dateText}</span>
+        <div style="font-weight:600; font-size:14px; padding-right:80px;">${esc(i.name)}</div>
+        <div style="font-size:12px; color:var(--muted); margin-top:4px;">${esc(i.next_step)}</div>
+        ${i.outreacher ? `<div style="margin-top:6px;">${singerChip(i.outreacher.first_name)}</div>` : ''}
       </div>`;
     }).join('');
   }
@@ -235,16 +238,44 @@ async function loadInstitutions() {
   const container = document.getElementById('inst-list');
   if (!container || !data) return;
 
-  container.innerHTML = data.map(i => {
-    const overdue = isOverdue(i.next_step_due);
-    return `<div class="inst-card" onclick="showInstitutionDetail('${i.id}')">
-      <div class="inst-top">
-        <div><div class="inst-name">${esc(i.name)}</div>${i.address ? `<div class="inst-loc">${esc(i.address)}</div>` : ''}</div>
-        ${statusBadge(i.status)}
-      </div>
-      ${i.outreacher ? `<div class="inst-bottom">${singerChip(i.outreacher.first_name)}${overdue ? '<span style="font-size:11px; color:var(--danger); font-weight:600;">Overdue</span>' : ''}</div>` : ''}
-    </div>`;
-  }).join('');
+  instFullData = data;
+  instPage = 0;
+  renderInstPage(container, data);
+}
+
+function renderInstCard(i) {
+  const overdue = isOverdue(i.next_step_due);
+  return `<div class="inst-card" onclick="showInstitutionDetail('${i.id}')">
+    <div class="inst-top">
+      <div><div class="inst-name">${esc(i.name)}</div>${i.address ? `<div class="inst-loc">${esc(i.address)}</div>` : ''}</div>
+      ${statusBadge(i.status)}
+    </div>
+    ${i.outreacher ? `<div class="inst-bottom">${singerChip(i.outreacher.first_name)}${overdue ? '<span style="font-size:11px; color:var(--danger); font-weight:600;">Overdue</span>' : ''}</div>` : ''}
+  </div>`;
+}
+
+function renderInstPage(container, data) {
+  const end = (instPage + 1) * PAGE_SIZE;
+  const visible = data.slice(0, end);
+  container.innerHTML = visible.map(renderInstCard).join('');
+  if (end < data.length) {
+    container.innerHTML += `<button class="btn btn-secondary" style="width:100%; margin-top:8px;" onclick="loadMoreInstitutions()">Show more (${data.length - end} remaining)</button>`;
+  }
+}
+
+function loadMoreInstitutions() {
+  instPage++;
+  const container = document.getElementById('inst-list');
+  const q = document.getElementById('inst-search')?.value?.toLowerCase() || '';
+  const filtered = q ? instFullData.filter(i => instMatchesSearch(i, q)) : instFullData;
+  renderInstPage(container, filtered);
+}
+
+function instMatchesSearch(i, q) {
+  return (i.name || '').toLowerCase().includes(q) ||
+    (i.address || '').toLowerCase().includes(q) ||
+    (i.status || '').toLowerCase().includes(q) ||
+    (i.outreacher?.first_name || '').toLowerCase().includes(q);
 }
 
 // ============================================================
@@ -345,6 +376,19 @@ function renderOutreach(data) {
       </tr>`;
     }).join('');
   }
+
+  // Collapsible end-state columns
+  document.querySelectorAll('.pipeline-col[data-collapsible]').forEach(col => {
+    const isMobile = window.innerWidth < 640;
+    if (isMobile) col.classList.add('collapsed');
+    else col.classList.remove('collapsed');
+    const header = col.querySelector('.pipeline-col-header');
+    header.style.cursor = 'pointer';
+    header.onclick = (e) => {
+      e.stopPropagation();
+      col.classList.toggle('collapsed');
+    };
+  });
 
   setupKanbanDrag();
 }
@@ -558,17 +602,45 @@ async function loadSingersView() {
   const container = document.getElementById('singers-list');
   if (!container) return;
 
-  container.innerHTML = singersCache.map(s => {
-    const roleLabel = s.role === 'both' ? '<span class="badge badge-active">Singer</span> <span class="badge badge-pending">Outreacher</span>'
-      : s.role === 'singer' ? '<span class="badge badge-active">Singer</span>'
-      : '<span class="badge badge-pending">Outreacher</span>';
-    const availBadge = s.availability === 'available' ? 'badge-active' : s.availability === 'limited' ? 'badge-outreach' : 'badge-inactive';
-    return `<div class="singer-card">
-      <div class="sc-top"><span class="sc-name">${esc(s.first_name)}</span><div>${roleLabel}</div></div>
-      <div style="margin-top:4px;"><span class="badge ${availBadge}">${s.availability}</span></div>
-      ${s.notes ? `<div class="sc-note">${esc(s.notes)}</div>` : ''}
-    </div>`;
-  }).join('');
+  singerFullData = singersCache;
+  singerPage = 0;
+  renderSingerPage(container, singerFullData);
+}
+
+function renderSingerCard(s) {
+  const roleLabel = s.role === 'both' ? '<span class="badge badge-active">Singer</span> <span class="badge badge-pending">Outreacher</span>'
+    : s.role === 'singer' ? '<span class="badge badge-active">Singer</span>'
+    : '<span class="badge badge-pending">Outreacher</span>';
+  const availBadge = s.availability === 'available' ? 'badge-active' : s.availability === 'limited' ? 'badge-outreach' : 'badge-inactive';
+  return `<div class="singer-card">
+    <div class="sc-top"><span class="sc-name">${esc(s.first_name)}</span><div>${roleLabel}</div></div>
+    <div style="margin-top:4px;"><span class="badge ${availBadge}">${s.availability}</span></div>
+    ${s.notes ? `<div class="sc-note">${esc(s.notes)}</div>` : ''}
+  </div>`;
+}
+
+function renderSingerPage(container, data) {
+  const end = (singerPage + 1) * PAGE_SIZE;
+  const visible = data.slice(0, end);
+  container.innerHTML = visible.map(renderSingerCard).join('');
+  if (end < data.length) {
+    container.innerHTML += `<button class="btn btn-secondary" style="width:100%; margin-top:8px;" onclick="loadMoreSingers()">Show more (${data.length - end} remaining)</button>`;
+  }
+}
+
+function loadMoreSingers() {
+  singerPage++;
+  const container = document.getElementById('singers-list');
+  const q = document.getElementById('singer-search')?.value?.toLowerCase() || '';
+  const filtered = q ? singerFullData.filter(s => singerMatchesSearch(s, q)) : singerFullData;
+  renderSingerPage(container, filtered);
+}
+
+function singerMatchesSearch(s, q) {
+  return (s.first_name || '').toLowerCase().includes(q) ||
+    (s.role || '').toLowerCase().includes(q) ||
+    (s.availability || '').toLowerCase().includes(q) ||
+    (s.notes || '').toLowerCase().includes(q);
 }
 
 // ============================================================
@@ -1047,14 +1119,27 @@ function submitBugReport(form) {
 // ============================================================
 // SEARCH & FILTER (client-side)
 // ============================================================
-function setupSearch(inputSelector, containerSelector, cardSelector) {
-  const input = document.querySelector(inputSelector);
+function setupInstSearch() {
+  const input = document.getElementById('inst-search');
   if (!input) return;
   input.addEventListener('input', () => {
+    instPage = 0;
     const q = input.value.toLowerCase();
-    document.querySelectorAll(`${containerSelector} ${cardSelector}`).forEach(card => {
-      card.style.display = card.textContent.toLowerCase().includes(q) ? '' : 'none';
-    });
+    const filtered = q ? instFullData.filter(i => instMatchesSearch(i, q)) : instFullData;
+    const container = document.getElementById('inst-list');
+    if (container) renderInstPage(container, filtered);
+  });
+}
+
+function setupSingerSearch() {
+  const input = document.getElementById('singer-search');
+  if (!input) return;
+  input.addEventListener('input', () => {
+    singerPage = 0;
+    const q = input.value.toLowerCase();
+    const filtered = q ? singerFullData.filter(s => singerMatchesSearch(s, q)) : singerFullData;
+    const container = document.getElementById('singers-list');
+    if (container) renderSingerPage(container, filtered);
   });
 }
 
@@ -1065,6 +1150,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (status) status.textContent = 'Error: ' + err.message;
     console.error('TSEB init failed:', err);
   });
-  setupSearch('#inst-search', '#inst-list', '.inst-card');
-  setupSearch('#singer-search', '#singers-list', '.singer-card');
+  setupInstSearch();
+  setupSingerSearch();
 });

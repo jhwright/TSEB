@@ -118,9 +118,13 @@
   .singer-chips { display:flex; flex-wrap:wrap; gap:4px; }
   .singer-chip { display:inline-block; background:var(--accent-light); color:var(--accent); padding:2px 8px; border-radius:10px; font-size:11px; font-weight:500; }
 
-  /* ===== PIPELINE (stacked on mobile) ===== */
-  .pipeline { display:flex; flex-direction:column; gap:10px; margin-bottom:16px; }
-  .pipeline-col { background:#fafaf8; border:1px solid var(--border); border-radius:var(--r); display:flex; flex-direction:column; }
+  /* ===== PIPELINE (horizontal scroll on mobile) ===== */
+  .pipeline { display:flex; flex-direction:row; flex-wrap:nowrap; gap:10px; margin-bottom:16px; overflow-x:auto; -webkit-overflow-scrolling:touch; padding-bottom:4px; }
+  .pipeline-col { background:#fafaf8; border:1px solid var(--border); border-radius:var(--r); display:flex; flex-direction:column; min-width:220px; flex-shrink:0; }
+  /* Collapsed state for end-state columns */
+  .pipeline-col.collapsed { min-width:auto; width:60px; cursor:pointer; }
+  .pipeline-col.collapsed .pipeline-col-body { display:none; }
+  .pipeline-col.collapsed .pipeline-col-header { writing-mode:vertical-rl; text-orientation:mixed; white-space:nowrap; padding:12px 8px; flex-direction:column; gap:6px; align-items:center; }
   .pipeline-col-header { padding:8px 12px; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.4px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
   .pipeline-col-header .count { background:#fff; border:1px solid var(--border); border-radius:10px; padding:0 7px; font-size:11px; }
   .pipeline-col-body { padding:6px; min-height:80px; flex:1; }
@@ -278,8 +282,9 @@
     .modal-overlay.open { align-items:flex-start; justify-content:center; padding-top:60px; }
     .modal { border-radius:12px; max-width:600px; max-height:80vh; }
     .detail-panel { width:520px; max-width:90vw; box-shadow:-4px 0 20px rgba(0,0,0,.12); }
-    .pipeline { flex-direction:row; }
     .pipeline-col { flex:1; min-width:0; }
+    .pipeline-col.collapsed { width:auto; min-width:0; }
+    .pipeline-col.collapsed .pipeline-col-header { writing-mode:horizontal-tb; text-orientation:initial; padding:8px 12px; flex-direction:row; }
     .trio-grid { flex-direction:row; }
     .trio-grid select { flex:1; }
     .stats { grid-template-columns:repeat(4,1fr); }
@@ -353,9 +358,7 @@
   </div>
 
   <h3 style="margin:16px 0 8px; font-size:15px;">Follow-ups Due</h3>
-  <div class="card" style="padding:0;">
-    <div id="dash-followups"><div class="loading">Loading...</div></div>
-  </div>
+  <div id="dash-followups"><div class="loading">Loading...</div></div>
 </section>
 
 <!-- ==================== OUTREACH ==================== -->
@@ -388,15 +391,15 @@
       <div class="pipeline-col-header" style="color:var(--ok); border-top:3px solid var(--ok);">Active <span class="count">0</span></div>
       <div class="pipeline-col-body" id="pipe-active"></div>
     </div>
-    <div class="pipeline-col">
+    <div class="pipeline-col" data-collapsible>
       <div class="pipeline-col-header" style="color:var(--muted); border-top:3px solid var(--muted);">On Hold <span class="count">0</span></div>
       <div class="pipeline-col-body" id="pipe-onhold"></div>
     </div>
-    <div class="pipeline-col">
+    <div class="pipeline-col" data-collapsible>
       <div class="pipeline-col-header" style="color:#8e7cc3; border-top:3px solid #8e7cc3;">Previous <span class="count">0</span></div>
       <div class="pipeline-col-body" id="pipe-previous"></div>
     </div>
-    <div class="pipeline-col">
+    <div class="pipeline-col" data-collapsible>
       <div class="pipeline-col-header" style="color:var(--danger); border-top:3px solid var(--danger);">Inactive <span class="count">0</span></div>
       <div class="pipeline-col-body" id="pipe-inactive"></div>
     </div>
