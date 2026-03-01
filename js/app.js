@@ -340,7 +340,8 @@ function renderOutreach(data) {
       const dateClass = overdue ? 'overdue' : soon ? 'soon' : '';
       const dateText = overdue ? 'Overdue' : fmtDateShort(i.next_step_due);
       const activeStyle = key === 'active' ? 'border-left:3px solid var(--ok);' : '';
-      return `<div class="pipeline-card" style="${activeStyle}" draggable="true" data-id="${i.id}" onclick="showInstitutionDetail('${i.id}')">
+      const canDrag = window.innerWidth >= 640;
+      return `<div class="pipeline-card" style="${activeStyle}" ${canDrag ? 'draggable="true"' : ''} data-id="${i.id}" onclick="showInstitutionDetail('${i.id}')">
         <div class="pc-name">${esc(i.name)}</div>
         ${i.institution_type ? `<div class="pc-type">${esc(i.institution_type.replace(/_/g,' '))}</div>` : ''}
         <div class="pc-meta">
@@ -432,6 +433,7 @@ function setupKanbanDropTargets() {
 }
 
 function setupKanbanDrag() {
+  if (window.innerWidth < 640) return;
   setupKanbanDropTargets();
 
   document.querySelectorAll('.pipeline-card[draggable]').forEach(card => {
