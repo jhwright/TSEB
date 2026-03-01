@@ -1009,9 +1009,9 @@ async function submitGig(form) {
 // HELPERS
 // ============================================================
 function openLogForInstitution(id) {
+  openModal('log-activity-modal');
   const sel = document.querySelector('#log-activity-modal select[name="institution_id"]');
   if (sel) sel.value = id;
-  openModal('log-activity-modal');
 }
 
 async function editInstitution(id) {
