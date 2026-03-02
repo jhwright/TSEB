@@ -18,25 +18,8 @@ async function init() {
   const { createClient } = supabase;
   sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  // Check existing session
-  const { data: { session } } = await sb.auth.getSession();
-  if (session) {
-    currentUser = session.user;
-    showApp();
-  } else {
-    showLogin();
-  }
-
-  // Listen for auth changes
-  sb.auth.onAuthStateChange((event, session) => {
-    if (event === 'SIGNED_IN') {
-      currentUser = session.user;
-      showApp();
-    } else if (event === 'SIGNED_OUT') {
-      currentUser = null;
-      showLogin();
-    }
-  });
+  // Skip auth for now — go straight to the app
+  showApp();
 }
 
 function showLogin() {
