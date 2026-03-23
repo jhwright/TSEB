@@ -427,7 +427,7 @@
   <div class="tab-panel active" id="panel-singers">
     <div class="toolbar">
       <input type="text" placeholder="Search singers…" oninput="filterTable('singers', this.value)">
-      <button class="btn btn-primary" onclick="addRow('singers')">+ Add Singer</button>
+      <button class="btn btn-primary" onclick="openEditForm('singers', null)">+ Add Singer</button>
     </div>
     <div class="table-wrap">
       <table id="tbl-singers">
@@ -437,12 +437,10 @@
           <th class="sortable" onclick="sortTable('singers','availability')">Availability <i class="sort-icon">⇅</i></th>
           <th>Preferred Days</th>
           <th>Email</th>
-          <th>Notes</th>
           <th class="sortable" onclick="sortTable('singers','created_at')">Created <i class="sort-icon">⇅</i></th>
           <th>ID</th>
-          <th></th>
         </tr></thead>
-        <tbody id="body-singers"><tr class="loading-row"><td colspan="9">Loading…</td></tr></tbody>
+        <tbody id="body-singers"><tr class="loading-row"><td colspan="7">Loading…</td></tr></tbody>
       </table>
     </div>
   </div>
@@ -451,7 +449,7 @@
   <div class="tab-panel" id="panel-institutions">
     <div class="toolbar">
       <input type="text" placeholder="Search institutions…" oninput="filterTable('institutions', this.value)">
-      <button class="btn btn-primary" onclick="addRow('institutions')">+ Add Institution</button>
+      <button class="btn btn-primary" onclick="openEditForm('institutions', null)">+ Add Institution</button>
     </div>
     <div class="table-wrap">
       <table id="tbl-institutions">
@@ -466,12 +464,10 @@
           <th class="sortable" onclick="sortTable('institutions','next_step_due')">Due <i class="sort-icon">⇅</i></th>
           <th>Recurrence</th>
           <th>Inactive Reason</th>
-          <th>Notes</th>
           <th class="sortable" onclick="sortTable('institutions','created_at')">Created <i class="sort-icon">⇅</i></th>
           <th>ID</th>
-          <th></th>
         </tr></thead>
-        <tbody id="body-institutions"><tr class="loading-row"><td colspan="14">Loading…</td></tr></tbody>
+        <tbody id="body-institutions"><tr class="loading-row"><td colspan="12">Loading…</td></tr></tbody>
       </table>
     </div>
   </div>
@@ -480,7 +476,7 @@
   <div class="tab-panel" id="panel-contacts">
     <div class="toolbar">
       <input type="text" placeholder="Search contacts…" oninput="filterTable('contacts', this.value)">
-      <button class="btn btn-primary" onclick="addRow('contacts')">+ Add Contact</button>
+      <button class="btn btn-primary" onclick="openEditForm('contacts', null)">+ Add Contact</button>
     </div>
     <div class="table-wrap">
       <table id="tbl-contacts">
@@ -492,12 +488,10 @@
           <th>Email</th>
           <th>Phone</th>
           <th>Primary</th>
-          <th>Notes</th>
           <th class="sortable" onclick="sortTable('contacts','created_at')">Created <i class="sort-icon">⇅</i></th>
           <th>ID</th>
-          <th></th>
         </tr></thead>
-        <tbody id="body-contacts"><tr class="loading-row"><td colspan="11">Loading…</td></tr></tbody>
+        <tbody id="body-contacts"><tr class="loading-row"><td colspan="9">Loading…</td></tr></tbody>
       </table>
     </div>
   </div>
@@ -506,7 +500,7 @@
   <div class="tab-panel" id="panel-activities">
     <div class="toolbar">
       <input type="text" placeholder="Search activities…" oninput="filterTable('activities', this.value)">
-      <button class="btn btn-primary" onclick="addRow('activities')">+ Add Activity</button>
+      <button class="btn btn-primary" onclick="openEditForm('activities', null)">+ Add Activity</button>
     </div>
     <div class="table-wrap">
       <table id="tbl-activities">
@@ -519,9 +513,8 @@
           <th>Description</th>
           <th class="sortable" onclick="sortTable('activities','created_at')">Created <i class="sort-icon">⇅</i></th>
           <th>ID</th>
-          <th></th>
         </tr></thead>
-        <tbody id="body-activities"><tr class="loading-row"><td colspan="9">Loading…</td></tr></tbody>
+        <tbody id="body-activities"><tr class="loading-row"><td colspan="8">Loading…</td></tr></tbody>
       </table>
     </div>
   </div>
@@ -530,7 +523,7 @@
   <div class="tab-panel" id="panel-gigs">
     <div class="toolbar">
       <input type="text" placeholder="Search gigs…" oninput="filterTable('gigs', this.value)">
-      <button class="btn btn-primary" onclick="addRow('gigs')">+ Add Gig</button>
+      <button class="btn btn-primary" onclick="openEditForm('gigs', null)">+ Add Gig</button>
     </div>
     <div class="table-wrap">
       <table id="tbl-gigs">
@@ -540,12 +533,10 @@
           <th>Time</th>
           <th>Recurrence</th>
           <th>Recurrence End</th>
-          <th>Notes</th>
           <th class="sortable" onclick="sortTable('gigs','created_at')">Created <i class="sort-icon">⇅</i></th>
           <th>ID</th>
-          <th></th>
         </tr></thead>
-        <tbody id="body-gigs"><tr class="loading-row"><td colspan="9">Loading…</td></tr></tbody>
+        <tbody id="body-gigs"><tr class="loading-row"><td colspan="7">Loading…</td></tr></tbody>
       </table>
     </div>
   </div>
@@ -554,7 +545,7 @@
   <div class="tab-panel" id="panel-gig_singers">
     <div class="toolbar">
       <input type="text" placeholder="Search gig singers…" oninput="filterTable('gig_singers', this.value)">
-      <button class="btn btn-primary" onclick="addRow('gig_singers')">+ Add Assignment</button>
+      <button class="btn btn-primary" onclick="openEditForm('gig_singers', null)">+ Add Assignment</button>
     </div>
     <div class="table-wrap">
       <table id="tbl-gig_singers">
@@ -563,13 +554,19 @@
           <th>Singer</th>
           <th>Anchor</th>
           <th>ID</th>
-          <th></th>
         </tr></thead>
-        <tbody id="body-gig_singers"><tr class="loading-row"><td colspan="5">Loading…</td></tr></tbody>
+        <tbody id="body-gig_singers"><tr class="loading-row"><td colspan="4">Loading…</td></tr></tbody>
       </table>
     </div>
   </div>
 </main>
+
+<!-- Edit form modal -->
+<div id="edit-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:200; display:none; align-items:center; justify-content:center;">
+  <div id="edit-modal" style="background:var(--surface); border-radius:8px; width:560px; max-height:85vh; overflow-y:auto; box-shadow:0 8px 32px rgba(0,0,0,0.2);">
+    <div id="edit-modal-content"></div>
+  </div>
+</div>
 
 <div id="toast-container"></div>
 
@@ -612,7 +609,6 @@ const COLS = {
     { key: 'availability',   label: 'Availability', type: 'enum', enumKey: 'singers.availability' },
     { key: 'preferred_days', label: 'Preferred Days', type: 'text' },
     { key: 'email',          label: 'Email',        type: 'text' },
-    { key: 'notes',          label: 'Notes',        type: 'text' },
     { key: 'created_at',     label: 'Created',      type: 'ts', readonly: true },
     { key: 'id',             label: 'ID',           type: 'id',  readonly: true },
   ],
@@ -627,7 +623,6 @@ const COLS = {
     { key: 'next_step_due',    label: 'Due',            type: 'date' },
     { key: 'recurrence',       label: 'Recurrence',     type: 'enum', enumKey: 'institutions.recurrence', nullable: true },
     { key: 'inactive_reason',  label: 'Inactive Reason', type: 'text' },
-    { key: 'notes',            label: 'Notes',          type: 'text' },
     { key: 'created_at',       label: 'Created',        type: 'ts', readonly: true },
     { key: 'id',               label: 'ID',             type: 'id', readonly: true },
   ],
@@ -639,7 +634,6 @@ const COLS = {
     { key: 'email',          label: 'Email',       type: 'text' },
     { key: 'phone',          label: 'Phone',       type: 'text' },
     { key: 'is_primary',     label: 'Primary',     type: 'bool' },
-    { key: 'notes',          label: 'Notes',       type: 'text' },
     { key: 'created_at',     label: 'Created',     type: 'ts', readonly: true },
     { key: 'id',             label: 'ID',          type: 'id', readonly: true },
   ],
@@ -659,7 +653,6 @@ const COLS = {
     { key: 'gig_time',        label: 'Time',            type: 'time' },
     { key: 'recurrence',      label: 'Recurrence',      type: 'enum', enumKey: 'gigs.recurrence', nullable: true },
     { key: 'recurrence_end',  label: 'Recurrence End',  type: 'date' },
-    { key: 'notes',           label: 'Notes',           type: 'text' },
     { key: 'created_at',      label: 'Created',         type: 'ts', readonly: true },
     { key: 'id',              label: 'ID',              type: 'id', readonly: true },
   ],
@@ -771,6 +764,8 @@ function buildRow(tableName, row) {
   const cols = COLS[tableName];
   const tr = document.createElement('tr');
   tr.dataset.id = row.id;
+  tr.style.cursor = 'pointer';
+  tr.addEventListener('click', () => openEditForm(tableName, row));
 
   cols.forEach(col => {
     const td = document.createElement('td');
@@ -782,27 +777,11 @@ function buildRow(tableName, row) {
       td.className = 'ts-cell';
       const v = row[col.key];
       td.textContent = v ? new Date(v).toLocaleString('en-US', { month:'short', day:'numeric', year:'numeric', hour:'numeric', minute:'2-digit' }) : '';
-    } else if (col.readonly) {
-      td.textContent = row[col.key] ?? '';
     } else {
-      const span = document.createElement('span');
-      span.className = 'cell-inner';
-      span.textContent = displayValue(col, row[col.key]);
-      span.addEventListener('click', () => activateCell(td, span, tableName, row, col));
-      td.appendChild(span);
+      td.textContent = displayValue(col, row[col.key]);
     }
     tr.appendChild(td);
   });
-
-  // Delete button
-  const tdDel = document.createElement('td');
-  const btn = document.createElement('button');
-  btn.className = 'del-btn';
-  btn.title = 'Delete row';
-  btn.textContent = '✕';
-  btn.addEventListener('click', () => deleteRow(tableName, row.id, tr));
-  tdDel.appendChild(btn);
-  tr.appendChild(tdDel);
 
   return tr;
 }
@@ -1269,6 +1248,192 @@ function toast(msg, type = 'info') {
     el.style.opacity = '0';
     setTimeout(() => el.remove(), 300);
   }, 3500);
+}
+
+// ── Edit Form Modal ──────────────────────────────────────────────────────────
+// All editable fields for each table (includes notes — only shown in form, not table)
+const FORM_FIELDS = {
+  singers: [
+    { key: 'first_name', label: 'Name', type: 'text', required: true },
+    { key: 'role', label: 'Role', type: 'enum', enumKey: 'singers.role' },
+    { key: 'availability', label: 'Availability', type: 'enum', enumKey: 'singers.availability' },
+    { key: 'preferred_days', label: 'Preferred Days', type: 'text' },
+    { key: 'email', label: 'Email', type: 'text' },
+    { key: 'notes', label: 'Notes', type: 'textarea' },
+  ],
+  institutions: [
+    { key: 'name', label: 'Name', type: 'text', required: true },
+    { key: 'institution_type', label: 'Type', type: 'enum', enumKey: 'institutions.institution_type', nullable: true },
+    { key: 'address', label: 'Address', type: 'text' },
+    { key: 'phone', label: 'Phone', type: 'text' },
+    { key: 'status', label: 'Status', type: 'enum', enumKey: 'institutions.status' },
+    { key: 'outreacher_id', label: 'Outreacher', type: 'fk-singer', nullable: true },
+    { key: 'next_step', label: 'Next Step', type: 'text' },
+    { key: 'next_step_due', label: 'Next Step Due', type: 'date' },
+    { key: 'recurrence', label: 'Recurrence', type: 'enum', enumKey: 'institutions.recurrence', nullable: true },
+    { key: 'inactive_reason', label: 'Inactive Reason', type: 'text' },
+    { key: 'notes', label: 'Notes', type: 'textarea' },
+  ],
+  contacts: [
+    { key: 'institution_id', label: 'Institution', type: 'fk-inst', required: true },
+    { key: 'first_name', label: 'First Name', type: 'text', required: true },
+    { key: 'last_name', label: 'Last Name', type: 'text' },
+    { key: 'job_title', label: 'Title', type: 'text' },
+    { key: 'phone', label: 'Phone', type: 'text' },
+    { key: 'email', label: 'Email', type: 'text' },
+    { key: 'is_primary', label: 'Primary Contact', type: 'bool' },
+    { key: 'notes', label: 'Notes', type: 'textarea' },
+  ],
+  activities: [
+    { key: 'institution_id', label: 'Institution', type: 'fk-inst', required: true },
+    { key: 'singer_id', label: 'Singer', type: 'fk-singer', nullable: true },
+    { key: 'activity_type', label: 'Type', type: 'enum', enumKey: 'activities.activity_type', required: true },
+    { key: 'activity_date', label: 'Date', type: 'date', required: true },
+    { key: 'contact_person', label: 'Contact Person', type: 'text' },
+    { key: 'description', label: 'Description', type: 'textarea', required: true },
+  ],
+  gigs: [
+    { key: 'institution_id', label: 'Institution', type: 'fk-inst', required: true },
+    { key: 'gig_date', label: 'Date', type: 'date', required: true },
+    { key: 'gig_time', label: 'Time', type: 'time' },
+    { key: 'recurrence', label: 'Recurrence', type: 'enum', enumKey: 'gigs.recurrence', nullable: true },
+    { key: 'recurrence_end', label: 'Recurrence End', type: 'date' },
+    { key: 'notes', label: 'Notes', type: 'textarea' },
+  ],
+  gig_singers: [
+    { key: 'gig_id', label: 'Gig', type: 'fk-gig', required: true },
+    { key: 'singer_id', label: 'Singer', type: 'fk-singer', required: true },
+    { key: 'is_anchor', label: 'Anchor', type: 'bool' },
+  ],
+};
+
+function openEditForm(tableName, row) {
+  const fields = FORM_FIELDS[tableName];
+  if (!fields) return;
+  const isNew = !row;
+  row = row || {};
+
+  let html = '<div style="padding:24px;">' +
+    '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">' +
+    '<h2 style="font-family:Source Serif 4,serif; font-size:20px; font-weight:600;">' + (isNew ? 'Add' : 'Edit') + ' ' + tableName.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase()).replace(/s$/,'') + '</h2>' +
+    '<button onclick="closeEditForm()" style="background:none; border:none; font-size:24px; cursor:pointer; color:var(--muted);">&times;</button>' +
+    '</div>' +
+    '<form onsubmit="event.preventDefault(); submitEditForm(\'' + tableName + '\', ' + (isNew ? 'null' : '\'' + row.id + '\'') + ', this);">';
+
+  fields.forEach(f => {
+    const val = row[f.key];
+    html += '<div style="margin-bottom:16px;">';
+    html += '<label style="display:block; font-size:13px; font-weight:600; color:var(--muted); margin-bottom:4px;">' + f.label + (f.required ? ' *' : '') + '</label>';
+
+    if (f.type === 'textarea') {
+      html += '<textarea name="' + f.key + '" rows="3" style="width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:4px; font-family:inherit; font-size:14px; resize:vertical;"' + (f.required ? ' required' : '') + '>' + esc(val || '') + '</textarea>';
+    } else if (f.type === 'enum') {
+      const opts = ENUMS[f.enumKey] || [];
+      html += '<select name="' + f.key + '" style="width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:4px; font-size:14px;">';
+      if (f.nullable) html += '<option value="">—</option>';
+      opts.forEach(o => { html += '<option value="' + o + '"' + (o === val ? ' selected' : '') + '>' + o.replace(/_/g,' ') + '</option>'; });
+      html += '</select>';
+    } else if (f.type === 'fk-singer') {
+      html += '<select name="' + f.key + '" style="width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:4px; font-size:14px;">';
+      if (f.nullable || !f.required) html += '<option value="">—</option>';
+      Object.entries(singerMap).sort((a,b) => a[1].localeCompare(b[1])).forEach(([id,name]) => {
+        html += '<option value="' + id + '"' + (id === val ? ' selected' : '') + '>' + esc(name) + '</option>';
+      });
+      html += '</select>';
+    } else if (f.type === 'fk-inst') {
+      html += '<select name="' + f.key + '" style="width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:4px; font-size:14px;">';
+      if (f.nullable || !f.required) html += '<option value="">—</option>';
+      Object.entries(instMap).sort((a,b) => a[1].localeCompare(b[1])).forEach(([id,name]) => {
+        html += '<option value="' + id + '"' + (id === val ? ' selected' : '') + '>' + esc(name) + '</option>';
+      });
+      html += '</select>';
+    } else if (f.type === 'fk-gig') {
+      html += '<select name="' + f.key + '" style="width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:4px; font-size:14px;">';
+      if (!f.required) html += '<option value="">—</option>';
+      Object.entries(gigMap).sort((a,b) => a[1].localeCompare(b[1])).forEach(([id,label]) => {
+        html += '<option value="' + id + '"' + (id === val ? ' selected' : '') + '>' + esc(label) + '</option>';
+      });
+      html += '</select>';
+    } else if (f.type === 'bool') {
+      html += '<input type="checkbox" name="' + f.key + '"' + (val ? ' checked' : '') + ' style="width:20px; height:20px;">';
+    } else if (f.type === 'date') {
+      html += '<input type="date" name="' + f.key + '" value="' + esc(val || '') + '" style="width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:4px; font-size:14px;"' + (f.required ? ' required' : '') + '>';
+    } else if (f.type === 'time') {
+      html += '<input type="time" name="' + f.key + '" value="' + esc(val ? val.slice(0,5) : '') + '" style="width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:4px; font-size:14px;">';
+    } else {
+      html += '<input type="text" name="' + f.key + '" value="' + esc(val || '') + '" style="width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:4px; font-size:14px;"' + (f.required ? ' required' : '') + '>';
+    }
+    html += '</div>';
+  });
+
+  html += '<div style="display:flex; gap:10px; margin-top:20px;">' +
+    '<button type="submit" style="flex:1; padding:10px; background:var(--primary); color:#fff; border:none; border-radius:4px; font-size:14px; font-weight:600; cursor:pointer;">' + (isNew ? 'Create' : 'Save Changes') + '</button>' +
+    '<button type="button" onclick="closeEditForm()" style="padding:10px 20px; background:none; border:1px solid var(--border); border-radius:4px; font-size:14px; cursor:pointer;">Cancel</button>' +
+    '</div></form></div>';
+
+  document.getElementById('edit-modal-content').innerHTML = html;
+  const overlay = document.getElementById('edit-overlay');
+  overlay.style.display = 'flex';
+}
+
+function closeEditForm() {
+  document.getElementById('edit-overlay').style.display = 'none';
+  document.getElementById('edit-modal-content').innerHTML = '';
+}
+
+// Close on overlay background click
+document.addEventListener('click', e => {
+  if (e.target.id === 'edit-overlay') closeEditForm();
+});
+
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+async function submitEditForm(tableName, rowId, form) {
+  const fields = FORM_FIELDS[tableName];
+  const updates = {};
+  fields.forEach(f => {
+    if (f.type === 'bool') {
+      updates[f.key] = form.querySelector('[name="' + f.key + '"]').checked;
+    } else {
+      const val = form.querySelector('[name="' + f.key + '"]').value;
+      updates[f.key] = val === '' ? null : val;
+    }
+  });
+
+  let error;
+  if (rowId) {
+    // Update existing
+    const res = await sb.from(tableName).update(updates).eq('id', rowId);
+    error = res.error;
+  } else {
+    // Insert new
+    const res = await sb.from(tableName).insert(updates);
+    error = res.error;
+  }
+
+  if (error) {
+    toast('Error: ' + error.message, 'error');
+    return;
+  }
+
+  closeEditForm();
+  toast(rowId ? 'Saved!' : 'Created!', 'success');
+  await loadTable(tableName);
+
+  // Refresh lookup maps if we changed singers/institutions/gigs
+  if (['singers','institutions','gigs'].includes(tableName)) {
+    const [singersRes, instsRes, gigsRes] = await Promise.all([
+      sb.from('singers').select('id, first_name').order('first_name'),
+      sb.from('institutions').select('id, name').order('name'),
+      sb.from('gigs').select('id, institution_id, gig_date').order('gig_date'),
+    ]);
+    Object.keys(singerMap).forEach(k => delete singerMap[k]);
+    Object.keys(instMap).forEach(k => delete instMap[k]);
+    Object.keys(gigMap).forEach(k => delete gigMap[k]);
+    (singersRes.data || []).forEach(s => { singerMap[s.id] = s.first_name; });
+    (instsRes.data || []).forEach(i => { instMap[i.id] = i.name; });
+    (gigsRes.data || []).forEach(g => { gigMap[g.id] = (instMap[g.institution_id] || '?') + ' — ' + (g.gig_date || ''); });
+  }
 }
 
 // ── Export All Tables to XLSX ──────────────────────────────────────────────────
