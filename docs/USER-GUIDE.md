@@ -1,6 +1,6 @@
 # TSEB User Guide — Threshold Singers East Bay
 
-Welcome! This guide will walk you through everything you need to know to use the Threshold Singers East Bay app. Whether you are new to the group or just new to this app, you will find it here. Take your time, and know that you cannot break anything by tapping around.
+Welcome! This guide covers everything you need to know to use the Threshold Singers East Bay app. Whether you are brand new to it or just looking for a refresher, you will find it all here. Take your time — you cannot break anything by tapping around and exploring.
 
 ---
 
@@ -12,9 +12,11 @@ Welcome! This guide will walk you through everything you need to know to use the
 4. [Schedule Tab](#schedule-tab)
 5. [Working with Gigs](#working-with-gigs)
 6. [Singers Tab](#singers-tab)
-7. [Sending Feedback](#sending-feedback)
-8. [Quick Reference](#quick-reference)
-9. [Index](#index)
+7. [Header Buttons](#header-buttons)
+8. [Admin View](#admin-view)
+9. [Sending Feedback](#sending-feedback)
+10. [Quick Reference](#quick-reference)
+11. [Index](#index)
 
 ---
 
@@ -26,7 +28,7 @@ Welcome! This guide will walk you through everything you need to know to use the
 
 > **https://jhwright.github.io/TSEB/**
 
-Bookmark that address so you can find it easily next time. No login, no password — just open and go.
+Bookmark that address so you can find it easily next time. You will sign in with your email address — the app will send you a magic link to click, and you are in. No passwords to remember.
 
 **The three tabs:** At the bottom of the screen you will see three tabs. Tap any one to switch between them:
 
@@ -38,23 +40,52 @@ Bookmark that address so you can find it easily next time. No login, no password
 
 ## Outreach Tab
 
-This is the first thing you see when you open the app. It shows all the care facilities we are in contact with.
+This is the first thing you see when you open the app. It shows all the care facilities we are in contact with, along with helpful filters so you can quickly find what you need.
 
-![The Outreach screen showing facility cards grouped by status](screenshots/01-outreach.png)
+![The Outreach screen showing facility cards and filter pills](screenshots/01-outreach.png)
 
-**Urgent action callout:** At the very top of the screen, look for a highlighted notice. If any facilities have a follow-up that is overdue, you will see a reminder right there. It is the first thing to check when you open the app.
+### Urgent Action Callout
 
-**Facility cards:** Each facility appears as a card with its name, a short note about where things stand, and a colored status pill on the right side:
+At the very top of the Outreach screen, look for a highlighted notice. If any facilities have a follow-up that is overdue or due this week, you will see a count right there — something like "2 overdue, 1 due this week." That is your nudge to check in with those facilities first.
+
+### Status Filter Pills
+
+Just below the urgent notice, you will see a row of colored pills: **Initial, Talking, Site Visit, Active, Hold, Previous, Inactive.** These let you narrow the list to just one group at a time.
+
+- Tap any pill to filter the list to only facilities with that status
+- Tap the same pill again to clear the filter and see everyone
+- You can also tap the **"Clear filter"** link that appears when a filter is active
+
+This is especially handy when you only want to look at, say, the facilities you are currently in active conversation with.
+
+### All / Mine Toggle
+
+Near the top of the screen you will see two buttons: **All** and **Mine.** Tap **Mine** to see only the facilities where you are the point of contact. Tap **All** to see everything. This is a great way to quickly check your own follow-up list.
+
+### Facility Cards
+
+Each facility appears as a card showing:
+
+- The facility name
+- The primary contact's name and phone number (tap the phone number to call directly)
+- A colored **status badge** showing where things stand
+- The next step or follow-up note, if one has been set
+
+The status badges are color-coded:
 
 - **Active** (green) — We are currently singing at this facility
-- **In Talk** (yellow/orange) — We are in conversation, working toward getting started
-- **New** (gray/blue) — We have just made initial contact
+- **In Conversation / Talking** (yellow/orange) — We are working toward getting started
+- **Initial Contact** (gray/blue) — We have just made first contact
+- **Site Visit** (yellow/orange) — We have a visit planned or recently completed one
+- **On Hold** (gray) — Paused for now
+- **Previous** (gray) — We sang here in the past
+- **Inactive** (red/muted) — No longer pursuing
 
-The cards are sorted so that the ones needing the most attention appear toward the top.
+**Opening a facility:** Tap anywhere on a facility card to open its detail screen.
 
-**All / Mine filter:** Near the top of the screen you will see two buttons: "All" and "Mine." Tap "Mine" to see only the facilities where you are the point of contact. Tap "All" to see everything.
+### Adding a New Facility
 
-**Opening a facility:** Tap anywhere on a facility card to open its detail screen and see the full picture — contacts, history, notes, and more.
+On the main Outreach screen, tap the large green **+** button in the bottom-right corner. A form will appear where you can enter the facility's name, type, address, status, and notes. Tap Save when you are done.
 
 ---
 
@@ -62,62 +93,103 @@ The cards are sorted so that the ones needing the most attention appear toward t
 
 Tap any facility card to open its detail screen. Here you will find everything about that facility in one place.
 
-![The facility detail screen showing contacts, activity timeline, and action buttons](screenshots/02-facility-detail.png)
+![The facility detail screen showing contacts, timeline, and action buttons](screenshots/02-facility-detail.png)
 
 **What you will see:**
 
-- The facility name and current status at the top
-- Contact people at the facility (name, title, phone, email)
-- A timeline of past activities (calls, emails, visits) in order from most recent
+- The facility name, status badge, type, and address at the top
+- A **Contacts** section listing the people you talk to there
+- A **Timeline** of past activities (calls, emails, visits) in order from most recent
 - Notes about next steps or anything else worth remembering
 
-**Logging an activity:** After you make a call, send an email, or visit a facility, tap the **Log Activity** button. A small form will appear asking what kind of activity it was and any notes you want to add. Fill it in and tap Save. That is all — your note will appear in the timeline.
+### Logging an Activity
 
-**Changing a facility's status:** If something has changed — say a facility is now ready to have us come sing — tap the status button (it shows the current status like "In Talk" or "New") and choose the new status from the list. This keeps everyone on the same page.
+After you make a call, send an email, or visit a facility, tap the **Log Activity** button. A full-screen form will open asking for:
 
-**Editing facility information:** Tap the **Edit** button to update the facility's name, address, phone, notes, or any other details. Make your changes and tap Save.
+- **Type** — call, email, visit, or other
+- **Contact** — which person at the facility you spoke with
+- **Description** — what was discussed or what happened
+- **Date** — when it happened
+- **Next step** — what to do next (and optionally, a due date)
 
-**Adding or editing contacts:** Contacts are the real people you talk to at a facility — a social worker, activities director, or administrator. To add a new contact, tap **+ Add Contact** and fill in their information. To edit an existing contact, tap the pencil icon next to their name.
+Fill it in and tap Save. Your note will appear in the timeline right away, and if you set a next step with a date, it will show up in the urgent action callout at the top of Outreach when it comes due.
 
-**Adding a new facility:** On the main Outreach screen, tap the large green **+** button (you will see it in the bottom-right corner of the screen). A form will appear where you can enter the facility's name, address, status, and any notes. Tap Save when you are done.
+### Changing a Facility's Status
+
+On the facility detail screen, you will see a row of large buttons — one for each possible status. Just tap the button for the status you want to move to, and it saves immediately. No dropdown, no extra steps.
+
+### Editing Facility Information
+
+Tap the **Edit** button to update the facility's name, type, address, notes, or any other details. Make your changes and tap Save.
+
+### Working with Contacts
+
+Contacts are the real people you talk to at a facility — a social worker, activities director, nurse manager, or administrator.
+
+- **To add a new contact:** Tap **+ Add Contact** and fill in their name, title, phone number, and email address
+- **To edit a contact:** Tap the edit icon next to their name
+- **To call a contact:** Tap their phone number — your phone will offer to place the call
+- **To email a contact:** Tap their email address
 
 ---
 
 ## Schedule Tab
 
-The Schedule tab shows all of our singing sessions — past, present, and future — in a calendar view.
+The Schedule tab shows all of our singing sessions — past, present, and future — in a calendar view with a list below.
 
-![The Schedule screen with a monthly calendar and gig list below](screenshots/03-schedule.png)
+![The Schedule screen with a monthly calendar and gig list](screenshots/03-schedule.png)
 
-**The calendar:** At the top you will see a full monthly calendar. Days that have a gig scheduled show a small colored dot. Tap the **Prev** or **Next** buttons at the top corners to move between months.
+### The Calendar
 
-**Tapping a day:** Tap any day on the calendar that has a dot on it. The gig list below will scroll to show you the gigs on that day, or a detail card will appear right there.
+At the top you will see a full monthly calendar. Days that have a gig scheduled show a small colored dot. Use the **Prev** and **Next** buttons at the top corners of the calendar to move between months. Today's date is highlighted so you can always tell where you are.
 
-**Gig list:** Below the calendar is a list of upcoming gigs grouped by month. Each entry shows the facility name, date, time, and the singers assigned. Times are shown in easy-to-read AM/PM format (for example, 2:00 PM).
+**Tapping a date:** Tap any day that has a dot. The gig list below the calendar will scroll to show the gigs on that day, or a quick detail will pop up.
+
+### Gig List
+
+Below the calendar is a list of gigs grouped by month. Each entry shows:
+
+- The venue (facility) name
+- The date and time in easy-to-read AM/PM format (for example, 2:00 PM)
+- The singers assigned to that session
+
+Tap any gig in the list to open its full detail screen.
+
+### Adding a New Gig
+
+Tap the large green **+** button in the bottom-right corner of the Schedule screen. A form will open where you can enter:
+
+- **Venue** — which facility
+- **Date** — when
+- **Time** — what time (in AM/PM)
+- **Recurrence** — one-time, weekly, biweekly, twice a month, or monthly
+- **Singers** — who is coming
+
+Fill in what you know and tap Save. You can always come back and edit it later.
 
 ---
 
 ## Working with Gigs
 
-Tap any gig in the schedule list to open its detail screen.
+Tap any gig — either from the calendar dot or from the list — to open its detail screen.
 
-![The gig detail screen showing venue, singers, notes, and action buttons](screenshots/04-gig-detail.png)
+![The gig detail screen showing venue, singers, and action buttons](screenshots/04-gig-detail.png)
 
 **What you will see:**
 
-- Venue name and address
-- Date and time
-- The singers assigned to this gig (shown as colored name tags)
-- Notes (parking, check-in instructions, who to ask for, and so on)
+- Venue name, date, time, and recurrence
+- The facility's address (handy if you need directions)
+- The singers assigned to this session, shown as colored name tags
 - Contact information for the facility
+- Notes (parking instructions, who to ask for at the front desk, and so on)
 
-**Editing a gig:** Tap **Edit Gig** to change the date, time, venue, notes, or anything else. Tap Save when you are done.
+### Editing a Gig
 
-**Assigning singers to a gig:** When editing a gig, you will see a list of singers you can add or remove. Check the names of whoever is coming, then save.
+Tap **Edit Gig** to change the date, time, recurrence, which singers are coming, or the notes. Make your changes and tap Save.
 
-**Adding a new gig:** On the main Schedule screen, tap the large green **+** button in the bottom-right corner. Fill in the venue, date, time, and any notes. You can assign singers right away or come back to it later.
+### Going to the Facility Detail
 
-**"Something wrong?" link:** At the bottom of each gig detail you will see a small link that says "Something wrong? Send feedback." Tap it if you spot an error — it will open an email so you can report it quickly.
+From a gig, tap **View Facility** to jump straight to that facility's detail screen — useful if you want to check the contact information or review past activities before you go.
 
 ---
 
@@ -127,54 +199,130 @@ The Singers tab is your volunteer roster. It shows everyone in the group and whe
 
 ![The Singers screen showing the roster grouped by availability](screenshots/05-singers.png)
 
-**Available count:** Right at the top of the screen you will see a number — something like "28 singers available." That gives you a quick sense of how many people are ready to be scheduled right now.
+### Available Count
 
-**Roster sections:** Singers are grouped into sections:
+Right at the top of the screen you will see a number — something like "28 singers available." That gives you a quick sense of how many people are ready to be scheduled right now.
+
+### Roster Sections
+
+Singers are grouped into three sections:
 
 - **Available** — Ready to be scheduled for gigs
-- **Limited** — Available some of the time (the notes on their card will explain)
+- **Limited** — Available some of the time (check their notes for details)
 - **Unavailable** — Taking a break or otherwise not available right now
 
-Each singer card shows their name and a short note about where they sing or any other details.
+Each singer card shows their name. Tap any card to see their full details.
 
-**Seeing a singer's details:** Tap any singer's card to see their full information — notes, roles, availability, and which gigs they are assigned to.
+### Seeing a Singer's Details
 
-**Changing availability:** On the singer's detail screen, you will see buttons for Available, Limited, and Unavailable. Just tap the one that applies and it will save automatically. This is especially handy when someone goes on vacation or comes back from a break.
+Tap a singer's card to open their detail screen. You will see their role, availability, preferred days, and any notes about them.
 
-**Adding a new singer:** On the Singers tab, tap the large green **+** button in the bottom-right corner. Enter the singer's name, availability, and any notes. Tap Save.
+### Changing Availability
 
-**Editing singer details:** Tap any singer's card to open their details, then tap the **Edit** button to change their name, notes, or any other information.
+On the singer's detail screen you will see three large buttons: **Available, Limited,** and **Unavailable.** Just tap the one that fits, and it saves right away. This is the easiest thing to keep up to date — especially when someone goes on vacation or comes back from a break.
+
+### Editing Singer Details
+
+From the singer's detail screen, tap **Edit** to update their name, role, preferred days, notes, or any other information. Tap Save when done.
+
+### Adding a New Singer
+
+On the Singers tab, tap the large green **+** button in the bottom-right corner. Enter their first name, role, availability, preferred days, and any notes. Tap Save.
+
+---
+
+## Header Buttons
+
+At the top of every screen, in the app's header bar, you will find a few small but useful buttons.
+
+### Help Button
+
+Tap **Help** to open a guide for the screen you are currently on. The guide is context-sensitive — it shows you the most relevant tips for whatever you are doing right now.
+
+### Feedback Button
+
+Tap **Feedback** any time you want to send a note to the coordinator — whether it is a bug report, a suggestion, or a question. See [Sending Feedback](#sending-feedback) for more.
+
+### Admin Link
+
+Tap **Admin** to open the Admin view in a new tab. See [Admin View](#admin-view) for details.
+
+---
+
+## Admin View
+
+The Admin view is a desktop-friendly way to browse, search, and edit all of the data in the app directly. It is especially useful for coordinators who need to make bulk changes or export records.
+
+**To open it:** Tap the **Admin** link in the header. It opens in a new browser tab.
+
+### What You Will See
+
+The Admin view shows all six database tables in a clean table layout:
+
+- Singers
+- Institutions (facilities)
+- Contacts
+- Activities
+- Gigs
+- Gig Singers (who is assigned to which gig)
+
+Use the tabs at the top to switch between tables.
+
+### Searching and Filtering
+
+Each table has a search bar at the top. Type any word to filter the rows — the table will narrow down instantly to show only matching records.
+
+### Editing a Record
+
+Click any row in the table to open a full edit form for that record. All fields are shown, including notes. Make your changes and save.
+
+### Adding a New Record
+
+Tap the **+** button at the top of any table to open a blank form and add a new record.
+
+### Downloading All Data
+
+Tap **Download All (.xlsx)** to export everything — all tables, all fields including notes — to an Excel spreadsheet. This is great for sharing with the coordinator, creating a backup, or doing analysis outside the app.
+
+### Getting Back to the Main App
+
+Tap the **Back to App** link at the top of the Admin view to return to the main app.
 
 ---
 
 ## Sending Feedback
 
-We want to know if something looks wrong, confusing, or broken — please do not hesitate to reach out!
+We want to know if something looks wrong, confusing, or broken. Please do not hesitate to reach out — there are no silly questions and no silly bug reports!
 
-**Feedback button in the header:** At the top of every screen, in the header bar, there is a **Feedback** button. Tap it any time to send a note to the coordinator.
+### Feedback Button in the Header
 
-**"Something wrong?" link:** At the bottom of every facility, gig, or singer detail screen, there is a small link that says "Something wrong? Send feedback." Tap it if you are looking at something specific that needs correcting.
+At the top of every screen, tap the **Feedback** button to send a note to the coordinator. A form will open where you can describe what you noticed. Just plain language is perfect — no technical terms needed.
 
-Both options will open an email addressed to the coordinator. Just type what you noticed and send it. You do not need to explain things in technical terms — plain language is perfect.
+### "Something Wrong?" Link in Modals
+
+At the bottom of every detail or edit form, there is a small link that says **"Something wrong? Send feedback."** Tap it if you are looking at a specific facility, gig, or singer record that has an error. It opens the same feedback form, already noting which screen you were on.
 
 ---
 
 ## Quick Reference
 
-| Task | How to do it |
-|------|--------------|
-| See what follow-ups are due | Open the app — the notice at the top of Outreach will tell you |
-| Log a phone call or visit | Outreach → tap facility → tap **Log Activity** |
-| Add a new facility | Outreach → tap the green **+** button |
-| Schedule a singing session | Schedule → tap the green **+** button |
-| Change a singer's availability | Singers → tap singer → tap the new availability |
-| Add a contact to a facility | Outreach → tap facility → tap **+ Add Contact** |
-| Edit a gig's time or date | Schedule → tap gig → tap **Edit Gig** |
-| See only your facilities | Outreach → tap **Mine** at the top |
-| See all facilities | Outreach → tap **All** at the top |
-| Navigate to a different month | Schedule → tap **Prev** or **Next** |
-| Add a new singer | Singers → tap the green **+** button |
-| Send feedback about the app | Tap **Feedback** in the header bar at the top |
+| Task | How |
+|------|-----|
+| See overdue follow-ups | Open app — callout at top of Outreach shows count |
+| Filter by status | Tap a status pill (Initial, Talking, Active, etc.) |
+| Clear status filter | Tap the active pill again, or tap "Clear filter" |
+| Log a phone call | Outreach → tap facility → Log Activity |
+| Change facility status | Outreach → tap facility → tap new status button |
+| Add a contact | Outreach → tap facility → + Add Contact |
+| Schedule a gig | Schedule → tap green + |
+| Edit a gig time | Schedule → tap gig → Edit Gig |
+| Go to facility from a gig | Schedule → tap gig → View Facility |
+| Change availability | Singers → tap your name → tap new availability |
+| Add a singer | Singers → tap green + |
+| Get screen-specific help | Tap Help in the header |
+| Download all data | Admin → Download All (.xlsx) |
+| Edit a record directly | Admin → click any row → edit form |
+| Send feedback | Tap Feedback in the header |
 
 ---
 
@@ -182,11 +330,17 @@ Both options will open an email addressed to the coordinator. Just type what you
 
 **Activity** — A logged interaction with a facility (call, email, visit). See [Working with Facilities](#working-with-facilities).
 
-**Availability** — Whether a singer is ready to be scheduled. See [Singers Tab](#singers-tab).
+**Admin** — Desktop table view for browsing, editing, and downloading all data. See [Admin View](#admin-view).
 
-**Calendar** — The monthly view on the Schedule tab. See [Schedule Tab](#schedule-tab).
+**Availability** — Whether a singer is ready to be scheduled (Available, Limited, or Unavailable). See [Singers Tab](#singers-tab).
+
+**Calendar** — The monthly view on the Schedule tab showing gig dots by day. See [Schedule Tab](#schedule-tab).
+
+**Clear Filter** — Link or re-tap a status pill to remove the active filter. See [Outreach Tab](#outreach-tab).
 
 **Contact** — A person at a care facility (social worker, activities director, etc.). See [Working with Facilities](#working-with-facilities).
+
+**Download** — Export all data to Excel from the Admin view. See [Admin View](#admin-view).
 
 **Edit** — Button to update information on a facility, gig, or singer. See [Working with Facilities](#working-with-facilities), [Working with Gigs](#working-with-gigs), [Singers Tab](#singers-tab).
 
@@ -194,9 +348,11 @@ Both options will open an email addressed to the coordinator. Just type what you
 
 **Feedback** — How to report a problem or send a note. See [Sending Feedback](#sending-feedback).
 
-**Filter** — The All / Mine toggle on the Outreach tab. See [Outreach Tab](#outreach-tab).
+**Filter** — The All/Mine toggle and status pills on the Outreach tab. See [Outreach Tab](#outreach-tab).
 
 **Gig** — A scheduled singing session at a facility. See [Schedule Tab](#schedule-tab) and [Working with Gigs](#working-with-gigs).
+
+**Help** — Button in the header that opens a guide for the current screen. See [Header Buttons](#header-buttons).
 
 **Outreach** — The first tab; shows all facilities and their status. See [Outreach Tab](#outreach-tab).
 
@@ -204,4 +360,6 @@ Both options will open an email addressed to the coordinator. Just type what you
 
 **Singer** — A volunteer in the group. See [Singers Tab](#singers-tab).
 
-**Status** — Where a facility stands in our relationship with them (New, In Talk, Active, etc.). See [Outreach Tab](#outreach-tab) and [Working with Facilities](#working-with-facilities).
+**Status** — Where a facility stands in our relationship with them (Initial Contact, Talking, Site Visit, Active, etc.). See [Outreach Tab](#outreach-tab) and [Working with Facilities](#working-with-facilities).
+
+**Status Pills** — Colored filter buttons on the Outreach tab for narrowing the facility list by status. See [Outreach Tab](#outreach-tab).
