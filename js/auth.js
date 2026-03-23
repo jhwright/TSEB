@@ -1,10 +1,38 @@
 // TSEB Auth module — magic link login, session management
 TSEB.auth = {
   async init() {
-    // DEV MODE: Skip auth, go straight to app
-    // TODO: Re-enable auth before launch
-    await this._loadSingers();
-    this._showApp();
+    // Check for existing session
+    const { data: { session } } = await TSEB.sb.auth.getSession();
+    if (session) {
+      await this._loadSingers();
+      this._showApp();
+      return;
+    }
+
+    // Check URL for magic link auth callback
+    const hash = window.location.hash;
+    if (hash && hash.includes('access_token')) {
+      // Supabase will pick up the token from the URL
+      const { data: { session: newSession }, error } = await TSEB.sb.auth.getSession();
+      if (newSession) {
+        // Clean up URL
+        window.history.replaceState(null, '', window.location.pathname);
+        await this._loadSingers();
+        this._showApp();
+        return;
+      }
+    }
+
+    // Listen for auth state changes (handles magic link redirect)
+    TSEB.sb.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN' && session) {
+        await this._loadSingers();
+        this._showApp();
+      }
+    });
+
+    // No session — show login
+    this._showLogin();
   },
 
   async _loadSingers() {
