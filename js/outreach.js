@@ -252,23 +252,30 @@ TSEB.outreach = {
     }).join('');
 
     // Contacts section
-    let contactsHTML = '';
+    let contactsHTML = '<div style="margin-bottom:20px;">' +
+      '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">' +
+      '<h4 style="font-size:14px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin:0;">Contacts</h4>' +
+      '<button class="btn btn-secondary" style="font-size:13px; min-height:36px; padding:6px 12px;" onclick="TSEB.outreach.openAddContact(\'' + id + '\')">+ Add Contact</button>' +
+      '</div>';
     if (contacts && contacts.length) {
-      contactsHTML = '<div style="margin-bottom:20px;">' +
-        '<h4 style="font-size:14px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin-bottom:10px;">Contacts</h4>' +
-        contacts.map(function(c) {
+      contactsHTML += contacts.map(function(c) {
           return '<div style="background:var(--bg); border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px; margin-bottom:8px;">' +
-            '<div style="font-weight:600; font-size:16px;">' + TSEB.util.esc((c.first_name || '') + ' ' + (c.last_name || '')).trim() +
+            '<div style="display:flex; justify-content:space-between; align-items:flex-start;">' +
+            '<div><div style="font-weight:600; font-size:16px;">' + TSEB.util.esc((c.first_name || '') + ' ' + (c.last_name || '')).trim() +
             (c.is_primary ? ' <span style="font-size:11px; color:var(--accent); font-weight:700;">PRIMARY</span>' : '') + '</div>' +
             (c.job_title ? '<div style="font-size:14px; color:var(--muted);">' + TSEB.util.esc(c.job_title) + '</div>' : '') +
             '<div style="font-size:14px; margin-top:4px;">' +
             (c.phone ? '<a href="tel:' + TSEB.util.esc(c.phone) + '" style="color:var(--primary);">' + TSEB.util.esc(c.phone) + '</a>' : '') +
             (c.phone && c.email ? ' · ' : '') +
             (c.email ? '<a href="mailto:' + TSEB.util.esc(c.email) + '" style="color:var(--primary);">' + TSEB.util.esc(c.email) + '</a>' : '') +
+            '</div></div>' +
+            '<button class="btn btn-ghost" style="font-size:12px; min-height:32px; padding:4px 10px; align-self:flex-start;" onclick="event.stopPropagation(); TSEB.outreach.openEditContact(\'' + c.id + '\', \'' + id + '\')">Edit</button>' +
             '</div></div>';
-        }).join('') +
-        '</div>';
+        }).join('');
+    } else {
+      contactsHTML += '<p style="color:var(--muted); font-size:15px;">No contacts yet. Add one to track who to call.</p>';
     }
+    contactsHTML += '</div>';
 
     // Timeline section
     let timelineHTML = '';
@@ -767,5 +774,99 @@ TSEB.outreach = {
     this._loaded = false;
     await this.load();
     this.showDetail(id);
+  },
+
+  // ============================================================
+  // CONTACTS — Add / Edit
+  // ============================================================
+  openAddContact: function(institutionId) {
+    TSEB.showForm(
+      '<div class="modal-header">' +
+      '<button class="modal-back-btn" onclick="TSEB.closeForm(); TSEB.outreach.showDetail(\'' + institutionId + '\')" aria-label="Back">&#8592;</button>' +
+      '<div class="modal-title">Add Contact</div></div>' +
+      '<div class="modal-body">' +
+      '<form onsubmit="event.preventDefault(); TSEB.outreach.submitAddContact(this, \'' + institutionId + '\');">' +
+      '<div class="form-group"><label class="form-label">First Name</label>' +
+      '<input type="text" name="first_name" class="form-input" required placeholder="First name"></div>' +
+      '<div class="form-group"><label class="form-label">Last Name</label>' +
+      '<input type="text" name="last_name" class="form-input" placeholder="Last name"></div>' +
+      '<div class="form-group"><label class="form-label">Job Title</label>' +
+      '<input type="text" name="job_title" class="form-input" placeholder="e.g. Activities Director"></div>' +
+      '<div class="form-group"><label class="form-label">Phone</label>' +
+      '<input type="tel" name="phone" class="form-input" placeholder="(510) 555-1234"></div>' +
+      '<div class="form-group"><label class="form-label">Email</label>' +
+      '<input type="email" name="email" class="form-input" placeholder="name@facility.com"></div>' +
+      '<div class="form-group" style="display:flex; align-items:center; gap:12px;">' +
+      '<input type="checkbox" name="is_primary" id="contact-primary" style="width:24px; height:24px;">' +
+      '<label for="contact-primary" class="form-label" style="margin:0;">Primary contact</label></div>' +
+      '<button type="submit" class="btn btn-primary" style="width:100%; margin-top:8px;">Add Contact</button>' +
+      '</form></div>'
+    );
+  },
+
+  async submitAddContact(form, institutionId) {
+    var fd = new FormData(form);
+    if (!fd.get('first_name')) { TSEB.toast('Please enter a name', 'warning'); return; }
+    var { error } = await TSEB.sb.from('contacts').insert({
+      institution_id: institutionId,
+      first_name: fd.get('first_name'),
+      last_name: fd.get('last_name') || null,
+      job_title: fd.get('job_title') || null,
+      phone: fd.get('phone') || null,
+      email: fd.get('email') || null,
+      is_primary: form.querySelector('[name="is_primary"]').checked
+    });
+    if (error) { TSEB.toast('Error: ' + error.message, 'error'); return; }
+    TSEB.closeForm();
+    TSEB.toast('Contact added!', 'success');
+    this._loaded = false;
+    await this.load();
+    this.showDetail(institutionId);
+  },
+
+  async openEditContact(contactId, institutionId) {
+    var { data: c } = await TSEB.sb.from('contacts').select('*').eq('id', contactId).single();
+    if (!c) { TSEB.toast('Could not load contact', 'error'); return; }
+
+    TSEB.showForm(
+      '<div class="modal-header">' +
+      '<button class="modal-back-btn" onclick="TSEB.closeForm(); TSEB.outreach.showDetail(\'' + institutionId + '\')" aria-label="Back">&#8592;</button>' +
+      '<div class="modal-title">Edit Contact</div></div>' +
+      '<div class="modal-body">' +
+      '<form onsubmit="event.preventDefault(); TSEB.outreach.submitEditContact(this, \'' + contactId + '\', \'' + institutionId + '\');">' +
+      '<div class="form-group"><label class="form-label">First Name</label>' +
+      '<input type="text" name="first_name" class="form-input" required value="' + TSEB.util.esc(c.first_name || '') + '"></div>' +
+      '<div class="form-group"><label class="form-label">Last Name</label>' +
+      '<input type="text" name="last_name" class="form-input" value="' + TSEB.util.esc(c.last_name || '') + '"></div>' +
+      '<div class="form-group"><label class="form-label">Job Title</label>' +
+      '<input type="text" name="job_title" class="form-input" value="' + TSEB.util.esc(c.job_title || '') + '"></div>' +
+      '<div class="form-group"><label class="form-label">Phone</label>' +
+      '<input type="tel" name="phone" class="form-input" value="' + TSEB.util.esc(c.phone || '') + '"></div>' +
+      '<div class="form-group"><label class="form-label">Email</label>' +
+      '<input type="email" name="email" class="form-input" value="' + TSEB.util.esc(c.email || '') + '"></div>' +
+      '<div class="form-group" style="display:flex; align-items:center; gap:12px;">' +
+      '<input type="checkbox" name="is_primary" id="contact-primary-edit" style="width:24px; height:24px;"' + (c.is_primary ? ' checked' : '') + '>' +
+      '<label for="contact-primary-edit" class="form-label" style="margin:0;">Primary contact</label></div>' +
+      '<button type="submit" class="btn btn-primary" style="width:100%; margin-top:8px;">Save Changes</button>' +
+      '</form></div>'
+    );
+  },
+
+  async submitEditContact(form, contactId, institutionId) {
+    var fd = new FormData(form);
+    var { error } = await TSEB.sb.from('contacts').update({
+      first_name: fd.get('first_name'),
+      last_name: fd.get('last_name') || null,
+      job_title: fd.get('job_title') || null,
+      phone: fd.get('phone') || null,
+      email: fd.get('email') || null,
+      is_primary: form.querySelector('[name="is_primary"]').checked
+    }).eq('id', contactId);
+    if (error) { TSEB.toast('Error: ' + error.message, 'error'); return; }
+    TSEB.closeForm();
+    TSEB.toast('Contact updated!', 'success');
+    this._loaded = false;
+    await this.load();
+    this.showDetail(institutionId);
   }
 };
