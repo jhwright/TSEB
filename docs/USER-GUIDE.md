@@ -85,7 +85,7 @@ The status badges are color-coded:
 
 ### Adding a New Facility
 
-On the main Outreach screen, tap the large green **+** button in the bottom-right corner. A form will appear where you can enter the facility's name, type, address, status, and notes. Tap Save when you are done.
+On the main Outreach screen, tap the large green **+** button in the bottom-right corner. A form will appear where you can enter the facility's name, type, address, zip code, status, and notes. Tap Save when you are done.
 
 ---
 
@@ -97,7 +97,7 @@ Tap any facility card to open its detail screen. Here you will find everything a
 
 **What you will see:**
 
-- The facility name, status badge, type, and address at the top
+- The facility name, status badge, type, address, and zip code at the top
 - A **Contacts** section listing the people you talk to there
 - A **Timeline** of past activities (calls, emails, visits) in order from most recent
 - Notes about next steps or anything else worth remembering
@@ -211,23 +211,29 @@ Singers are grouped into three sections:
 - **Limited** — Available some of the time (check their notes for details)
 - **Unavailable** — Taking a break or otherwise not available right now
 
-Each singer card shows their name. Tap any card to see their full details.
+Each singer card shows their name, preferred days, and zip code. Tap any card to see their full details.
 
 ### Seeing a Singer's Details
 
-Tap a singer's card to open their detail screen. You will see their role, availability, preferred days, and any notes about them.
+Tap a singer's card to open their detail screen. You will see their role, availability, preferred days, zip code, and any notes about them.
 
 ### Changing Availability
 
 On the singer's detail screen you will see three large buttons: **Available, Limited,** and **Unavailable.** Just tap the one that fits, and it saves right away. This is the easiest thing to keep up to date — especially when someone goes on vacation or comes back from a break.
 
+### Zip Codes
+
+Each singer can have a zip code on file. This helps the coordinator match singers to nearby facilities when scheduling gigs. You can see the zip code on singer cards and in the detail view.
+
+> **Action needed:** If you see a singer without a zip code, please tap their card, tap **Edit**, and add their zip code. This helps us schedule singers at facilities close to where they live.
+
 ### Editing Singer Details
 
-From the singer's detail screen, tap **Edit** to update their name, role, preferred days, notes, or any other information. Tap Save when done.
+From the singer's detail screen, tap **Edit** to update their name, role, preferred days, zip code, notes, or any other information. Tap Save when done.
 
 ### Adding a New Singer
 
-On the Singers tab, tap the large green **+** button in the bottom-right corner. Enter their first name, role, availability, preferred days, and any notes. Tap Save.
+On the Singers tab, tap the large green **+** button in the bottom-right corner. Enter their first name, role, availability, preferred days, zip code, and any notes. Tap Save.
 
 ---
 
@@ -318,6 +324,7 @@ At the bottom of every detail or edit form, there is a small link that says **"S
 | Edit a gig time | Schedule → tap gig → Edit Gig |
 | Go to facility from a gig | Schedule → tap gig → View Facility |
 | Change availability | Singers → tap your name → tap new availability |
+| Add a singer's zip code | Singers → tap singer → Edit → enter zip code → Save |
 | Add a singer | Singers → tap green + |
 | Get screen-specific help | Tap Help in the header |
 | Download all data | Admin → Download All (.xlsx) |
@@ -363,3 +370,5 @@ At the bottom of every detail or edit form, there is a small link that says **"S
 **Status** — Where a facility stands in our relationship with them (Initial Contact, Talking, Site Visit, Active, etc.). See [Outreach Tab](#outreach-tab) and [Working with Facilities](#working-with-facilities).
 
 **Status Pills** — Colored filter buttons on the Outreach tab for narrowing the facility list by status. See [Outreach Tab](#outreach-tab).
+
+**Zip Code** — Used on both facilities and singers for geographic matching. Helps schedule singers near venues. See [Singers Tab](#singers-tab), [Working with Facilities](#working-with-facilities).
