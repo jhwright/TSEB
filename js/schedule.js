@@ -118,7 +118,7 @@ TSEB.schedule = {
     endDay.setDate(endDay.getDate() + (6 - last.getDay()));
 
     var { data: gigs } = await TSEB.sb.from('gigs')
-      .select('*, institution:institutions(name), gig_singers(singer_id, is_anchor)')
+      .select('*, institution:institutions(name, address), gig_singers(singer_id, is_anchor)')
       .gte('gig_date', this._localDateStr(startDay))
       .lte('gig_date', this._localDateStr(endDay))
       .order('gig_time');
@@ -176,9 +176,11 @@ TSEB.schedule = {
       html += '<div style="font-size:13px; font-weight:' + (isToday ? '700' : '400') + '; color:' + (isToday ? 'var(--accent)' : 'var(--text)') + ';">' + cursor.getDate() + '</div>';
 
       dayGigs.forEach(function(g) {
+        var timeLabel = g.gig_time ? g.gig_time.slice(0, 5) + ' ' : '';
+        var tooltip = TSEB.util.esc((g.institution ? g.institution.name : '') + (g.gig_time ? ' at ' + g.gig_time.slice(0, 5) : '') + (g.institution && g.institution.address ? '\n' + g.institution.address : ''));
         html += '<div style="font-size:11px; background:var(--primary-light); color:var(--primary); padding:1px 4px; border-radius:3px; margin-top:2px; cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" ' +
-          'onclick="TSEB.schedule.showGigDetail(\'' + g.id + '\')" title="' + TSEB.util.esc(g.institution ? g.institution.name : '') + '">' +
-          TSEB.util.esc(g.institution ? g.institution.name : '?') +
+          'onclick="TSEB.schedule.showGigDetail(\'' + g.id + '\')" title="' + tooltip + '">' +
+          timeLabel + TSEB.util.esc(g.institution ? g.institution.name : '?') +
           '</div>';
       });
 
