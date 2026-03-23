@@ -394,12 +394,127 @@ TSEB.schedule = {
         ? '<div style="margin-bottom:20px;"><h4 style="font-size:14px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin-bottom:10px;">Notes</h4><p style="font-size:15px;">' + TSEB.util.esc(gig.notes) + '</p></div>'
         : '') +
 
+      '<div style="display:flex; gap:10px; margin-top:20px;">' +
+      '<button class="btn btn-primary" style="flex:1;" onclick="TSEB.schedule.openEditForm(\'' + gig.id + '\')">Edit Gig</button>' +
       (inst.id
-        ? '<button class="btn btn-secondary" style="width:100%;" onclick="TSEB.outreach.showDetail(\'' + inst.id + '\')">View Facility</button>'
+        ? '<button class="btn btn-secondary" style="flex:1;" onclick="TSEB.outreach.showDetail(\'' + inst.id + '\')">View Facility</button>'
         : '') +
+      '</div>' +
 
       '</div>';
 
     TSEB.showDetail(html);
+  },
+
+  // ============================================================
+  // EDIT GIG
+  // ============================================================
+  async openEditForm(gigId) {
+    var { data: gig } = await TSEB.sb.from('gigs').select('*').eq('id', gigId).single();
+    if (!gig) { TSEB.toast('Could not load gig', 'error'); return; }
+
+    TSEB.closeDetail();
+
+    var singerOptions = '<option value="">Select singer...</option>' +
+      TSEB.singersCache.map(function(s) {
+        return '<option value="' + s.id + '">' + TSEB.util.esc(s.first_name) + '</option>';
+      }).join('');
+
+    // Get current singers
+    var { data: currentSingers } = await TSEB.sb.from('gig_singers').select('singer_id, is_anchor').eq('gig_id', gigId).order('is_anchor', { ascending: false });
+    var cs = currentSingers || [];
+
+    TSEB.showForm(
+      '<div class="modal-header">' +
+      '<button class="modal-back-btn" onclick="TSEB.closeForm(); TSEB.schedule.showGigDetail(\'' + gigId + '\')" aria-label="Back">&#8592;</button>' +
+      '<div class="modal-title">Edit Gig</div>' +
+      '</div>' +
+      '<div class="modal-body">' +
+      '<form onsubmit="event.preventDefault(); TSEB.schedule.submitEdit(this, \'' + gigId + '\');">' +
+
+      '<div class="form-group">' +
+      '<label class="form-label">Date</label>' +
+      '<input type="date" name="gig_date" class="form-input" required value="' + (gig.gig_date || '') + '">' +
+      '</div>' +
+
+      '<div class="form-group">' +
+      '<label class="form-label">Time</label>' +
+      '<input type="time" name="gig_time" class="form-input" value="' + (gig.gig_time ? gig.gig_time.slice(0, 5) : '') + '">' +
+      '</div>' +
+
+      '<div class="form-group">' +
+      '<label class="form-label">Recurrence</label>' +
+      '<select name="recurrence" class="form-input form-select">' +
+      '<option value="one_time"' + (gig.recurrence === 'one_time' ? ' selected' : '') + '>One-time</option>' +
+      '<option value="weekly"' + (gig.recurrence === 'weekly' ? ' selected' : '') + '>Weekly</option>' +
+      '<option value="biweekly"' + (gig.recurrence === 'biweekly' ? ' selected' : '') + '>Biweekly</option>' +
+      '<option value="2x_month"' + (gig.recurrence === '2x_month' ? ' selected' : '') + '>2x per month</option>' +
+      '<option value="monthly"' + (gig.recurrence === 'monthly' ? ' selected' : '') + '>Monthly</option>' +
+      '</select>' +
+      '</div>' +
+
+      '<div class="form-group">' +
+      '<label class="form-label">Singer 1 (anchor)</label>' +
+      '<select name="singer1" class="form-input form-select">' + singerOptions + '</select>' +
+      '</div>' +
+
+      '<div class="form-group">' +
+      '<label class="form-label">Singer 2</label>' +
+      '<select name="singer2" class="form-input form-select">' + singerOptions + '</select>' +
+      '</div>' +
+
+      '<div class="form-group">' +
+      '<label class="form-label">Singer 3</label>' +
+      '<select name="singer3" class="form-input form-select">' + singerOptions + '</select>' +
+      '</div>' +
+
+      '<div class="form-group">' +
+      '<label class="form-label">Notes</label>' +
+      '<textarea name="gig_notes" class="form-input" rows="3">' + TSEB.util.esc(gig.notes || '') + '</textarea>' +
+      '</div>' +
+
+      '<button type="submit" class="btn btn-primary" style="width:100%; margin-top:8px;">Save Changes</button>' +
+      '</form>' +
+      '</div>'
+    );
+
+    // Pre-select current singers after form renders
+    setTimeout(function() {
+      var form = document.getElementById('form-container');
+      if (!form) return;
+      var selects = form.querySelectorAll('select[name^="singer"]');
+      cs.forEach(function(s, i) {
+        if (selects[i]) selects[i].value = s.singer_id;
+      });
+    }, 50);
+  },
+
+  async submitEdit(form, gigId) {
+    var fd = new FormData(form);
+
+    var { error } = await TSEB.sb.from('gigs').update({
+      gig_date: fd.get('gig_date'),
+      gig_time: fd.get('gig_time') || null,
+      recurrence: fd.get('recurrence'),
+      notes: fd.get('gig_notes') || null
+    }).eq('id', gigId);
+
+    if (error) { TSEB.toast('Error: ' + error.message, 'error'); return; }
+
+    // Replace singers: delete existing, insert new
+    await TSEB.sb.from('gig_singers').delete().eq('gig_id', gigId);
+    var singerIds = [fd.get('singer1'), fd.get('singer2'), fd.get('singer3')].filter(Boolean);
+    if (singerIds.length) {
+      await TSEB.sb.from('gig_singers').insert(
+        singerIds.map(function(sid, i) {
+          return { gig_id: gigId, singer_id: sid, is_anchor: i === 0 };
+        })
+      );
+    }
+
+    TSEB.closeForm();
+    TSEB.toast('Gig updated!', 'success');
+    this._loaded = false;
+    this.load();
   }
 };

@@ -9,7 +9,7 @@ TSEB.outreach = {
     TSEB.showSkeleton('outreach-list', 4);
 
     const { data, error } = await TSEB.sb.from('institutions')
-      .select('*, outreacher:singers!institutions_outreacher_id_fkey(first_name)')
+      .select('*, outreacher:singers!institutions_outreacher_id_fkey(first_name), contacts(first_name, last_name, phone, is_primary)')
       .order('next_step_due', { ascending: true, nullsFirst: false });
 
     if (error) {
@@ -177,12 +177,23 @@ TSEB.outreach = {
       ? '<span style="margin-right:8px;">' + TSEB.util.singerChip(i.outreacher.first_name) + '</span>'
       : '';
 
+    // Primary contact
+    var primary = (i.contacts || []).find(function(c) { return c.is_primary; }) || (i.contacts || [])[0];
+    var contactLine = '';
+    if (primary) {
+      var cName = ((primary.first_name || '') + ' ' + (primary.last_name || '')).trim();
+      contactLine = '<div class="card-detail">' + TSEB.util.esc(cName) +
+        (primary.phone ? ' · <a href="tel:' + TSEB.util.esc(primary.phone) + '" style="color:var(--primary);" onclick="event.stopPropagation();">' + TSEB.util.esc(primary.phone) + '</a>' : '') +
+        '</div>';
+    }
+
     return '<div class="' + cardClass + '" style="cursor:pointer;" onclick="TSEB.outreach.showDetail(\'' + i.id + '\')">' +
       '<div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:6px;">' +
       '<div class="card-title">' + TSEB.util.esc(i.name) + '</div>' +
       TSEB.util.statusBadge(i.status) +
       '</div>' +
       (i.address ? '<div class="card-detail">' + TSEB.util.esc(i.address) + '</div>' : '') +
+      contactLine +
       nextStepHTML +
       (outreacherHTML ? '<div style="margin-top:8px;">' + outreacherHTML + '</div>' : '') +
       '</div>';
