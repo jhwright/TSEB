@@ -54,7 +54,7 @@ TSEB.showSkeleton = function(containerId, count) {
 TSEB.showForm = function(html) {
   const overlay = document.getElementById('form-overlay');
   const container = document.getElementById('form-container');
-  container.innerHTML = html;
+  container.innerHTML = html + TSEB._feedbackLink('Form modal');
   overlay.style.display = 'flex';
   // Trigger slide-in animation
   requestAnimationFrame(() => {
@@ -71,11 +71,17 @@ TSEB.closeForm = function() {
   }, 300);
 };
 
+// Feedback link for modals
+TSEB._feedbackLink = function(context) {
+  return '<div style="text-align:center; padding:20px 0 8px; border-top:1px solid var(--border); margin-top:24px;">' +
+    '<button onclick="TSEB.feedback.open(\'' + (context || '') + '\')" style="background:none; border:none; color:var(--muted); font-size:14px; cursor:pointer; text-decoration:underline;">Something wrong? Send feedback</button></div>';
+};
+
 // Show detail overlay
 TSEB.showDetail = function(html) {
   const overlay = document.getElementById('detail-overlay');
   const container = document.getElementById('detail-container');
-  container.innerHTML = html;
+  container.innerHTML = html + TSEB._feedbackLink('Detail modal');
   overlay.style.display = 'flex';
   requestAnimationFrame(() => {
     requestAnimationFrame(() => container.classList.add('modal-open'));
