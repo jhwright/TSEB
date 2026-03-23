@@ -28,7 +28,7 @@ Welcome! This guide covers everything you need to know to use the Threshold Sing
 
 > **https://jhwright.github.io/TSEB/**
 
-Bookmark that address so you can find it easily next time. You will sign in with your email address — the app will send you a magic link to click, and you are in. No passwords to remember.
+Bookmark that address so you can find it easily next time. Right now, the app is open — no sign-in needed. Just open the link and you are in.
 
 **The three tabs:** At the bottom of the screen you will see three tabs. Tap any one to switch between them:
 
@@ -241,9 +241,13 @@ On the Singers tab, tap the large green **+** button in the bottom-right corner.
 
 At the top of every screen, in the app's header bar, you will find a few small but useful buttons.
 
+### Guide Button
+
+Tap **Guide** to open this user guide in a new tab. It includes screenshots, a quick reference table, and an index of all features. You can bookmark it for easy access later.
+
 ### Help Button
 
-Tap **Help** to open a guide for the screen you are currently on. The guide is context-sensitive — it shows you the most relevant tips for whatever you are doing right now.
+Tap **Help** to open a quick help overlay for the screen you are currently on. It shows the most relevant tips for whatever you are doing right now — without leaving the app.
 
 ### Feedback Button
 
@@ -326,6 +330,7 @@ At the bottom of every detail or edit form, there is a small link that says **"S
 | Change availability | Singers → tap your name → tap new availability |
 | Add a singer's zip code | Singers → tap singer → Edit → enter zip code → Save |
 | Add a singer | Singers → tap green + |
+| Open user guide | Tap Guide in the header |
 | Get screen-specific help | Tap Help in the header |
 | Download all data | Admin → Download All (.xlsx) |
 | Edit a record directly | Admin → click any row → edit form |
@@ -356,6 +361,8 @@ At the bottom of every detail or edit form, there is a small link that says **"S
 **Feedback** — How to report a problem or send a note. See [Sending Feedback](#sending-feedback).
 
 **Filter** — The All/Mine toggle and status pills on the Outreach tab. See [Outreach Tab](#outreach-tab).
+
+**Guide** — Button in the header that opens this user guide in a new tab. See [Header Buttons](#header-buttons).
 
 **Gig** — A scheduled singing session at a facility. See [Schedule Tab](#schedule-tab) and [Working with Gigs](#working-with-gigs).
 
