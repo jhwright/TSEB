@@ -65,9 +65,14 @@ Side tracks: `on_hold`, `previous`, `inactive`
 ### Restrict access to specific volunteers
 Modify the RLS policies in `001_schema.sql` to check `auth.jwt() ->> 'email'` against a whitelist instead of just `auth.role() = 'authenticated'`.
 
+## Design System
+Always read DESIGN.md before making any visual or UI decisions.
+All font choices, colors, spacing, and aesthetic direction are defined there.
+Do not deviate without explicit user approval.
+In QA mode, flag any code that doesn't match DESIGN.md.
+
 ## Do NOT
 
 - Add a build step or bundler — this must stay zero-config
 - Use localStorage — Supabase handles all persistence
 - Store last names of singers — organizational policy
-- Commit `js/config.js` with real credentials

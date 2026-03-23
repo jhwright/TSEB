@@ -1,1140 +1,197 @@
-// TSEB Bedside Singing Manager - Supabase Client
-// Replaces hardcoded HTML with live data from Supabase
+// TSEB App — Core namespace, utilities, navigation
+window.TSEB = {};
 
-let sb;
-let currentUser = null;
-let singersCache = [];
-let instPage = 0;
-let singerPage = 0;
-const PAGE_SIZE = 10;
-let instFullData = [];
-let singerFullData = [];
+// Supabase client (initialized after config.js loads)
+TSEB.sb = null;
 
-// ============================================================
-// INIT
-// ============================================================
-async function init() {
-  if (typeof supabase === 'undefined') throw new Error('Supabase CDN failed to load');
-  const { createClient } = supabase;
-  sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Current user's singer record (set after auth)
+TSEB.currentSinger = null;
 
-  // Skip auth for now — go straight to the app
-  showApp();
-}
+// Navigation
+TSEB.nav = function(screen) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  const el = document.getElementById('screen-' + screen);
+  const btn = document.querySelector('.nav-btn[data-screen="' + screen + '"]');
+  if (el) el.classList.add('active');
+  if (btn) btn.classList.add('active');
+  // Lazy-load: fetch data on first tab switch
+  if (screen === 'schedule' && !TSEB.schedule._loaded) TSEB.schedule.load();
+  if (screen === 'singers' && !TSEB.singers._loaded) TSEB.singers.load();
+  if (screen === 'outreach' && !TSEB.outreach._loaded) TSEB.outreach.load();
+  document.dispatchEvent(new CustomEvent('tseb:navigated', { detail: { screen } }));
+};
 
-function showLogin() {
-  document.getElementById('login-screen').style.display = 'flex';
-  document.getElementById('app-content').style.display = 'none';
-}
+// Toast notifications
+TSEB.toast = function(message, type) {
+  type = type || 'info';
+  const container = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.className = 'toast toast-' + type;
+  toast.textContent = message;
+  toast.style.pointerEvents = 'auto';
+  container.appendChild(toast);
+  // Trigger animation on next frame
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => toast.classList.add('toast-visible'));
+  });
+  // Auto-remove after 4 seconds
+  setTimeout(() => {
+    toast.classList.remove('toast-visible');
+    setTimeout(() => toast.remove(), 300);
+  }, 4000);
+};
 
-function showApp() {
-  document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('app-content').style.display = 'block';
-  loadAll();
-}
+// Show/hide loading skeletons
+TSEB.showSkeleton = function(containerId, count) {
+  count = count || 3;
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  el.innerHTML = Array(count).fill('<div class="skeleton skeleton-card"></div>').join('');
+};
 
-async function signInWithMagicLink() {
-  const email = document.getElementById('login-email').value.trim();
-  if (!email) { alert('Please enter your email address'); return; }
+// Show form overlay (full-screen on mobile)
+TSEB.showForm = function(html) {
+  const overlay = document.getElementById('form-overlay');
+  const container = document.getElementById('form-container');
+  container.innerHTML = html;
+  overlay.style.display = 'flex';
+  // Trigger slide-in animation
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => container.classList.add('modal-open'));
+  });
+};
 
-  if (!sb) { alert('App is still loading, please try again'); return; }
+TSEB.closeForm = function() {
+  const container = document.getElementById('form-container');
+  container.classList.remove('modal-open');
+  setTimeout(() => {
+    document.getElementById('form-overlay').style.display = 'none';
+    container.innerHTML = '';
+  }, 300);
+};
 
-  const btn = document.getElementById('login-btn');
-  btn.disabled = true;
-  btn.textContent = 'Sending...';
+// Show detail overlay
+TSEB.showDetail = function(html) {
+  const overlay = document.getElementById('detail-overlay');
+  const container = document.getElementById('detail-container');
+  container.innerHTML = html;
+  overlay.style.display = 'flex';
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => container.classList.add('modal-open'));
+  });
+};
 
-  try {
-    const { error } = await sb.auth.signInWithOtp({
-      email,
-      options: { emailRedirectTo: window.location.origin + window.location.pathname }
-    });
+TSEB.closeDetail = function() {
+  const container = document.getElementById('detail-container');
+  container.classList.remove('modal-open');
+  setTimeout(() => {
+    document.getElementById('detail-overlay').style.display = 'none';
+    container.innerHTML = '';
+  }, 300);
+};
 
-    if (error) {
-      alert('Login failed: ' + error.message);
-      btn.disabled = false;
-      btn.textContent = 'Send Magic Link';
-    } else {
-      document.getElementById('login-form').innerHTML = `
-        <div style="color:var(--ok); font-weight:600; font-size:15px; margin-bottom:8px;">Check your email</div>
-        <div style="color:var(--muted); font-size:14px;">We sent a login link to <strong>${esc(email)}</strong></div>
-      `;
-    }
-  } catch (err) {
-    alert('Error: ' + err.message);
-    btn.disabled = false;
-    btn.textContent = 'Send Magic Link';
-  }
-}
+// Utilities namespace
+TSEB.util = {};
 
-async function signOut() {
-  await sb.auth.signOut();
-}
-
-// ============================================================
-// DATA LOADING
-// ============================================================
-async function loadAll() {
-  await loadSingers();
-  await Promise.all([
-    loadDashboard(),
-    loadInstitutions(),
-    loadOutreach(),
-    loadSingersView(),
-    loadSchedule()
-  ]);
-  populateSingerDropdowns();
-}
-
-async function loadSingers() {
-  const { data } = await sb.from('singers').select('*').order('first_name');
-  singersCache = data || [];
-}
-
-function singerName(id) {
-  const s = singersCache.find(s => s.id === id);
-  return s ? s.first_name : '—';
-}
-
-function singerChip(name) {
-  return `<span class="singer-chip">${esc(name)}</span>`;
-}
-
-function esc(str) {
+TSEB.util.esc = function(str) {
   if (!str) return '';
   const d = document.createElement('div');
   d.textContent = str;
   return d.innerHTML;
-}
+};
 
-function fmtDate(d) {
+TSEB.util.fmtDate = function(d) {
   if (!d) return '—';
   const dt = new Date(d + 'T00:00:00');
   return dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-}
+};
 
-function fmtDateShort(d) {
+TSEB.util.fmtDateShort = function(d) {
   if (!d) return '—';
   const dt = new Date(d + 'T00:00:00');
   return dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-}
+};
 
-function isOverdue(d) {
+TSEB.util.todayStr = function() {
+  return new Date().toISOString().split('T')[0];
+};
+
+TSEB.util.isOverdue = function(d) {
   if (!d) return false;
   return new Date(d) < new Date(new Date().toDateString());
-}
+};
 
-function isSoon(d) {
+TSEB.util.isSoon = function(d) {
   if (!d) return false;
   const dt = new Date(d);
   const now = new Date(new Date().toDateString());
-  const week = new Date(now); week.setDate(week.getDate() + 7);
+  const week = new Date(now);
+  week.setDate(week.getDate() + 7);
   return dt >= now && dt <= week;
-}
-
-function statusBadge(status) {
-  const map = {
-    active: 'badge-active', initial_contact: 'badge-outreach', in_conversation: 'badge-outreach',
-    site_visit: 'badge-pending', on_hold: 'badge-inactive', previous: 'badge-inactive',
-    inactive: 'badge-eliminated'
-  };
-  const label = status.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-  return `<span class="badge ${map[status] || 'badge-inactive'}">${label}</span>`;
-}
-
-function recurrenceLabel(r) {
-  const map = { weekly: 'Weekly', biweekly: 'Biweekly', '2x_month': '2x/mo', monthly: 'Monthly', one_time: 'One-time' };
-  return map[r] || r || '';
-}
-
-// ============================================================
-// DASHBOARD
-// ============================================================
-async function loadDashboard() {
-  const [{ count: activeCount }, { count: outreachCount }, { count: singerCount }, { data: upcomingGigs }] = await Promise.all([
-    sb.from('institutions').select('*', { count: 'exact', head: true }).eq('status', 'active'),
-    sb.from('institutions').select('*', { count: 'exact', head: true }).in('status', ['initial_contact', 'in_conversation', 'site_visit']),
-    sb.from('singers').select('*', { count: 'exact', head: true }),
-    sb.from('gigs').select('*, institution:institutions(name), gig_singers(singer_id, is_anchor)')
-      .gte('gig_date', new Date().toISOString().split('T')[0])
-      .order('gig_date').order('gig_time').limit(6)
-  ]);
-
-  // Stats
-  const stats = document.getElementById('dash-stats');
-  if (stats) {
-    stats.innerHTML = `
-      <div class="stat-card"><div class="number">${activeCount || 0}</div><div class="label">Active Venues</div></div>
-      <div class="stat-card"><div class="number">${outreachCount || 0}</div><div class="label">In Outreach</div></div>
-      <div class="stat-card"><div class="number">${singerCount || 0}</div><div class="label">Volunteers</div></div>
-      <div class="stat-card"><div class="number">${(upcomingGigs || []).length}</div><div class="label">Upcoming Gigs</div></div>
-    `;
-  }
-
-  // Upcoming gigs
-  const gigList = document.getElementById('dash-gigs');
-  if (gigList && upcomingGigs) {
-    gigList.innerHTML = upcomingGigs.map(g => {
-      const dt = new Date(g.gig_date + 'T00:00:00');
-      const singers = (g.gig_singers || []).map(gs => singerName(gs.singer_id)).join(', ');
-      const time = g.gig_time ? g.gig_time.slice(0, 5) : '';
-      return `<li>
-        <div class="gig-date"><div class="month">${dt.toLocaleDateString('en-US',{month:'short'})}</div><div class="day">${dt.getDate()}</div></div>
-        <div class="gig-info"><div class="gig-venue">${esc(g.institution?.name)}</div><div class="gig-singers">${esc(singers)}</div><div class="gig-time">${time}</div>${g.notes ? `<div style="font-size:12px; color:var(--muted); font-style:italic; margin-top:2px;">${esc(g.notes)}</div>` : ''}</div>
-        ${g.recurrence ? `<span class="gig-recur">${recurrenceLabel(g.recurrence)}</span>` : ''}
-      </li>`;
-    }).join('');
-  }
-
-  // Follow-ups due
-  const { data: followups } = await sb.from('institutions')
-    .select('*, outreacher:singers!institutions_outreacher_id_fkey(first_name)')
-    .not('next_step', 'is', null)
-    .not('status', 'in', '(active,inactive,previous,on_hold)')
-    .order('next_step_due', { ascending: true, nullsFirst: false })
-    .limit(5);
-
-  const fuList = document.getElementById('dash-followups');
-  if (fuList && followups) {
-    fuList.innerHTML = followups.map(i => {
-      const overdue = isOverdue(i.next_step_due);
-      const soon = isSoon(i.next_step_due);
-      const dateBadgeClass = overdue ? 'badge-eliminated' : soon ? 'badge-outreach' : 'badge-pending';
-      const dateText = overdue ? 'Overdue' : fmtDateShort(i.next_step_due);
-      return `<div class="card" style="padding:12px; margin-bottom:8px; position:relative;">
-        <span class="badge ${dateBadgeClass}" style="position:absolute; top:10px; right:10px;">${dateText}</span>
-        <div style="font-weight:600; font-size:14px; padding-right:80px;">${esc(i.name)}</div>
-        <div style="font-size:12px; color:var(--muted); margin-top:4px;">${esc(i.next_step)}</div>
-        ${i.outreacher ? `<div style="margin-top:6px;">${singerChip(i.outreacher.first_name)}</div>` : ''}
-      </div>`;
-    }).join('');
-  }
-}
-
-// ============================================================
-// INSTITUTIONS
-// ============================================================
-async function loadInstitutions() {
-  const { data } = await sb.from('institutions')
-    .select('*, outreacher:singers!institutions_outreacher_id_fkey(first_name), gig_singers:gigs(gig_singers(singer_id))')
-    .order('status').order('name');
-
-  const container = document.getElementById('inst-list');
-  if (!container || !data) return;
-
-  instFullData = data;
-  instPage = 0;
-  renderInstPage(container, data);
-}
-
-function renderInstCard(i) {
-  const overdue = isOverdue(i.next_step_due);
-  return `<div class="inst-card" onclick="showInstitutionDetail('${i.id}')">
-    <div class="inst-top">
-      <div><div class="inst-name">${esc(i.name)}</div>${i.address ? `<div class="inst-loc">${esc(i.address)}</div>` : ''}</div>
-      ${statusBadge(i.status)}
-    </div>
-    ${i.outreacher ? `<div class="inst-bottom">${singerChip(i.outreacher.first_name)}${overdue ? '<span style="font-size:11px; color:var(--danger); font-weight:600;">Overdue</span>' : ''}</div>` : ''}
-  </div>`;
-}
-
-function renderInstPage(container, data) {
-  const end = (instPage + 1) * PAGE_SIZE;
-  const visible = data.slice(0, end);
-  container.innerHTML = visible.map(renderInstCard).join('');
-  if (end < data.length) {
-    container.innerHTML += `<button class="btn btn-secondary" style="width:100%; margin-top:8px;" onclick="loadMoreInstitutions()">Show more (${data.length - end} remaining)</button>`;
-  }
-}
-
-function loadMoreInstitutions() {
-  instPage++;
-  const container = document.getElementById('inst-list');
-  const q = document.getElementById('inst-search')?.value?.toLowerCase() || '';
-  const filtered = q ? instFullData.filter(i => instMatchesSearch(i, q)) : instFullData;
-  renderInstPage(container, filtered);
-}
-
-function instMatchesSearch(i, q) {
-  return (i.name || '').toLowerCase().includes(q) ||
-    (i.address || '').toLowerCase().includes(q) ||
-    (i.status || '').toLowerCase().includes(q) ||
-    (i.outreacher?.first_name || '').toLowerCase().includes(q);
-}
-
-// ============================================================
-// OUTREACH PIPELINE
-// ============================================================
-let outreachData = null;
-
-async function loadOutreach() {
-  const { data, error } = await sb.from('institutions')
-    .select('*, outreacher:singers!institutions_outreacher_id_fkey(first_name)')
-    .order('next_step_due', { ascending: true, nullsFirst: false });
-
-  if (error) { console.error('loadOutreach error:', error); return; }
-  if (!data) return;
-  outreachData = data;
-
-  // Populate outreacher filter
-  const filterEl = document.getElementById('outreach-filter');
-  if (filterEl) {
-    const currentVal = filterEl.value;
-    const outreachers = [...new Set(data.filter(i => i.outreacher).map(i => i.outreacher.first_name))].sort();
-    filterEl.innerHTML = '<option value="">All Outreachers</option>' +
-      outreachers.map(n => `<option value="${esc(n)}">${esc(n)}</option>`).join('');
-    filterEl.value = currentVal;
-  }
-
-  renderOutreach(data);
-}
-
-function filterOutreach() {
-  if (!outreachData) return;
-  const filterVal = document.getElementById('outreach-filter')?.value || '';
-  const filtered = filterVal ? outreachData.filter(i => i.outreacher && i.outreacher.first_name === filterVal) : outreachData;
-  renderOutreach(filtered);
-}
-
-function renderOutreach(data) {
-  const stages = {
-    initial_contact: { el: 'pipe-initial', items: [] },
-    in_conversation: { el: 'pipe-conversation', items: [] },
-    site_visit: { el: 'pipe-sitevisit', items: [] },
-    active: { el: 'pipe-active', items: [] },
-    on_hold: { el: 'pipe-onhold', items: [] },
-    previous: { el: 'pipe-previous', items: [] },
-    inactive: { el: 'pipe-inactive', items: [] }
-  };
-
-  data.forEach(i => {
-    const stage = stages[i.status];
-    if (stage) stage.items.push(i);
-  });
-
-  Object.entries(stages).forEach(([key, stage]) => {
-    const el = document.getElementById(stage.el);
-    if (!el) return;
-    const countEl = el.closest('.pipeline-col')?.querySelector('.count');
-    if (countEl) countEl.textContent = stage.items.length;
-
-    el.innerHTML = stage.items.map(i => {
-      const overdue = isOverdue(i.next_step_due);
-      const soon = isSoon(i.next_step_due);
-      const dateClass = overdue ? 'overdue' : soon ? 'soon' : '';
-      const dateText = overdue ? 'Overdue' : fmtDateShort(i.next_step_due);
-      const activeStyle = key === 'active' ? 'border-left:3px solid var(--ok);' : '';
-      const canDrag = window.innerWidth >= 640;
-      return `<div class="pipeline-card" style="${activeStyle}" ${canDrag ? 'draggable="true"' : ''} data-id="${i.id}" onclick="showInstitutionDetail('${i.id}')">
-        <div class="pc-name">${esc(i.name)}</div>
-        ${i.institution_type ? `<div class="pc-type">${esc(i.institution_type.replace(/_/g,' '))}</div>` : ''}
-        <div class="pc-meta">
-          ${i.outreacher ? singerChip(i.outreacher.first_name) : ''}
-          <span class="pc-date ${dateClass}">${key === 'active' ? recurrenceLabel(i.recurrence) : dateText}</span>
-        </div>
-      </div>`;
-    }).join('');
-  });
-
-  // Follow-ups table
-  const followups = data.filter(i => i.next_step && !['active','inactive'].includes(i.status))
-    .sort((a, b) => {
-      if (!a.next_step_due) return 1;
-      if (!b.next_step_due) return -1;
-      return new Date(a.next_step_due) - new Date(b.next_step_due);
-    }).slice(0, 8);
-
-  const tbody = document.getElementById('outreach-followups');
-  if (tbody) {
-    tbody.innerHTML = followups.map(i => {
-      const overdue = isOverdue(i.next_step_due);
-      const soon = isSoon(i.next_step_due);
-      const bg = overdue ? 'background:var(--danger-light)' : soon ? 'background:var(--warn-light)' : '';
-      const badge = overdue ? '<span class="badge badge-eliminated">Overdue</span>' : soon ? '<span class="badge badge-outreach">Soon</span>' : '<span class="badge badge-pending">Upcoming</span>';
-      return `<tr style="${bg}">
-        <td>${badge}</td>
-        <td><strong>${esc(i.name)}</strong></td>
-        <td>${i.outreacher ? singerChip(i.outreacher.first_name) : '—'}</td>
-        <td>${esc(i.next_step)}</td>
-        <td style="${overdue ? 'font-weight:600; color:var(--danger)' : soon ? 'font-weight:600; color:var(--warn)' : ''}">${fmtDateShort(i.next_step_due)}</td>
-        <td><button class="btn btn-sm btn-secondary" onclick="openLogForInstitution('${i.id}')">Log</button></td>
-      </tr>`;
-    }).join('');
-  }
-
-  // Collapsible end-state columns
-  document.querySelectorAll('.pipeline-col[data-collapsible]').forEach(col => {
-    const isMobile = window.innerWidth < 640;
-    if (isMobile) col.classList.add('collapsed');
-    else col.classList.remove('collapsed');
-    const header = col.querySelector('.pipeline-col-header');
-    header.style.cursor = 'pointer';
-    header.onclick = (e) => {
-      e.stopPropagation();
-      col.classList.toggle('collapsed');
-    };
-  });
-
-  setupKanbanDrag();
-}
-
-// ============================================================
-// KANBAN DRAG & DROP
-// ============================================================
-const stageMap = {
-  'pipe-initial': 'initial_contact',
-  'pipe-conversation': 'in_conversation',
-  'pipe-sitevisit': 'site_visit',
-  'pipe-active': 'active',
-  'pipe-onhold': 'on_hold',
-  'pipe-previous': 'previous',
-  'pipe-inactive': 'inactive'
 };
 
-let kanbanDragId = null;
-
-// Set up drop targets once (not on every render)
-let kanbanDropSetup = false;
-function setupKanbanDropTargets() {
-  if (kanbanDropSetup) return;
-  kanbanDropSetup = true;
-
-  document.querySelectorAll('.pipeline-col-body').forEach(col => {
-    col.addEventListener('dragover', e => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; col.classList.add('drag-over'); });
-    col.addEventListener('dragleave', e => { if (!col.contains(e.relatedTarget)) col.classList.remove('drag-over'); });
-    col.addEventListener('drop', async e => {
-      e.preventDefault();
-      col.classList.remove('drag-over');
-      const newStatus = stageMap[col.id];
-      if (!kanbanDragId || !newStatus) return;
-      const id = kanbanDragId;
-      kanbanDragId = null;
-      const { error } = await sb.from('institutions').update({ status: newStatus }).eq('id', id);
-      if (error) { alert('Error: ' + error.message); return; }
-      loadOutreach();
-    });
-  });
-}
-
-function setupKanbanDrag() {
-  if (window.innerWidth < 640) return;
-  setupKanbanDropTargets();
-
-  document.querySelectorAll('.pipeline-card[draggable]').forEach(card => {
-    card.addEventListener('dragstart', e => {
-      kanbanDragId = card.dataset.id;
-      card.classList.add('dragging');
-      e.dataTransfer.effectAllowed = 'move';
-      e.dataTransfer.setData('text/plain', card.dataset.id);
-      card._dragged = false;
-      setTimeout(() => { card._dragged = true; }, 0);
-    });
-    card.addEventListener('dragend', () => {
-      card.classList.remove('dragging');
-      document.querySelectorAll('.pipeline-col-body').forEach(b => b.classList.remove('drag-over'));
-    });
-    // Allow drops on cards to bubble to column body
-    card.addEventListener('dragover', e => {
-      e.preventDefault();
-      e.dataTransfer.dropEffect = 'move';
-      const col = card.closest('.pipeline-col-body');
-      if (col) col.classList.add('drag-over');
-    });
-    card.addEventListener('drop', e => {
-      e.preventDefault();
-      const col = card.closest('.pipeline-col-body');
-      if (col) col.dispatchEvent(new DragEvent('drop', { dataTransfer: e.dataTransfer, bubbles: false }));
-    });
-    // Suppress click if it was a drag
-    card.addEventListener('click', e => {
-      if (card._dragged) { e.stopImmediatePropagation(); card._dragged = false; }
-    }, true);
-  });
-
-  // Touch support for mobile
-  let touchCard = null, touchClone = null, touchStartX = 0, touchStartY = 0, touchMoved = false;
-  document.querySelectorAll('.pipeline-card[draggable]').forEach(card => {
-    card.addEventListener('touchstart', e => {
-      touchMoved = false;
-      touchStartX = e.touches[0].clientX;
-      touchStartY = e.touches[0].clientY;
-    }, { passive: true });
-    card.addEventListener('touchmove', e => {
-      const dx = Math.abs(e.touches[0].clientX - touchStartX);
-      const dy = Math.abs(e.touches[0].clientY - touchStartY);
-      if (!touchCard && dx < 10 && dy < 10) return; // not a drag yet
-      if (!touchCard) {
-        touchCard = card;
-        kanbanDragId = card.dataset.id;
-        touchClone = card.cloneNode(true);
-        touchClone.style.cssText = 'position:fixed;z-index:1000;opacity:.7;pointer-events:none;width:' + card.offsetWidth + 'px;';
-        document.body.appendChild(touchClone);
-        card.classList.add('dragging');
-        touchMoved = true;
-      }
-      e.preventDefault();
-      const t = e.touches[0];
-      touchClone.style.left = (t.clientX - 20) + 'px';
-      touchClone.style.top = (t.clientY - 20) + 'px';
-      document.querySelectorAll('.pipeline-col-body').forEach(b => {
-        const r = b.getBoundingClientRect();
-        b.classList.toggle('drag-over', t.clientX >= r.left && t.clientX <= r.right && t.clientY >= r.top && t.clientY <= r.bottom);
-      });
-    }, { passive: false });
-    card.addEventListener('touchend', async e => {
-      if (!touchCard) return;
-      if (touchClone) touchClone.remove();
-      touchCard.classList.remove('dragging');
-      const dropTarget = document.querySelector('.pipeline-col-body.drag-over');
-      document.querySelectorAll('.pipeline-col-body').forEach(b => b.classList.remove('drag-over'));
-      if (dropTarget && kanbanDragId) {
-        const newStatus = stageMap[dropTarget.id];
-        if (newStatus) {
-          const { error } = await sb.from('institutions').update({ status: newStatus }).eq('id', kanbanDragId);
-          if (error) alert('Error: ' + error.message);
-          else loadOutreach();
-        }
-      }
-      touchCard = null; touchClone = null; kanbanDragId = null;
-      // Suppress the click that follows touchend after a drag
-      if (touchMoved) {
-        card.addEventListener('click', ev => { ev.stopImmediatePropagation(); ev.preventDefault(); }, { once: true, capture: true });
-      }
-    });
-  });
-}
-
-// ============================================================
-// INSTITUTION DETAIL (dynamic slide-over)
-// ============================================================
-async function showInstitutionDetail(id) {
-  const [{ data: inst }, { data: contacts }, { data: activities }] = await Promise.all([
-    sb.from('institutions').select('*, outreacher:singers!institutions_outreacher_id_fkey(first_name)').eq('id', id).single(),
-    sb.from('contacts').select('*').eq('institution_id', id).order('is_primary', { ascending: false }),
-    sb.from('activities').select('*, singer:singers(first_name)').eq('institution_id', id).order('activity_date', { ascending: false })
-  ]);
-
-  if (!inst) return;
-
-  const overdue = isOverdue(inst.next_step_due);
-  const daysOverdue = overdue ? Math.floor((new Date() - new Date(inst.next_step_due)) / 86400000) : 0;
-
-  const panel = document.getElementById('dynamic-detail');
-  panel.innerHTML = `
-    <div class="detail-panel">
-      <div class="detail-panel-header">
-        <div>
-          <h3>${esc(inst.name)}</h3>
-          <div class="subtitle">${esc((inst.institution_type || '').replace(/_/g,' '))}${inst.address ? ' · ' + esc(inst.address) : ''}</div>
-          <div style="margin-top:6px;">${statusBadge(inst.status)} ${overdue ? '<span class="badge badge-eliminated">Overdue</span>' : ''}</div>
-        </div>
-        <button class="modal-close" onclick="document.getElementById('dynamic-detail').classList.remove('open')">&times;</button>
-      </div>
-      <div class="detail-panel-body">
-        ${inst.next_step ? `
-          <div class="next-step-banner" ${!overdue && inst.status === 'site_visit' ? 'style="background:var(--ok-light); border-color:#8ed1a8;"' : ''}>
-            <div class="nsb-label" ${inst.status === 'site_visit' ? 'style="color:var(--ok);"' : ''}>Next Step</div>
-            ${esc(inst.next_step)}
-            <div class="nsb-due">Due: ${fmtDate(inst.next_step_due)} ${overdue ? `· <strong style="color:var(--danger)">${daysOverdue} days overdue</strong>` : ''}</div>
-          </div>
-        ` : ''}
-        <div class="quick-actions">
-          <button class="btn btn-primary btn-sm" onclick="openLogForInstitution('${inst.id}')">Log Activity</button>
-          <button class="btn btn-secondary btn-sm" onclick="editInstitution('${inst.id}')">Edit</button>
-        </div>
-        ${inst.outreacher ? `
-          <div class="detail-section"><h4>Outreacher</h4><span class="singer-chip" style="font-size:13px; padding:4px 12px;">${esc(inst.outreacher.first_name)}</span></div>
-        ` : ''}
-        ${contacts && contacts.length ? `
-          <div class="detail-section"><h4>Contacts</h4>
-            ${contacts.map(c => `
-              <div class="contact-card">
-                <div class="cc-name">${esc(c.first_name || '')} ${esc(c.last_name || '')}</div>
-                ${c.job_title ? `<div class="cc-title">${esc(c.job_title)}</div>` : ''}
-                <div class="cc-info">
-                  ${c.phone ? `<a href="tel:${c.phone}">${esc(c.phone)}</a>` : ''}
-                  ${c.phone && c.email ? ' · ' : ''}
-                  ${c.email ? `<a href="mailto:${c.email}">${esc(c.email)}</a>` : ''}
-                </div>
-              </div>
-            `).join('')}
-          </div>
-        ` : ''}
-        <div class="detail-section"><h4>Timeline</h4>
-          ${activities && activities.length ? `
-            <div class="timeline">
-              ${activities.map(a => {
-                const typeClass = ['phone_call','voicemail','email_sent','in_person','site_visit','first_sing'].includes(a.activity_type) ? 'action' : a.activity_type === 'status_change' ? 'status-change' : 'note';
-                return `<div class="timeline-item ${typeClass}">
-                  <div class="tl-date">${fmtDate(a.activity_date)}</div>
-                  ${a.singer ? `<div class="tl-author">${esc(a.singer.first_name)}</div>` : ''}
-                  <div class="tl-content">${esc(a.description)}</div>
-                </div>`;
-              }).join('')}
-            </div>
-          ` : '<p style="color:var(--muted); font-size:13px;">No activity logged yet.</p>'}
-        </div>
-        ${inst.notes ? `<div class="detail-section"><h4>Notes</h4><p style="font-size:13px;">${esc(inst.notes)}</p></div>` : ''}
-      </div>
-    </div>
-  `;
-  panel.classList.add('open');
-}
-
-// ============================================================
-// SINGERS VIEW
-// ============================================================
-async function loadSingersView() {
-  const container = document.getElementById('singers-list');
-  if (!container) return;
-
-  singerFullData = singersCache;
-  singerPage = 0;
-  renderSingerPage(container, singerFullData);
-}
-
-function renderSingerCard(s) {
-  const roleLabel = s.role === 'both' ? '<span class="badge badge-active">Singer</span> <span class="badge badge-pending">Outreacher</span>'
-    : s.role === 'singer' ? '<span class="badge badge-active">Singer</span>'
-    : '<span class="badge badge-pending">Outreacher</span>';
-  const availBadge = s.availability === 'available' ? 'badge-active' : s.availability === 'limited' ? 'badge-outreach' : 'badge-inactive';
-  return `<div class="singer-card">
-    <div class="sc-top"><span class="sc-name">${esc(s.first_name)}</span><div>${roleLabel}</div></div>
-    <div style="margin-top:4px;"><span class="badge ${availBadge}">${s.availability}</span></div>
-    ${s.notes ? `<div class="sc-note">${esc(s.notes)}</div>` : ''}
-  </div>`;
-}
-
-function renderSingerPage(container, data) {
-  const end = (singerPage + 1) * PAGE_SIZE;
-  const visible = data.slice(0, end);
-  container.innerHTML = visible.map(renderSingerCard).join('');
-  if (end < data.length) {
-    container.innerHTML += `<button class="btn btn-secondary" style="width:100%; margin-top:8px;" onclick="loadMoreSingers()">Show more (${data.length - end} remaining)</button>`;
-  }
-}
-
-function loadMoreSingers() {
-  singerPage++;
-  const container = document.getElementById('singers-list');
-  const q = document.getElementById('singer-search')?.value?.toLowerCase() || '';
-  const filtered = q ? singerFullData.filter(s => singerMatchesSearch(s, q)) : singerFullData;
-  renderSingerPage(container, filtered);
-}
-
-function singerMatchesSearch(s, q) {
-  return (s.first_name || '').toLowerCase().includes(q) ||
-    (s.role || '').toLowerCase().includes(q) ||
-    (s.availability || '').toLowerCase().includes(q) ||
-    (s.notes || '').toLowerCase().includes(q);
-}
-
-// ============================================================
-// SCHEDULE
-// ============================================================
-async function loadSchedule() {
-  const today = new Date().toISOString().split('T')[0];
-  const endDate = new Date();
-  endDate.setDate(endDate.getDate() + 30);
-  const end = endDate.toISOString().split('T')[0];
-
-  const { data: gigs } = await sb.from('gigs')
-    .select('*, institution:institutions(id, name, address, institution_type, contacts(first_name, last_name, job_title, phone, email, is_primary)), gig_singers(singer_id, is_anchor)')
-    .gte('gig_date', today)
-    .lte('gig_date', end)
-    .order('gig_date')
-    .order('gig_time');
-
-  if (!gigs) return;
-
-  // Group by date
-  const grouped = {};
-  gigs.forEach(g => {
-    if (!grouped[g.gig_date]) grouped[g.gig_date] = [];
-    grouped[g.gig_date].push(g);
-  });
-
-  const listEl = document.getElementById('sched-list-content');
-  if (listEl) {
-    listEl.innerHTML = Object.entries(grouped).map(([date, dayGigs]) => {
-      const dt = new Date(date + 'T00:00:00');
-      const dayLabel = dt.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
-      return `<div class="sched-day-group">
-        <div class="sched-day-label"><span class="sched-day-date">${dayLabel}</span><span>${dayGigs.length} gig${dayGigs.length > 1 ? 's' : ''}</span></div>
-        ${dayGigs.map(g => {
-          const singers = (g.gig_singers || []).map(gs => {
-            const name = singerName(gs.singer_id);
-            return gs.is_anchor ? `${name} <span class="singer-role">anchor</span>` : name;
-          });
-          const primary = (g.institution?.contacts || []).find(c => c.is_primary);
-          const contactLine = primary ? `${esc((primary.first_name || '') + ' ' + (primary.last_name || '')).trim()}${primary.phone ? ' · <a href="tel:' + primary.phone + '">' + esc(primary.phone) + '</a>' : ''}` : '';
-          return `<div class="sched-gig" style="cursor:pointer;" onclick="showGigDetail('${g.id}')">
-            <div class="sched-gig-time">${g.gig_time ? g.gig_time.slice(0, 5) : '—'}</div>
-            <div class="sched-gig-body">
-              <div class="sched-gig-venue">${esc(g.institution?.name)}</div>
-              <div class="sched-gig-meta">${recurrenceLabel(g.recurrence)}${g.institution?.address ? ' · ' + esc(g.institution.address) : ''}</div>
-              ${contactLine ? `<div class="sched-gig-contact" style="font-size:12px; color:var(--muted); margin-top:2px;">${contactLine}</div>` : ''}
-              <div class="sched-gig-singers"><div class="singer-chips">${singers.map(s => `<span class="singer-chip">${s}</span>`).join('')}</div></div>
-              ${g.notes ? `<div style="font-size:12px; color:var(--muted); margin-top:4px; font-style:italic;">${esc(g.notes)}</div>` : ''}
-            </div>
-            <div class="sched-gig-actions">${g.recurrence ? `<span class="gig-recur">${recurrenceLabel(g.recurrence)}</span>` : ''}</div>
-          </div>`;
-        }).join('')}
-      </div>`;
-    }).join('') || '<p style="padding:16px; color:var(--muted);">No upcoming gigs scheduled.</p>';
-  }
-
-  // Also load calendar view
-  loadCalendar(new Date().getFullYear(), new Date().getMonth());
-}
-
-// ============================================================
-// GIG DETAIL
-// ============================================================
-async function showGigDetail(gigId) {
-  const [{ data: gig }, ] = await Promise.all([
-    sb.from('gigs')
-      .select('*, institution:institutions(id, name, address, institution_type, notes, contacts(first_name, last_name, job_title, phone, email, is_primary)), gig_singers(singer_id, is_anchor)')
-      .eq('id', gigId).single()
-  ]);
-  if (!gig) return;
-
-  const inst = gig.institution || {};
-  const contacts = (inst.contacts || []).sort((a, b) => (b.is_primary ? 1 : 0) - (a.is_primary ? 1 : 0));
-  const singers = (gig.gig_singers || []).map(gs => {
-    const name = singerName(gs.singer_id);
-    return gs.is_anchor ? `<span class="singer-chip">${name} <span class="singer-role">anchor</span></span>` : `<span class="singer-chip">${name}</span>`;
-  });
-  const dt = new Date(gig.gig_date + 'T00:00:00');
-  const dateLabel = dt.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
-
-  const panel = document.getElementById('dynamic-detail');
-  panel.innerHTML = `
-    <div class="detail-panel">
-      <div class="detail-panel-header">
-        <div>
-          <h3>${esc(inst.name || 'Unknown Venue')}</h3>
-          <div class="subtitle">${dateLabel}${gig.gig_time ? ' at ' + gig.gig_time.slice(0, 5) : ''} · ${recurrenceLabel(gig.recurrence)}</div>
-        </div>
-        <button class="modal-close" onclick="document.getElementById('dynamic-detail').classList.remove('open')">&times;</button>
-      </div>
-      <div class="detail-panel-body">
-        ${inst.address ? `
-          <div class="detail-section"><h4>Address</h4><p style="font-size:13px;">${esc(inst.address)}</p></div>
-        ` : ''}
-        ${contacts.length ? `
-          <div class="detail-section"><h4>Contacts</h4>
-            ${contacts.map(c => `
-              <div class="contact-card">
-                <div class="cc-name">${esc(c.first_name || '')} ${esc(c.last_name || '')}${c.is_primary ? ' <span style="font-size:10px; color:var(--accent);">PRIMARY</span>' : ''}</div>
-                ${c.job_title ? `<div class="cc-title">${esc(c.job_title)}</div>` : ''}
-                <div class="cc-info">
-                  ${c.phone ? `<a href="tel:${c.phone}">${esc(c.phone)}</a>` : ''}
-                  ${c.phone && c.email ? ' · ' : ''}
-                  ${c.email ? `<a href="mailto:${c.email}">${esc(c.email)}</a>` : ''}
-                </div>
-              </div>
-            `).join('')}
-          </div>
-        ` : ''}
-        ${singers.length ? `
-          <div class="detail-section"><h4>Singers</h4><div class="singer-chips">${singers.join('')}</div></div>
-        ` : ''}
-        ${gig.notes ? `<div class="detail-section"><h4>Notes</h4><p style="font-size:13px;">${esc(gig.notes)}</p></div>` : ''}
-        <div style="margin-top:16px;">
-          <button class="btn btn-secondary btn-sm" onclick="showInstitutionDetail('${inst.id}')">View Full Institution</button>
-        </div>
-      </div>
-    </div>
-  `;
-  panel.classList.add('open');
-}
-
-// ============================================================
-// CALENDAR VIEW
-// ============================================================
-let calMonth = new Date().getMonth();
-let calYear = new Date().getFullYear();
-let calGigsCache = [];
-
-async function loadCalendar(year, month) {
-  calYear = year;
-  calMonth = month;
-
-  // Fetch gigs for the visible month range (include overflow days)
-  const first = new Date(year, month, 1);
-  const last = new Date(year, month + 1, 0);
-  // Expand to cover partial weeks
-  const startDay = new Date(first);
-  startDay.setDate(startDay.getDate() - first.getDay());
-  const endDay = new Date(last);
-  endDay.setDate(endDay.getDate() + (6 - last.getDay()));
-
-  const { data: gigs } = await sb.from('gigs')
-    .select('*, institution:institutions(name, address, contacts(first_name, last_name, phone, is_primary)), gig_singers(singer_id, is_anchor)')
-    .gte('gig_date', localDateStr(startDay))
-    .lte('gig_date', localDateStr(endDay))
-    .order('gig_time');
-
-  calGigsCache = gigs || [];
-  renderCalendar();
-}
-
-function localDateStr(d) {
-  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-}
-
-function renderCalendar() {
-  const container = document.getElementById('cal-container');
-  if (!container) return;
-
-  const today = localDateStr(new Date());
-  const first = new Date(calYear, calMonth, 1);
-  const last = new Date(calYear, calMonth + 1, 0);
-  const monthLabel = first.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-
-  // Build gigs-by-date map
-  const gigsByDate = {};
-  calGigsCache.forEach(g => {
-    if (!gigsByDate[g.gig_date]) gigsByDate[g.gig_date] = [];
-    gigsByDate[g.gig_date].push(g);
-  });
-
-  // Navigation
-  let html = `<div class="cal-nav">
-    <button onclick="calPrev()">&lsaquo; Prev</button>
-    <span class="cal-month-label">${monthLabel}</span>
-    <button onclick="calNext()">Next &rsaquo;</button>
-  </div>`;
-
-  // Grid header
-  html += '<div class="cal-grid">';
-  ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].forEach(d => {
-    html += `<div class="cal-hdr">${d}</div>`;
-  });
-
-  // Fill cells — compute exact cell count to avoid infinite loop
-  const cursor = new Date(calYear, calMonth, 1);
-  cursor.setDate(cursor.getDate() - first.getDay());
-  const totalCells = Math.ceil((first.getDay() + last.getDate()) / 7) * 7;
-
-  for (let i = 0; i < totalCells; i++) {
-    const dateStr = localDateStr(cursor);
-    const isOther = cursor.getMonth() !== calMonth;
-    const isToday = dateStr === today;
-    const classes = ['cal-cell'];
-    if (isOther) classes.push('other-month');
-    if (isToday) classes.push('today');
-
-    const dayGigs = gigsByDate[dateStr] || [];
-    const totalRows = totalCells / 7;
-    const currentRow = Math.floor(i / 7);
-    const isBottomRows = currentRow >= totalRows - 2;
-    const dots = dayGigs.map(g => {
-      const timeAttr = g.gig_time ? `data-time="${g.gig_time.slice(0, 5)}"` : '';
-      const timeClass = g.gig_time ? ' has-time' : '';
-      const aboveClass = isBottomRows ? ' tt-above' : '';
-      const singers = (g.gig_singers || []).map(gs => {
-        const n = singerName(gs.singer_id);
-        return gs.is_anchor ? n + ' (anchor)' : n;
-      });
-      const primary = (g.institution?.contacts || []).find(c => c.is_primary);
-      const contactStr = primary ? esc((primary.first_name || '') + ' ' + (primary.last_name || '')).trim() + (primary.phone ? ' · ' + esc(primary.phone) : '') : '';
-      const tooltip = `<div class="cal-tooltip">
-        <strong>${esc(g.institution?.name || '')}</strong>
-        ${g.institution?.address ? '<div style="color:var(--muted);">' + esc(g.institution.address) + '</div>' : ''}
-        ${contactStr ? '<div style="color:var(--muted);">' + contactStr + '</div>' : ''}
-        ${g.gig_time ? '<div>' + g.gig_time.slice(0, 5) + ' · ' + recurrenceLabel(g.recurrence) + '</div>' : '<div>' + recurrenceLabel(g.recurrence) + '</div>'}
-        ${singers.length ? '<div class="tt-singers">' + singers.map(s => esc(s)).join(', ') + '</div>' : ''}
-        ${g.notes ? '<div class="tt-notes">' + esc(g.notes) + '</div>' : ''}
-      </div>`;
-      return `<div class="cal-dot${timeClass}${aboveClass}" ${timeAttr} onclick="event.stopPropagation(); showGigDetail('${g.id}')">${esc(g.institution?.name || '')}${tooltip}</div>`;
-    }).join('');
-
-    html += `<div class="${classes.join(' ')}">
-      <div class="cal-day-num">${cursor.getDate()}</div>
-      <div class="cal-dots">${dots}</div>
-    </div>`;
-
-    cursor.setDate(cursor.getDate() + 1);
-  }
-
-  html += '</div>';
-  container.innerHTML = html;
-}
-
-function calPrev() {
-  let m = calMonth - 1, y = calYear;
-  if (m < 0) { m = 11; y--; }
-  loadCalendar(y, m);
-}
-
-function calNext() {
-  let m = calMonth + 1, y = calYear;
-  if (m > 11) { m = 0; y++; }
-  loadCalendar(y, m);
-}
-
-// ============================================================
-// FORM SUBMISSIONS
-// ============================================================
-async function submitLogActivity(form) {
-  const fd = new FormData(form);
-  const institutionId = fd.get('institution_id');
-  if (!institutionId) { alert('Select an institution'); return; }
-
-  // Insert activity
-  const { error: actErr } = await sb.from('activities').insert({
-    institution_id: institutionId,
-    singer_id: fd.get('singer_id') || null,
-    activity_type: fd.get('activity_type'),
-    activity_date: fd.get('activity_date'),
-    contact_person: fd.get('contact_person') || null,
-    description: fd.get('description')
-  });
-  if (actErr) { alert('Error: ' + actErr.message); return; }
-
-  // Update next step if provided
-  const nextStep = fd.get('next_step');
-  const nextDue = fd.get('next_step_due');
-  const newStage = fd.get('new_stage');
-  const updates = {};
-  if (nextStep) updates.next_step = nextStep;
-  if (nextDue) updates.next_step_due = nextDue;
-  if (newStage) updates.status = newStage;
-
-  if (Object.keys(updates).length) {
-    await sb.from('institutions').update(updates).eq('id', institutionId);
-  }
-
-  closeModal('log-activity-modal');
-  form.reset();
-  loadAll();
-}
-
-async function submitInstitution(form) {
-  const fd = new FormData(form);
-  const { error } = await sb.from('institutions').insert({
-    name: fd.get('name'),
-    institution_type: fd.get('institution_type') || null,
-    status: fd.get('status'),
-    address: fd.get('address') || null,
-    outreacher_id: fd.get('outreacher_id') || null,
-    next_step: fd.get('next_step') || null,
-    next_step_due: fd.get('next_step_due') || null
-  });
-  if (error) { alert('Error: ' + error.message); return; }
-
-  // Add contact if provided
-  const cName = fd.get('contact_first_name');
-  if (cName) {
-    // Get the new institution's ID (last inserted)
-    const { data: newest } = await sb.from('institutions').select('id').eq('name', fd.get('name')).order('created_at', { ascending: false }).limit(1);
-    if (newest && newest[0]) {
-      await sb.from('contacts').insert({
-        institution_id: newest[0].id,
-        first_name: cName,
-        last_name: fd.get('contact_last_name') || null,
-        job_title: fd.get('contact_title') || null,
-        phone: fd.get('contact_phone') || null,
-        email: fd.get('contact_email') || null
-      });
-    }
-  }
-
-  closeModal('institution-modal');
-  form.reset();
-  loadAll();
-}
-
-async function submitSinger(form) {
-  const fd = new FormData(form);
-  const { error } = await sb.from('singers').insert({
-    first_name: fd.get('first_name'),
-    role: fd.get('role'),
-    availability: fd.get('availability'),
-    preferred_days: fd.get('preferred_days') || null,
-    notes: fd.get('notes') || null
-  });
-  if (error) { alert('Error: ' + error.message); return; }
-  closeModal('singer-modal');
-  form.reset();
-  loadAll();
-}
-
-async function submitGig(form) {
-  const fd = new FormData(form);
-  const institutionId = fd.get('institution_id');
-  if (!institutionId) { alert('Select a venue'); return; }
-
-  const { data: gig, error } = await sb.from('gigs').insert({
-    institution_id: institutionId,
-    gig_date: fd.get('gig_date'),
-    gig_time: fd.get('gig_time') || null,
-    recurrence: fd.get('recurrence'),
-    recurrence_end: fd.get('recurrence_end') || null,
-    notes: fd.get('gig_notes') || null
-  }).select().single();
-
-  if (error) { alert('Error: ' + error.message); return; }
-
-  // Add singers
-  const singerIds = [fd.get('singer1'), fd.get('singer2'), fd.get('singer3')].filter(Boolean);
-  if (singerIds.length && gig) {
-    await sb.from('gig_singers').insert(
-      singerIds.map((sid, i) => ({ gig_id: gig.id, singer_id: sid, is_anchor: i === 0 }))
-    );
-  }
-
-  closeModal('gig-modal');
-  form.reset();
-  loadAll();
-}
-
-// ============================================================
-// HELPERS
-// ============================================================
-function openLogForInstitution(id) {
-  openModal('log-activity-modal');
-  const sel = document.querySelector('#log-activity-modal select[name="institution_id"]');
-  if (sel) sel.value = id;
-}
-
-async function editInstitution(id) {
-  const { data: inst } = await sb.from('institutions').select('*').eq('id', id).single();
-  if (!inst) return;
-
-  // Close the detail panel
-  document.getElementById('dynamic-detail').classList.remove('open');
-
-  const modal = document.getElementById('edit-institution-modal');
-  const form = modal.querySelector('form');
-  form.querySelector('[name="id"]').value = inst.id;
-  form.querySelector('[name="name"]').value = inst.name || '';
-  form.querySelector('[name="institution_type"]').value = inst.institution_type || '';
-  form.querySelector('[name="status"]').value = inst.status || '';
-  form.querySelector('[name="address"]').value = inst.address || '';
-  form.querySelector('[name="recurrence"]').value = inst.recurrence || '';
-  form.querySelector('[name="next_step"]').value = inst.next_step || '';
-  form.querySelector('[name="next_step_due"]').value = inst.next_step_due || '';
-  form.querySelector('[name="notes"]').value = inst.notes || '';
-  form.querySelector('[name="inactive_reason"]').value = inst.inactive_reason || '';
-
-  // Show/hide inactive reason based on status
-  const inactiveGroup = modal.querySelector('.inactive-reason-group');
-  inactiveGroup.style.display = inst.status === 'inactive' ? '' : 'none';
-  form.querySelector('[name="status"]').addEventListener('change', function() {
-    inactiveGroup.style.display = this.value === 'inactive' ? '' : 'none';
-  });
-
-  // Populate singer dropdown then set value
-  await populateInstitutionDropdowns();
-  const outreacherSel = form.querySelector('[name="outreacher_id"]');
-  // Rebuild the singer list for this dropdown
-  const placeholder = outreacherSel.dataset.placeholder || 'Assign...';
-  outreacherSel.innerHTML = `<option value="">${placeholder}</option>` +
-    singersCache.map(s => `<option value="${s.id}">${esc(s.first_name)}</option>`).join('');
-  outreacherSel.value = inst.outreacher_id || '';
-
-  openModal('edit-institution-modal');
-}
-
-async function submitEditInstitution(form) {
-  const fd = new FormData(form);
-  const id = fd.get('id');
-  const { error } = await sb.from('institutions').update({
-    name: fd.get('name'),
-    institution_type: fd.get('institution_type') || null,
-    status: fd.get('status'),
-    address: fd.get('address') || null,
-    outreacher_id: fd.get('outreacher_id') || null,
-    recurrence: fd.get('recurrence') || null,
-    next_step: fd.get('next_step') || null,
-    next_step_due: fd.get('next_step_due') || null,
-    notes: fd.get('notes') || null,
-    inactive_reason: fd.get('inactive_reason') || null
-  }).eq('id', id);
-
-  if (error) { alert('Error: ' + error.message); return; }
-  closeModal('edit-institution-modal');
-  form.reset();
-  loadAll();
-  // Reopen the detail panel to show updated info
-  showInstitutionDetail(id);
-}
-
-function populateSingerDropdowns() {
-  document.querySelectorAll('select[data-singer-list]').forEach(sel => {
+TSEB.util.statusBadge = function(status) {
+  const map = {
+    active: 'badge-active',
+    initial_contact: 'badge-initial',
+    in_conversation: 'badge-conversation',
+    site_visit: 'badge-conversation',
+    on_hold: 'badge-muted',
+    previous: 'badge-muted',
+    inactive: 'badge-overdue'
+  };
+  const label = (status || '').replace(/_/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+  return '<span class="badge ' + (map[status] || 'badge-muted') + '">' + label + '</span>';
+};
+
+TSEB.util.recurrenceLabel = function(r) {
+  const map = { weekly: 'Weekly', biweekly: 'Biweekly', '2x_month': '2x/mo', monthly: 'Monthly', one_time: 'One-time' };
+  return map[r] || r || '';
+};
+
+TSEB.util.singerChip = function(name) {
+  return '<span class="singer-chip">' + TSEB.util.esc(name) + '</span>';
+};
+
+// Singers cache (loaded once, shared across modules)
+TSEB.singersCache = [];
+
+TSEB.util.singerName = function(id) {
+  const s = TSEB.singersCache.find(function(s) { return s.id === id; });
+  return s ? s.first_name : '—';
+};
+
+// Populate singer dropdowns
+TSEB.util.populateSingerDropdowns = function() {
+  document.querySelectorAll('select[data-singer-list]').forEach(function(sel) {
     const currentVal = sel.value;
     const placeholder = sel.dataset.placeholder || 'Select...';
-    sel.innerHTML = `<option value="">${placeholder}</option>` +
-      singersCache.map(s => `<option value="${s.id}">${esc(s.first_name)}</option>`).join('');
+    sel.innerHTML = '<option value="">' + placeholder + '</option>' +
+      TSEB.singersCache.map(function(s) {
+        return '<option value="' + s.id + '">' + TSEB.util.esc(s.first_name) + '</option>';
+      }).join('');
     if (currentVal) sel.value = currentVal;
   });
-}
+};
 
-async function populateInstitutionDropdowns() {
-  const { data } = await sb.from('institutions').select('id, name, status').order('name');
-  document.querySelectorAll('select[data-institution-list]').forEach(sel => {
-    const currentVal = sel.value;
-    const activeOnly = sel.hasAttribute('data-active-only');
-    const filtered = activeOnly ? (data || []).filter(i => i.status === 'active') : (data || []);
-    sel.innerHTML = '<option value="">Select...</option>' +
-      filtered.map(i => `<option value="${i.id}">${esc(i.name)}</option>`).join('');
-    if (currentVal) sel.value = currentVal;
-  });
-}
+// Init
+document.addEventListener('DOMContentLoaded', function() {
+  // Verify all modules registered
+  const required = ['auth', 'outreach', 'schedule', 'singers', 'guide'];
+  const missing = required.filter(function(m) { return !TSEB[m]; });
+  if (missing.length) {
+    document.body.innerHTML = '<div style="padding:2rem; font-family:system-ui; text-align:center;"><h2>Something went wrong</h2><p style="margin:1rem 0;">The app couldn\'t load properly. Please <button onclick="location.reload()" style="color:#4a6741; text-decoration:underline; border:none; background:none; font-size:inherit; cursor:pointer;">refresh the page</button>.</p><p style="color:#6B7280; font-size:14px;">If this keeps happening, contact your choir coordinator.</p></div>';
+    return;
+  }
 
-// ============================================================
-// BUG REPORT
-// ============================================================
-function submitBugReport(form) {
-  const fd = new FormData(form);
-  const desc = fd.get('description') || '';
-  const expected = fd.get('expected') || '';
-  const reporter = fd.get('reporter') || 'Anonymous';
-  const subject = encodeURIComponent('TSEB Bug Report');
-  const body = encodeURIComponent(
-    `Bug Report from: ${reporter}\n\nWhat happened:\n${desc}\n\nExpected behavior:\n${expected}\n\nPage: ${location.href}\nTime: ${new Date().toISOString()}\nUA: ${navigator.userAgent}`
-  );
-  window.open(`mailto:jhwright@gmail.com?subject=${subject}&body=${body}`, '_self');
-  closeModal('bug-report-modal');
-  form.reset();
-}
+  // Initialize Supabase
+  if (typeof supabase === 'undefined') {
+    document.getElementById('cdn-error').style.display = 'block';
+    return;
+  }
+  TSEB.sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// ============================================================
-// SEARCH & FILTER (client-side)
-// ============================================================
-function setupInstSearch() {
-  const input = document.getElementById('inst-search');
-  if (!input) return;
-  input.addEventListener('input', () => {
-    instPage = 0;
-    const q = input.value.toLowerCase();
-    const filtered = q ? instFullData.filter(i => instMatchesSearch(i, q)) : instFullData;
-    const container = document.getElementById('inst-list');
-    if (container) renderInstPage(container, filtered);
-  });
-}
-
-function setupSingerSearch() {
-  const input = document.getElementById('singer-search');
-  if (!input) return;
-  input.addEventListener('input', () => {
-    singerPage = 0;
-    const q = input.value.toLowerCase();
-    const filtered = q ? singerFullData.filter(s => singerMatchesSearch(s, q)) : singerFullData;
-    const container = document.getElementById('singers-list');
-    if (container) renderSingerPage(container, filtered);
-  });
-}
-
-// Run on load
-document.addEventListener('DOMContentLoaded', () => {
-  init().catch(err => {
-    const status = document.getElementById('login-status');
-    if (status) status.textContent = 'Error: ' + err.message;
-    console.error('TSEB init failed:', err);
-  });
-  setupInstSearch();
-  setupSingerSearch();
+  // Start auth flow (auth will show login or app)
+  TSEB.auth.init();
 });
