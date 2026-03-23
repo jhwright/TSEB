@@ -393,7 +393,7 @@ TSEB.schedule = {
         : '') +
 
       (inst.id
-        ? '<button class="btn btn-secondary" style="width:100%;" onclick="TSEB.closeDetail(); TSEB.outreach.showDetail(\'' + inst.id + '\')">View Facility</button>'
+        ? '<button class="btn btn-secondary" style="width:100%;" onclick="TSEB.outreach.showDetail(\'' + inst.id + '\')">View Facility</button>'
         : '') +
 
       '</div>';
