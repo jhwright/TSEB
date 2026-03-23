@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TSEB Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Source+Serif+4:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #4a6741;
+    --primary-light: #e8f0e6;
+    --accent: #C67B3C;
+    --accent-light: #FFF3E0;
+    --bg: #FAF8F5;
+    --surface: #FFFFFF;
+    --text: #1A1A1A;
+    --muted: #6B7280;
+    --border: #E5E5E0;
+    --success: #2D6A4F;
+    --success-light: #e8f5e9;
+    --error: #B91C1C;
+    --error-light: #FEE2E2;
+    --info: #1E5F8A;
+    --info-light: #E0F2FE;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    background: var(--bg);
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  header {
+    background: var(--primary);
+    color: #fff;
+    padding: 0 24px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  }
+  header h1 {
+    font-family: 'Source Serif 4', serif;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+  header a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 13px;
+    opacity: 0.85;
+    border: 1px solid rgba(255,255,255,0.4);
+    padding: 4px 12px;
+    border-radius: 4px;
+    transition: opacity 0.15s;
+  }
+  header a:hover { opacity: 1; background: rgba(255,255,255,0.1); }
+
+  /* ── Auth banner ── */
+  #auth-banner {
+    background: var(--info-light);
+    border-bottom: 1px solid #bbd4e8;
+    padding: 10px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    color: var(--info);
+  }
+  #auth-banner input {
+    padding: 5px 10px;
+    border: 1px solid #bbd4e8;
+    border-radius: 4px;
+    font-size: 13px;
+    width: 240px;
+  }
+  #auth-banner button {
+    padding: 5px 14px;
+    background: var(--info);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+  }
+  #auth-status {
+    margin-left: auto;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  /* ── Tab bar ── */
+  #tab-bar {
+    background: var(--surface);
+    border-bottom: 2px solid var(--border);
+    display: flex;
+    padding: 0 24px;
+    gap: 0;
+    position: sticky;
+    top: 52px;
+    z-index: 90;
+  }
+  .tab-btn {
+    padding: 12px 20px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--muted);
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    transition: color 0.15s, border-color 0.15s;
+    white-space: nowrap;
+  }
+  .tab-btn:hover { color: var(--primary); }
+  .tab-btn.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+    background: var(--primary-light);
+  }
+  .tab-count {
+    display: inline-block;
+    background: var(--border);
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 10px;
+    padding: 1px 7px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+  .tab-btn.active .tab-count {
+    background: var(--primary);
+    color: #fff;
+  }
+
+  /* ── Main content ── */
+  main {
+    padding: 20px 24px;
+  }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ── Toolbar ── */
+  .toolbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .toolbar input[type="text"] {
+    padding: 7px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: 'Source Sans 3', sans-serif;
+    width: 280px;
+    background: var(--surface);
+    color: var(--text);
+  }
+  .toolbar input[type="text"]:focus {
+    outline: 2px solid var(--primary);
+    outline-offset: 1px;
+  }
+  .btn {
+    padding: 7px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    transition: filter 0.15s, transform 0.1s;
+  }
+  .btn:hover { filter: brightness(0.93); }
+  .btn:active { transform: scale(0.98); }
+  .btn-primary { background: var(--primary); color: #fff; }
+  .btn-danger { background: var(--error); color: #fff; }
+  .btn-ghost {
+    background: none;
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+
+  /* ── Table ── */
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+  }
+  thead tr {
+    background: var(--bg);
+    border-bottom: 2px solid var(--border);
+  }
+  th {
+    padding: 10px 12px;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    white-space: nowrap;
+    user-select: none;
+  }
+  th.sortable { cursor: pointer; }
+  th.sortable:hover { color: var(--primary); }
+  th .sort-icon { margin-left: 4px; opacity: 0.4; font-style: normal; }
+  th.sort-asc .sort-icon, th.sort-desc .sort-icon { opacity: 1; color: var(--primary); }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.1s;
+  }
+  tbody tr:nth-child(even) { background: #FAFAF8; }
+  tbody tr:hover { background: var(--primary-light); }
+  tbody tr.new-row { background: #fffde7; }
+  tbody tr:last-child { border-bottom: none; }
+
+  td {
+    padding: 7px 12px;
+    font-size: 13px;
+    vertical-align: middle;
+    max-width: 260px;
+  }
+  td.id-cell {
+    font-family: monospace;
+    font-size: 11px;
+    color: var(--muted);
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: help;
+  }
+  td.ts-cell {
+    font-size: 12px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  /* ── Inline editing ── */
+  .cell-inner {
+    display: block;
+    min-height: 24px;
+    border-radius: 4px;
+    padding: 2px 4px;
+    cursor: text;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition: background 0.15s;
+  }
+  .cell-inner:hover { background: rgba(74,103,65,0.08); }
+  .cell-inner.editing { background: transparent; }
+
+  td input.cell-input,
+  td select.cell-input,
+  td textarea.cell-input {
+    width: 100%;
+    padding: 3px 6px;
+    border: 2px solid var(--primary);
+    border-radius: 4px;
+    font-size: 13px;
+    font-family: 'Source Sans 3', sans-serif;
+    background: #fff;
+    color: var(--text);
+    outline: none;
+  }
+  td input[type="checkbox"].cell-input {
+    width: auto;
+    cursor: pointer;
+  }
+
+  /* ── Save flash ── */
+  @keyframes flashSuccess {
+    0%   { background: var(--success-light); }
+    100% { background: transparent; }
+  }
+  @keyframes flashError {
+    0%   { background: var(--error-light); }
+    100% { background: transparent; }
+  }
+  td.flash-success { animation: flashSuccess 1.2s ease-out forwards; }
+  td.flash-error   { animation: flashError   1.2s ease-out forwards; }
+
+  /* ── Delete button ── */
+  .del-btn {
+    background: none;
+    border: none;
+    color: var(--error);
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+    padding: 2px 6px;
+    border-radius: 4px;
+    opacity: 0.5;
+    transition: opacity 0.15s, background 0.15s;
+  }
+  .del-btn:hover { opacity: 1; background: var(--error-light); }
+
+  /* ── New row inputs ── */
+  .new-row td input,
+  .new-row td select {
+    width: 100%;
+    padding: 4px 6px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 13px;
+    font-family: 'Source Sans 3', sans-serif;
+    background: #fff;
+  }
+  .new-row td input:focus,
+  .new-row td select:focus {
+    outline: 2px solid var(--primary);
+    outline-offset: 1px;
+    border-color: var(--primary);
+  }
+
+  /* ── Toast ── */
+  #toast-container {
+    position: fixed;
+    top: 64px;
+    right: 20px;
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    pointer-events: none;
+  }
+  .toast {
+    padding: 10px 18px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    animation: toastIn 0.15s ease-out;
+    pointer-events: all;
+    max-width: 360px;
+  }
+  @keyframes toastIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .toast.success { background: var(--success); color: #fff; }
+  .toast.error   { background: var(--error);   color: #fff; }
+  .toast.info    { background: var(--info);    color: #fff; }
+
+  /* ── Loading state ── */
+  .loading-row td {
+    color: var(--muted);
+    font-style: italic;
+    padding: 24px 12px;
+    text-align: center;
+  }
+
+  /* ── Null display ── */
+  .null-val { color: var(--border); font-style: italic; font-size: 12px; }
+
+  /* ── Boolean display ── */
+  .bool-true  { color: var(--success); font-weight: 700; }
+  .bool-false { color: var(--muted); }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>TSEB Admin</h1>
+  <a href="index.html">&#8592; Back to App</a>
+</header>
+
+<div id="auth-banner">
+  <span>Sign in to edit:</span>
+  <input type="email" id="auth-email" placeholder="your@email.com">
+  <button onclick="sendMagicLink()">Send magic link</button>
+  <span id="auth-status">Not signed in</span>
+</div>
+
+<div id="tab-bar">
+  <button class="tab-btn active" data-tab="singers" onclick="switchTab('singers')">
+    Singers <span class="tab-count" id="count-singers">–</span>
+  </button>
+  <button class="tab-btn" data-tab="institutions" onclick="switchTab('institutions')">
+    Institutions <span class="tab-count" id="count-institutions">–</span>
+  </button>
+  <button class="tab-btn" data-tab="contacts" onclick="switchTab('contacts')">
+    Contacts <span class="tab-count" id="count-contacts">–</span>
+  </button>
+  <button class="tab-btn" data-tab="activities" onclick="switchTab('activities')">
+    Activities <span class="tab-count" id="count-activities">–</span>
+  </button>
+  <button class="tab-btn" data-tab="gigs" onclick="switchTab('gigs')">
+    Gigs <span class="tab-count" id="count-gigs">–</span>
+  </button>
+  <button class="tab-btn" data-tab="gig_singers" onclick="switchTab('gig_singers')">
+    Gig Singers <span class="tab-count" id="count-gig_singers">–</span>
+  </button>
+</div>
+
+<main>
+  <!-- Singers -->
+  <div class="tab-panel active" id="panel-singers">
+    <div class="toolbar">
+      <input type="text" placeholder="Search singers…" oninput="filterTable('singers', this.value)">
+      <button class="btn btn-primary" onclick="addRow('singers')">+ Add Singer</button>
+    </div>
+    <div class="table-wrap">
+      <table id="tbl-singers">
+        <thead><tr>
+          <th class="sortable" onclick="sortTable('singers','first_name')">Name <i class="sort-icon">⇅</i></th>
+          <th class="sortable" onclick="sortTable('singers','role')">Role <i class="sort-icon">⇅</i></th>
+          <th class="sortable" onclick="sortTable('singers','availability')">Availability <i class="sort-icon">⇅</i></th>
+          <th>Preferred Days</th>
+          <th>Email</th>
+          <th>Notes</th>
+          <th class="sortable" onclick="sortTable('singers','created_at')">Created <i class="sort-icon">⇅</i></th>
+          <th>ID</th>
+          <th></th>
+        </tr></thead>
+        <tbody id="body-singers"><tr class="loading-row"><td colspan="9">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Institutions -->
+  <div class="tab-panel" id="panel-institutions">
+    <div class="toolbar">
+      <input type="text" placeholder="Search institutions…" oninput="filterTable('institutions', this.value)">
+      <button class="btn btn-primary" onclick="addRow('institutions')">+ Add Institution</button>
+    </div>
+    <div class="table-wrap">
+      <table id="tbl-institutions">
+        <thead><tr>
+          <th class="sortable" onclick="sortTable('institutions','name')">Name <i class="sort-icon">⇅</i></th>
+          <th class="sortable" onclick="sortTable('institutions','institution_type')">Type <i class="sort-icon">⇅</i></th>
+          <th>Address</th>
+          <th>Phone</th>
+          <th class="sortable" onclick="sortTable('institutions','status')">Status <i class="sort-icon">⇅</i></th>
+          <th>Outreacher</th>
+          <th>Next Step</th>
+          <th class="sortable" onclick="sortTable('institutions','next_step_due')">Due <i class="sort-icon">⇅</i></th>
+          <th>Recurrence</th>
+          <th>Inactive Reason</th>
+          <th>Notes</th>
+          <th class="sortable" onclick="sortTable('institutions','created_at')">Created <i class="sort-icon">⇅</i></th>
+          <th>ID</th>
+          <th></th>
+        </tr></thead>
+        <tbody id="body-institutions"><tr class="loading-row"><td colspan="14">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Contacts -->
+  <div class="tab-panel" id="panel-contacts">
+    <div class="toolbar">
+      <input type="text" placeholder="Search contacts…" oninput="filterTable('contacts', this.value)">
+      <button class="btn btn-primary" onclick="addRow('contacts')">+ Add Contact</button>
+    </div>
+    <div class="table-wrap">
+      <table id="tbl-contacts">
+        <thead><tr>
+          <th>Institution</th>
+          <th class="sortable" onclick="sortTable('contacts','first_name')">First Name <i class="sort-icon">⇅</i></th>
+          <th class="sortable" onclick="sortTable('contacts','last_name')">Last Name <i class="sort-icon">⇅</i></th>
+          <th>Title</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Primary</th>
+          <th>Notes</th>
+          <th class="sortable" onclick="sortTable('contacts','created_at')">Created <i class="sort-icon">⇅</i></th>
+          <th>ID</th>
+          <th></th>
+        </tr></thead>
+        <tbody id="body-contacts"><tr class="loading-row"><td colspan="11">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Activities -->
+  <div class="tab-panel" id="panel-activities">
+    <div class="toolbar">
+      <input type="text" placeholder="Search activities…" oninput="filterTable('activities', this.value)">
+      <button class="btn btn-primary" onclick="addRow('activities')">+ Add Activity</button>
+    </div>
+    <div class="table-wrap">
+      <table id="tbl-activities">
+        <thead><tr>
+          <th>Institution</th>
+          <th>Singer</th>
+          <th class="sortable" onclick="sortTable('activities','activity_type')">Type <i class="sort-icon">⇅</i></th>
+          <th class="sortable" onclick="sortTable('activities','activity_date')">Date <i class="sort-icon">⇅</i></th>
+          <th>Contact Person</th>
+          <th>Description</th>
+          <th class="sortable" onclick="sortTable('activities','created_at')">Created <i class="sort-icon">⇅</i></th>
+          <th>ID</th>
+          <th></th>
+        </tr></thead>
+        <tbody id="body-activities"><tr class="loading-row"><td colspan="9">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Gigs -->
+  <div class="tab-panel" id="panel-gigs">
+    <div class="toolbar">
+      <input type="text" placeholder="Search gigs…" oninput="filterTable('gigs', this.value)">
+      <button class="btn btn-primary" onclick="addRow('gigs')">+ Add Gig</button>
+    </div>
+    <div class="table-wrap">
+      <table id="tbl-gigs">
+        <thead><tr>
+          <th>Institution</th>
+          <th class="sortable" onclick="sortTable('gigs','gig_date')">Date <i class="sort-icon">⇅</i></th>
+          <th>Time</th>
+          <th>Recurrence</th>
+          <th>Recurrence End</th>
+          <th>Notes</th>
+          <th class="sortable" onclick="sortTable('gigs','created_at')">Created <i class="sort-icon">⇅</i></th>
+          <th>ID</th>
+          <th></th>
+        </tr></thead>
+        <tbody id="body-gigs"><tr class="loading-row"><td colspan="9">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Gig Singers -->
+  <div class="tab-panel" id="panel-gig_singers">
+    <div class="toolbar">
+      <input type="text" placeholder="Search gig singers…" oninput="filterTable('gig_singers', this.value)">
+      <button class="btn btn-primary" onclick="addRow('gig_singers')">+ Add Assignment</button>
+    </div>
+    <div class="table-wrap">
+      <table id="tbl-gig_singers">
+        <thead><tr>
+          <th>Gig (Institution + Date)</th>
+          <th>Singer</th>
+          <th>Anchor</th>
+          <th>ID</th>
+          <th></th>
+        </tr></thead>
+        <tbody id="body-gig_singers"><tr class="loading-row"><td colspan="5">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<div id="toast-container"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script>
+// ── Init ──────────────────────────────────────────────────────────────────────
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// ── Lookup maps (loaded once) ─────────────────────────────────────────────────
+let singerMap = {};    // id → first_name
+let instMap   = {};    // id → name
+let gigMap    = {};    // id → "InstitutionName YYYY-MM-DD"
+
+// ── Table data cache ──────────────────────────────────────────────────────────
+const tableData = {
+  singers: [], institutions: [], contacts: [],
+  activities: [], gigs: [], gig_singers: []
+};
+const sortState = {};
+const filterState = {};
+
+// ── Enums ─────────────────────────────────────────────────────────────────────
+const ENUMS = {
+  'singers.role':                  ['singer','outreacher','both'],
+  'singers.availability':          ['available','limited','unavailable'],
+  'institutions.status':           ['initial_contact','in_conversation','site_visit','active','on_hold','previous','inactive'],
+  'institutions.institution_type': ['hospital','hospice','nursing_snf','memory_care','senior_center','nicu','retirement','other'],
+  'institutions.recurrence':       ['one_time','weekly','biweekly','2x_month','monthly'],
+  'activities.activity_type':      ['phone_call','voicemail','email_sent','email_received','in_person','site_visit','first_sing','status_change','note'],
+  'gigs.recurrence':               ['one_time','weekly','biweekly','2x_month','monthly'],
+};
+
+// ── Column definitions ────────────────────────────────────────────────────────
+// type: text | enum | date | time | bool | ts | id | fk-singer | fk-inst | fk-gig
+const COLS = {
+  singers: [
+    { key: 'first_name',     label: 'Name',         type: 'text' },
+    { key: 'role',           label: 'Role',         type: 'enum', enumKey: 'singers.role' },
+    { key: 'availability',   label: 'Availability', type: 'enum', enumKey: 'singers.availability' },
+    { key: 'preferred_days', label: 'Preferred Days', type: 'text' },
+    { key: 'email',          label: 'Email',        type: 'text' },
+    { key: 'notes',          label: 'Notes',        type: 'text' },
+    { key: 'created_at',     label: 'Created',      type: 'ts', readonly: true },
+    { key: 'id',             label: 'ID',           type: 'id',  readonly: true },
+  ],
+  institutions: [
+    { key: 'name',             label: 'Name',           type: 'text' },
+    { key: 'institution_type', label: 'Type',           type: 'enum', enumKey: 'institutions.institution_type', nullable: true },
+    { key: 'address',          label: 'Address',        type: 'text' },
+    { key: 'phone',            label: 'Phone',          type: 'text' },
+    { key: 'status',           label: 'Status',         type: 'enum', enumKey: 'institutions.status' },
+    { key: 'outreacher_id',    label: 'Outreacher',     type: 'fk-singer', nullable: true },
+    { key: 'next_step',        label: 'Next Step',      type: 'text' },
+    { key: 'next_step_due',    label: 'Due',            type: 'date' },
+    { key: 'recurrence',       label: 'Recurrence',     type: 'enum', enumKey: 'institutions.recurrence', nullable: true },
+    { key: 'inactive_reason',  label: 'Inactive Reason', type: 'text' },
+    { key: 'notes',            label: 'Notes',          type: 'text' },
+    { key: 'created_at',       label: 'Created',        type: 'ts', readonly: true },
+    { key: 'id',               label: 'ID',             type: 'id', readonly: true },
+  ],
+  contacts: [
+    { key: 'institution_id', label: 'Institution', type: 'fk-inst' },
+    { key: 'first_name',     label: 'First Name',  type: 'text' },
+    { key: 'last_name',      label: 'Last Name',   type: 'text' },
+    { key: 'job_title',      label: 'Title',       type: 'text' },
+    { key: 'email',          label: 'Email',       type: 'text' },
+    { key: 'phone',          label: 'Phone',       type: 'text' },
+    { key: 'is_primary',     label: 'Primary',     type: 'bool' },
+    { key: 'notes',          label: 'Notes',       type: 'text' },
+    { key: 'created_at',     label: 'Created',     type: 'ts', readonly: true },
+    { key: 'id',             label: 'ID',          type: 'id', readonly: true },
+  ],
+  activities: [
+    { key: 'institution_id', label: 'Institution',   type: 'fk-inst' },
+    { key: 'singer_id',      label: 'Singer',        type: 'fk-singer', nullable: true },
+    { key: 'activity_type',  label: 'Type',          type: 'enum', enumKey: 'activities.activity_type' },
+    { key: 'activity_date',  label: 'Date',          type: 'date' },
+    { key: 'contact_person', label: 'Contact Person', type: 'text' },
+    { key: 'description',    label: 'Description',   type: 'text' },
+    { key: 'created_at',     label: 'Created',       type: 'ts', readonly: true },
+    { key: 'id',             label: 'ID',            type: 'id', readonly: true },
+  ],
+  gigs: [
+    { key: 'institution_id',  label: 'Institution',     type: 'fk-inst' },
+    { key: 'gig_date',        label: 'Date',            type: 'date' },
+    { key: 'gig_time',        label: 'Time',            type: 'time' },
+    { key: 'recurrence',      label: 'Recurrence',      type: 'enum', enumKey: 'gigs.recurrence', nullable: true },
+    { key: 'recurrence_end',  label: 'Recurrence End',  type: 'date' },
+    { key: 'notes',           label: 'Notes',           type: 'text' },
+    { key: 'created_at',      label: 'Created',         type: 'ts', readonly: true },
+    { key: 'id',              label: 'ID',              type: 'id', readonly: true },
+  ],
+  gig_singers: [
+    { key: 'gig_id',    label: 'Gig',       type: 'fk-gig' },
+    { key: 'singer_id', label: 'Singer',    type: 'fk-singer' },
+    { key: 'is_anchor', label: 'Anchor',    type: 'bool' },
+    { key: 'id',        label: 'ID',        type: 'id', readonly: true },
+  ],
+};
+
+// ── Auth ──────────────────────────────────────────────────────────────────────
+async function sendMagicLink() {
+  const email = document.getElementById('auth-email').value.trim();
+  if (!email) { toast('Enter your email address', 'error'); return; }
+  const { error } = await sb.auth.signInWithOtp({ email });
+  if (error) { toast('Error: ' + error.message, 'error'); }
+  else { toast('Magic link sent — check your email', 'success'); }
+}
+
+sb.auth.onAuthStateChange((event, session) => {
+  const el = document.getElementById('auth-status');
+  if (session) {
+    el.textContent = 'Signed in as ' + session.user.email;
+    el.style.color = 'var(--success)';
+    document.getElementById('auth-banner').style.background = 'var(--success-light)';
+  } else {
+    el.textContent = 'Not signed in — read-only';
+    el.style.color = 'var(--muted)';
+  }
+});
+
+// ── Boot ──────────────────────────────────────────────────────────────────────
+async function boot() {
+  // Load lookup data
+  const [singersRes, instsRes, gigsRes] = await Promise.all([
+    sb.from('singers').select('id, first_name').order('first_name'),
+    sb.from('institutions').select('id, name').order('name'),
+    sb.from('gigs').select('id, institution_id, gig_date').order('gig_date'),
+  ]);
+
+  (singersRes.data || []).forEach(s => { singerMap[s.id] = s.first_name; });
+  (instsRes.data   || []).forEach(i => { instMap[i.id]   = i.name; });
+  (gigsRes.data    || []).forEach(g => {
+    gigMap[g.id] = (instMap[g.institution_id] || '?') + ' — ' + (g.gig_date || '');
+  });
+
+  // Load all tables
+  await Promise.all(Object.keys(tableData).map(t => loadTable(t)));
+}
+
+// ── Load table ────────────────────────────────────────────────────────────────
+async function loadTable(tableName) {
+  const { data, error } = await sb.from(tableName).select('*');
+  if (error) {
+    toast('Error loading ' + tableName + ': ' + error.message, 'error');
+    return;
+  }
+  tableData[tableName] = data || [];
+  document.getElementById('count-' + tableName).textContent = tableData[tableName].length;
+  renderTable(tableName);
+}
+
+// ── Render table ──────────────────────────────────────────────────────────────
+function renderTable(tableName) {
+  const cols = COLS[tableName];
+  const raw  = tableData[tableName];
+  const filter = (filterState[tableName] || '').toLowerCase();
+  const sort   = sortState[tableName];
+
+  let rows = raw.slice();
+
+  // Filter
+  if (filter) {
+    rows = rows.filter(row =>
+      cols.some(col => {
+        const v = row[col.key];
+        if (v == null) return false;
+        return String(v).toLowerCase().includes(filter);
+      })
+    );
+  }
+
+  // Sort
+  if (sort) {
+    rows.sort((a, b) => {
+      const av = a[sort.key] ?? '';
+      const bv = b[sort.key] ?? '';
+      const cmp = String(av).localeCompare(String(bv), undefined, { numeric: true });
+      return sort.dir === 'asc' ? cmp : -cmp;
+    });
+  }
+
+  const tbody = document.getElementById('body-' + tableName);
+  tbody.innerHTML = '';
+
+  if (rows.length === 0) {
+    tbody.innerHTML = `<tr class="loading-row"><td colspan="${cols.length + 1}">No rows found</td></tr>`;
+    return;
+  }
+
+  rows.forEach(row => {
+    tbody.appendChild(buildRow(tableName, row));
+  });
+}
+
+// ── Build a data row ──────────────────────────────────────────────────────────
+function buildRow(tableName, row) {
+  const cols = COLS[tableName];
+  const tr = document.createElement('tr');
+  tr.dataset.id = row.id;
+
+  cols.forEach(col => {
+    const td = document.createElement('td');
+    if (col.type === 'id') {
+      td.className = 'id-cell';
+      td.title = row[col.key] || '';
+      td.textContent = (row[col.key] || '').substring(0, 8) + '…';
+    } else if (col.type === 'ts') {
+      td.className = 'ts-cell';
+      const v = row[col.key];
+      td.textContent = v ? new Date(v).toLocaleString('en-US', { month:'short', day:'numeric', year:'numeric', hour:'numeric', minute:'2-digit' }) : '';
+    } else if (col.readonly) {
+      td.textContent = row[col.key] ?? '';
+    } else {
+      const span = document.createElement('span');
+      span.className = 'cell-inner';
+      span.textContent = displayValue(col, row[col.key]);
+      span.addEventListener('click', () => activateCell(td, span, tableName, row, col));
+      td.appendChild(span);
+    }
+    tr.appendChild(td);
+  });
+
+  // Delete button
+  const tdDel = document.createElement('td');
+  const btn = document.createElement('button');
+  btn.className = 'del-btn';
+  btn.title = 'Delete row';
+  btn.textContent = '✕';
+  btn.addEventListener('click', () => deleteRow(tableName, row.id, tr));
+  tdDel.appendChild(btn);
+  tr.appendChild(tdDel);
+
+  return tr;
+}
+
+// ── Display value (human-readable) ────────────────────────────────────────────
+function displayValue(col, value) {
+  if (value == null || value === '') return '';
+  switch (col.type) {
+    case 'fk-singer': return singerMap[value] || value;
+    case 'fk-inst':   return instMap[value]   || value;
+    case 'fk-gig':    return gigMap[value]    || value;
+    case 'bool':      return value ? 'Yes' : 'No';
+    default:          return String(value);
+  }
+}
+
+// ── Activate inline editor ────────────────────────────────────────────────────
+function activateCell(td, span, tableName, row, col) {
+  if (td.querySelector('input, select')) return; // already editing
+
+  span.classList.add('editing');
+  const currentValue = row[col.key];
+  let input;
+
+  if (col.type === 'enum') {
+    input = document.createElement('select');
+    input.className = 'cell-input';
+    const values = ENUMS[col.enumKey] || [];
+    if (col.nullable) {
+      const opt = document.createElement('option');
+      opt.value = '';
+      opt.textContent = '—';
+      input.appendChild(opt);
+    }
+    values.forEach(v => {
+      const opt = document.createElement('option');
+      opt.value = v;
+      opt.textContent = v;
+      if (v === currentValue) opt.selected = true;
+      input.appendChild(opt);
+    });
+    if (!currentValue && col.nullable) input.value = '';
+
+  } else if (col.type === 'fk-singer') {
+    input = document.createElement('select');
+    input.className = 'cell-input';
+    if (col.nullable) {
+      const opt = document.createElement('option');
+      opt.value = '';
+      opt.textContent = '—';
+      input.appendChild(opt);
+    }
+    Object.entries(singerMap).forEach(([id, name]) => {
+      const opt = document.createElement('option');
+      opt.value = id;
+      opt.textContent = name;
+      if (id === currentValue) opt.selected = true;
+      input.appendChild(opt);
+    });
+
+  } else if (col.type === 'fk-inst') {
+    input = document.createElement('select');
+    input.className = 'cell-input';
+    if (col.nullable) {
+      const opt = document.createElement('option');
+      opt.value = '';
+      opt.textContent = '—';
+      input.appendChild(opt);
+    }
+    Object.entries(instMap).forEach(([id, name]) => {
+      const opt = document.createElement('option');
+      opt.value = id;
+      opt.textContent = name;
+      if (id === currentValue) opt.selected = true;
+      input.appendChild(opt);
+    });
+
+  } else if (col.type === 'fk-gig') {
+    input = document.createElement('select');
+    input.className = 'cell-input';
+    Object.entries(gigMap).forEach(([id, label]) => {
+      const opt = document.createElement('option');
+      opt.value = id;
+      opt.textContent = label;
+      if (id === currentValue) opt.selected = true;
+      input.appendChild(opt);
+    });
+
+  } else if (col.type === 'bool') {
+    input = document.createElement('input');
+    input.type = 'checkbox';
+    input.className = 'cell-input';
+    input.checked = !!currentValue;
+    // Checkboxes save immediately on change
+    input.addEventListener('change', async () => {
+      await saveCell(tableName, row, col, input.checked, td, span);
+    });
+
+  } else if (col.type === 'date') {
+    input = document.createElement('input');
+    input.type = 'date';
+    input.className = 'cell-input';
+    input.value = currentValue || '';
+
+  } else if (col.type === 'time') {
+    input = document.createElement('input');
+    input.type = 'time';
+    input.className = 'cell-input';
+    input.value = currentValue || '';
+
+  } else {
+    input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'cell-input';
+    input.value = currentValue || '';
+  }
+
+  span.innerHTML = '';
+  span.appendChild(input);
+
+  if (col.type !== 'bool') {
+    input.focus();
+    if (input.select) input.select();
+
+    const commit = async () => {
+      const newVal = (col.type === 'bool') ? input.checked
+                   : (input.value === '' && col.nullable !== false) ? null
+                   : input.value || null;
+      await saveCell(tableName, row, col, newVal, td, span);
+    };
+
+    input.addEventListener('blur', commit);
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter') { e.preventDefault(); input.blur(); }
+      if (e.key === 'Escape') {
+        // Cancel: restore display without saving
+        span.classList.remove('editing');
+        span.textContent = displayValue(col, currentValue);
+      }
+    });
+  }
+}
+
+// ── Save a cell ───────────────────────────────────────────────────────────────
+async function saveCell(tableName, row, col, newValue, td, span) {
+  // Skip if unchanged
+  const oldValue = row[col.key];
+  const unchanged = (newValue === oldValue) ||
+                    (newValue === '' && oldValue == null) ||
+                    (newValue == null && oldValue === '');
+  if (unchanged) {
+    span.classList.remove('editing');
+    span.textContent = displayValue(col, oldValue);
+    return;
+  }
+
+  const update = {};
+  update[col.key] = newValue === '' ? null : newValue;
+
+  const { error } = await sb.from(tableName).update(update).eq('id', row.id);
+
+  span.classList.remove('editing');
+
+  if (error) {
+    toast('Save failed: ' + error.message, 'error');
+    td.classList.add('flash-error');
+    setTimeout(() => td.classList.remove('flash-error'), 1200);
+    span.textContent = displayValue(col, oldValue);
+  } else {
+    // Update local data
+    row[col.key] = newValue === '' ? null : newValue;
+    td.classList.add('flash-success');
+    setTimeout(() => td.classList.remove('flash-success'), 1200);
+    span.textContent = displayValue(col, row[col.key]);
+
+    // Refresh lookup maps if relevant
+    if (tableName === 'singers' && col.key === 'first_name') {
+      singerMap[row.id] = newValue;
+    }
+    if (tableName === 'institutions' && col.key === 'name') {
+      instMap[row.id] = newValue;
+      // Rebuild gigMap for affected gigs
+      Object.keys(gigMap).forEach(gid => {
+        // We don't track inst per gig here efficiently; full reload on next tab switch is fine
+      });
+    }
+  }
+}
+
+// ── Delete row ────────────────────────────────────────────────────────────────
+async function deleteRow(tableName, id, tr) {
+  if (!confirm('Delete this row? This cannot be undone.')) return;
+  const { error } = await sb.from(tableName).delete().eq('id', id);
+  if (error) {
+    toast('Delete failed: ' + error.message, 'error');
+  } else {
+    tableData[tableName] = tableData[tableName].filter(r => r.id !== id);
+    document.getElementById('count-' + tableName).textContent = tableData[tableName].length;
+    tr.remove();
+    toast('Row deleted', 'success');
+    // Remove from lookup maps
+    if (tableName === 'singers') delete singerMap[id];
+    if (tableName === 'institutions') delete instMap[id];
+    if (tableName === 'gigs') delete gigMap[id];
+  }
+}
+
+// ── Add row ───────────────────────────────────────────────────────────────────
+function addRow(tableName) {
+  const cols   = COLS[tableName];
+  const tbody  = document.getElementById('body-' + tableName);
+
+  // Remove any existing new-row
+  const existing = tbody.querySelector('tr.new-row');
+  if (existing) existing.remove();
+
+  const tr = document.createElement('tr');
+  tr.className = 'new-row';
+
+  const inputs = {};
+
+  cols.forEach(col => {
+    const td = document.createElement('td');
+    if (col.type === 'id' || col.type === 'ts' || col.readonly) {
+      td.innerHTML = '<span style="color:var(--muted);font-size:12px">auto</span>';
+    } else if (col.type === 'enum') {
+      const sel = document.createElement('select');
+      const values = ENUMS[col.enumKey] || [];
+      if (col.nullable) {
+        const opt = document.createElement('option');
+        opt.value = '';
+        opt.textContent = '—';
+        sel.appendChild(opt);
+      }
+      values.forEach(v => {
+        const opt = document.createElement('option');
+        opt.value = v;
+        opt.textContent = v;
+        sel.appendChild(opt);
+      });
+      td.appendChild(sel);
+      inputs[col.key] = sel;
+
+    } else if (col.type === 'fk-singer') {
+      const sel = document.createElement('select');
+      if (col.nullable) {
+        const opt = document.createElement('option');
+        opt.value = '';
+        opt.textContent = '—';
+        sel.appendChild(opt);
+      }
+      Object.entries(singerMap).sort((a,b) => a[1].localeCompare(b[1])).forEach(([id, name]) => {
+        const opt = document.createElement('option');
+        opt.value = id;
+        opt.textContent = name;
+        sel.appendChild(opt);
+      });
+      td.appendChild(sel);
+      inputs[col.key] = sel;
+
+    } else if (col.type === 'fk-inst') {
+      const sel = document.createElement('select');
+      if (col.nullable) {
+        const opt = document.createElement('option');
+        opt.value = '';
+        opt.textContent = '—';
+        sel.appendChild(opt);
+      }
+      Object.entries(instMap).sort((a,b) => a[1].localeCompare(b[1])).forEach(([id, name]) => {
+        const opt = document.createElement('option');
+        opt.value = id;
+        opt.textContent = name;
+        sel.appendChild(opt);
+      });
+      td.appendChild(sel);
+      inputs[col.key] = sel;
+
+    } else if (col.type === 'fk-gig') {
+      const sel = document.createElement('select');
+      Object.entries(gigMap).sort((a,b) => a[1].localeCompare(b[1])).forEach(([id, label]) => {
+        const opt = document.createElement('option');
+        opt.value = id;
+        opt.textContent = label;
+        sel.appendChild(opt);
+      });
+      td.appendChild(sel);
+      inputs[col.key] = sel;
+
+    } else if (col.type === 'bool') {
+      const inp = document.createElement('input');
+      inp.type = 'checkbox';
+      td.appendChild(inp);
+      inputs[col.key] = inp;
+
+    } else if (col.type === 'date') {
+      const inp = document.createElement('input');
+      inp.type = 'date';
+      td.appendChild(inp);
+      inputs[col.key] = inp;
+
+    } else if (col.type === 'time') {
+      const inp = document.createElement('input');
+      inp.type = 'time';
+      td.appendChild(inp);
+      inputs[col.key] = inp;
+
+    } else {
+      const inp = document.createElement('input');
+      inp.type = 'text';
+      inp.placeholder = col.label;
+      td.appendChild(inp);
+      inputs[col.key] = inp;
+    }
+    tr.appendChild(td);
+  });
+
+  // Save + Cancel buttons
+  const tdActions = document.createElement('td');
+  tdActions.style.whiteSpace = 'nowrap';
+
+  const saveBtn = document.createElement('button');
+  saveBtn.className = 'btn btn-primary';
+  saveBtn.style.padding = '3px 10px';
+  saveBtn.style.fontSize = '12px';
+  saveBtn.style.marginRight = '4px';
+  saveBtn.textContent = 'Save';
+  saveBtn.addEventListener('click', () => saveNewRow(tableName, inputs, tr));
+
+  const cancelBtn = document.createElement('button');
+  cancelBtn.className = 'btn btn-ghost';
+  cancelBtn.style.padding = '3px 10px';
+  cancelBtn.style.fontSize = '12px';
+  cancelBtn.textContent = 'Cancel';
+  cancelBtn.addEventListener('click', () => tr.remove());
+
+  tdActions.appendChild(saveBtn);
+  tdActions.appendChild(cancelBtn);
+  tr.appendChild(tdActions);
+
+  tbody.insertBefore(tr, tbody.firstChild);
+
+  // Focus first editable input
+  const firstInput = Object.values(inputs)[0];
+  if (firstInput && firstInput.focus) firstInput.focus();
+}
+
+// ── Save new row ──────────────────────────────────────────────────────────────
+async function saveNewRow(tableName, inputs, tr) {
+  const insert = {};
+  const cols   = COLS[tableName];
+
+  cols.forEach(col => {
+    if (col.type === 'id' || col.type === 'ts' || col.readonly) return;
+    const inp = inputs[col.key];
+    if (!inp) return;
+    if (col.type === 'bool') {
+      insert[col.key] = inp.checked;
+    } else {
+      const v = inp.value.trim();
+      insert[col.key] = v === '' ? null : v;
+    }
+  });
+
+  // Basic required field check
+  const requiredMissing = cols.filter(col => {
+    if (col.type === 'id' || col.type === 'ts' || col.readonly || col.nullable) return false;
+    // Assume non-nullable fk and non-nullable text are required
+    if (['fk-singer','fk-inst','fk-gig','fk-gig'].includes(col.type)) {
+      return !insert[col.key];
+    }
+    if (col.key === 'first_name' || col.key === 'name' || col.key === 'description' ||
+        col.key === 'activity_date' || col.key === 'gig_date' || col.key === 'institution_id' ||
+        col.key === 'singer_id' || col.key === 'gig_id') {
+      return !insert[col.key];
+    }
+    return false;
+  });
+
+  if (requiredMissing.length > 0) {
+    toast('Required fields missing: ' + requiredMissing.map(c => c.label).join(', '), 'error');
+    return;
+  }
+
+  const { data, error } = await sb.from(tableName).insert(insert).select().single();
+
+  if (error) {
+    toast('Insert failed: ' + error.message, 'error');
+    return;
+  }
+
+  toast('Row added', 'success');
+  tableData[tableName].unshift(data);
+  document.getElementById('count-' + tableName).textContent = tableData[tableName].length;
+
+  // Update lookup maps
+  if (tableName === 'singers') singerMap[data.id] = data.first_name;
+  if (tableName === 'institutions') instMap[data.id] = data.name;
+  if (tableName === 'gigs') gigMap[data.id] = (instMap[data.institution_id] || '?') + ' — ' + (data.gig_date || '');
+
+  tr.remove();
+  // Re-render to put the new row in place
+  renderTable(tableName);
+}
+
+// ── Sort ──────────────────────────────────────────────────────────────────────
+function sortTable(tableName, key) {
+  const current = sortState[tableName];
+  if (current && current.key === key) {
+    sortState[tableName] = { key, dir: current.dir === 'asc' ? 'desc' : 'asc' };
+  } else {
+    sortState[tableName] = { key, dir: 'asc' };
+  }
+
+  // Update header icons
+  const tbl = document.getElementById('tbl-' + tableName);
+  tbl.querySelectorAll('th').forEach(th => {
+    th.classList.remove('sort-asc', 'sort-desc');
+    const icon = th.querySelector('.sort-icon');
+    if (icon) icon.textContent = '⇅';
+  });
+
+  const headers = tbl.querySelectorAll('th.sortable');
+  const colKeys = COLS[tableName].filter(c => {
+    const ths = tbl.querySelectorAll('th.sortable');
+    return true;
+  });
+
+  // Match header by onclick attribute
+  tbl.querySelectorAll('th.sortable').forEach(th => {
+    const onclick = th.getAttribute('onclick') || '';
+    if (onclick.includes("'" + key + "'")) {
+      const dir = sortState[tableName].dir;
+      th.classList.add('sort-' + dir);
+      const icon = th.querySelector('.sort-icon');
+      if (icon) icon.textContent = dir === 'asc' ? '↑' : '↓';
+    }
+  });
+
+  renderTable(tableName);
+}
+
+// ── Filter ────────────────────────────────────────────────────────────────────
+function filterTable(tableName, value) {
+  filterState[tableName] = value;
+  renderTable(tableName);
+}
+
+// ── Tab switching ─────────────────────────────────────────────────────────────
+function switchTab(tableName) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelector('[data-tab="' + tableName + '"]').classList.add('active');
+  document.getElementById('panel-' + tableName).classList.add('active');
+}
+
+// ── Toast ─────────────────────────────────────────────────────────────────────
+function toast(msg, type = 'info') {
+  const el = document.createElement('div');
+  el.className = 'toast ' + type;
+  el.textContent = msg;
+  document.getElementById('toast-container').appendChild(el);
+  setTimeout(() => {
+    el.style.transition = 'opacity 0.3s';
+    el.style.opacity = '0';
+    setTimeout(() => el.remove(), 300);
+  }, 3500);
+}
+
+// ── Start ─────────────────────────────────────────────────────────────────────
+boot().catch(err => toast('Boot error: ' + err.message, 'error'));
+</script>
+</body>
+</html>
