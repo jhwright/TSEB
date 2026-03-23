@@ -3,6 +3,7 @@ TSEB.outreach = {
   _loaded: false,
   _data: null,       // full dataset from last fetch
   _filter: 'all',   // 'all' | 'mine'
+  _statusFilter: null, // null = all, or a status string like 'active'
 
   async load() {
     this._loaded = true;
@@ -40,12 +41,28 @@ TSEB.outreach = {
 
   _filtered() {
     if (!this._data) return [];
+    var data = this._data;
     if (this._filter === 'mine' && TSEB.currentSinger) {
-      return this._data.filter(function(i) {
+      data = data.filter(function(i) {
         return i.outreacher_id === TSEB.currentSinger.id;
       });
     }
-    return this._data;
+    if (this._statusFilter) {
+      var sf = this._statusFilter;
+      data = data.filter(function(i) { return i.status === sf; });
+    }
+    return data;
+  },
+
+  setStatusFilter: function(status) {
+    if (status === null || status === 'null') {
+      this._statusFilter = null;
+    } else {
+      this._statusFilter = (this._statusFilter === status) ? null : status;
+    }
+    this._renderPills();
+    this._renderCards();
+    this._renderCallout();
   },
 
   _renderAll() {
@@ -118,12 +135,18 @@ TSEB.outreach = {
       inactive: 'badge-overdue'
     };
 
+    var self = this;
     el.innerHTML = Object.keys(statusGroups).map(function(key) {
-      const count = statusGroups[key];
+      var count = statusGroups[key];
       if (count === 0) return '';
-      return '<span class="badge ' + (badgeClass[key] || 'badge-muted') + '">' +
+      var isActive = self._statusFilter === key;
+      var activeStyle = isActive ? 'outline:3px solid var(--primary); outline-offset:1px; font-weight:700;' : '';
+      return '<span class="badge ' + (badgeClass[key] || 'badge-muted') + '" ' +
+        'style="cursor:pointer; ' + activeStyle + '" ' +
+        'onclick="TSEB.outreach.setStatusFilter(\'' + key + '\')">' +
         labels[key] + ' · ' + count + '</span>';
-    }).join('');
+    }).join('') +
+    (self._statusFilter ? ' <span style="font-size:13px; color:var(--primary); cursor:pointer; text-decoration:underline;" onclick="TSEB.outreach.setStatusFilter(null)">Clear filter</span>' : '');
   },
 
   _renderCards() {
