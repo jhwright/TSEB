@@ -49,7 +49,7 @@ TSEB.singers = {
             '<div style="display:flex; justify-content:space-between; align-items:center;">' +
             '<div class="card-title" style="font-size:18px;">' + TSEB.util.esc(s.first_name) + '</div>' +
             '<div>' + role + '</div></div>' +
-            (s.preferred_days ? '<div class="card-detail" style="margin-top:4px;">Prefers: ' + TSEB.util.esc(s.preferred_days) + '</div>' : '') +
+            (s.preferred_days || s.zip_code ? '<div class="card-detail" style="margin-top:4px;">' + (s.preferred_days ? 'Prefers: ' + TSEB.util.esc(s.preferred_days) : '') + (s.preferred_days && s.zip_code ? ' · ' : '') + (s.zip_code ? 'Zip: ' + TSEB.util.esc(s.zip_code) : '') + '</div>' : '') +
             (s.notes ? '<div class="card-detail" style="margin-top:4px; font-style:italic;">' + TSEB.util.esc(s.notes) + '</div>' : '') +
             '</div>';
         }).join('');
@@ -70,6 +70,7 @@ TSEB.singers = {
       '<div class="modal-body">' +
       '<div style="font-size:16px; color:var(--muted); margin-bottom:8px;">Role: ' + roleLabel + '</div>' +
       (s.preferred_days ? '<div style="font-size:16px; color:var(--muted); margin-bottom:8px;">Preferred days: ' + TSEB.util.esc(s.preferred_days) + '</div>' : '') +
+      (s.zip_code ? '<div style="font-size:16px; color:var(--muted); margin-bottom:8px;">Zip code: ' + TSEB.util.esc(s.zip_code) + '</div>' : '') +
       (s.notes ? '<div style="font-size:16px; color:var(--muted); margin-bottom:16px;">' + TSEB.util.esc(s.notes) + '</div>' : '') +
 
       '<h4 style="font-size:14px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin:16px 0 12px;">Availability</h4>' +
@@ -117,6 +118,8 @@ TSEB.singers = {
       '<select name="availability" class="form-input form-select"><option value="available">Available</option><option value="limited">Limited</option><option value="unavailable">Unavailable</option></select></div>' +
       '<div class="form-group"><label class="form-label">Preferred Days</label>' +
       '<input type="text" name="preferred_days" class="form-input" placeholder="e.g. Tue, Thu"></div>' +
+      '<div class="form-group"><label class="form-label">Zip Code</label>' +
+      '<input type="text" name="zip_code" class="form-input" placeholder="e.g. 94611" maxlength="10"></div>' +
       '<div class="form-group"><label class="form-label">Notes</label>' +
       '<textarea name="notes" class="form-input" rows="3" placeholder="Any notes..."></textarea></div>' +
       '<button type="submit" class="btn btn-primary" style="width:100%; margin-top:8px;">Add Singer</button>' +
@@ -129,7 +132,7 @@ TSEB.singers = {
     if (!fd.get('first_name')) { TSEB.toast('Please enter a name', 'warning'); return; }
     var { error } = await TSEB.sb.from('singers').insert({
       first_name: fd.get('first_name'), role: fd.get('role'), availability: fd.get('availability'),
-      preferred_days: fd.get('preferred_days') || null, notes: fd.get('notes') || null
+      preferred_days: fd.get('preferred_days') || null, zip_code: fd.get('zip_code') || null, notes: fd.get('notes') || null
     });
     if (error) { TSEB.toast('Error: ' + error.message, 'error'); return; }
     TSEB.closeForm();
@@ -156,6 +159,8 @@ TSEB.singers = {
       '<option value="both"' + (s.role === 'both' ? ' selected' : '') + '>Both</option></select></div>' +
       '<div class="form-group"><label class="form-label">Preferred Days</label>' +
       '<input type="text" name="preferred_days" class="form-input" value="' + TSEB.util.esc(s.preferred_days || '') + '" placeholder="e.g. Tue, Thu"></div>' +
+      '<div class="form-group"><label class="form-label">Zip Code</label>' +
+      '<input type="text" name="zip_code" class="form-input" value="' + TSEB.util.esc(s.zip_code || '') + '" placeholder="e.g. 94611" maxlength="10"></div>' +
       '<div class="form-group"><label class="form-label">Notes</label>' +
       '<textarea name="notes" class="form-input" rows="3">' + TSEB.util.esc(s.notes || '') + '</textarea></div>' +
       '<button type="submit" class="btn btn-primary" style="width:100%; margin-top:8px;">Save Changes</button>' +
@@ -167,7 +172,7 @@ TSEB.singers = {
     var fd = new FormData(form);
     var { error } = await TSEB.sb.from('singers').update({
       first_name: fd.get('first_name'), role: fd.get('role'),
-      preferred_days: fd.get('preferred_days') || null, notes: fd.get('notes') || null
+      preferred_days: fd.get('preferred_days') || null, zip_code: fd.get('zip_code') || null, notes: fd.get('notes') || null
     }).eq('id', singerId);
     if (error) { TSEB.toast('Error: ' + error.message, 'error'); return; }
     TSEB.closeForm();

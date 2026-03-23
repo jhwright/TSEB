@@ -215,7 +215,7 @@ TSEB.outreach = {
       '<div class="card-title">' + TSEB.util.esc(i.name) + '</div>' +
       TSEB.util.statusBadge(i.status) +
       '</div>' +
-      (i.address ? '<div class="card-detail">' + TSEB.util.esc(i.address) + '</div>' : '') +
+      (i.address || i.zip_code ? '<div class="card-detail">' + TSEB.util.esc(i.address || '') + (i.address && i.zip_code ? ' · ' : '') + (i.zip_code ? TSEB.util.esc(i.zip_code) : '') + '</div>' : '') +
       contactLine +
       nextStepHTML +
       (outreacherHTML ? '<div style="margin-top:8px;">' + outreacherHTML + '</div>' : '') +
@@ -335,7 +335,7 @@ TSEB.outreach = {
       '<div class="modal-body">' +
       '<div style="margin-bottom:16px;">' +
       (typeLabel ? '<div style="font-size:15px; color:var(--muted);">' + TSEB.util.esc(typeLabel) + '</div>' : '') +
-      (inst.address ? '<div style="font-size:15px; color:var(--muted);">' + TSEB.util.esc(inst.address) + '</div>' : '') +
+      (inst.address || inst.zip_code ? '<div style="font-size:15px; color:var(--muted);">' + TSEB.util.esc(inst.address || '') + (inst.address && inst.zip_code ? ' · ' : '') + (inst.zip_code ? TSEB.util.esc(inst.zip_code) : '') + '</div>' : '') +
       '<div style="margin-top:8px;">' + TSEB.util.statusBadge(inst.status) + '</div>' +
       '</div>' +
 
@@ -422,6 +422,11 @@ TSEB.outreach = {
       '</div>' +
 
       '<div class="form-group">' +
+      '<label class="form-label">Zip Code</label>' +
+      '<input name="zip_code" type="text" class="form-input" placeholder="e.g. 94611" maxlength="10">' +
+      '</div>' +
+
+      '<div class="form-group">' +
       '<label class="form-label" for="add-inst-outreacher">Outreacher</label>' +
       '<select id="add-inst-outreacher" name="outreacher_id" class="form-select">' +
       '<option value="">Unassigned</option>' +
@@ -482,6 +487,7 @@ TSEB.outreach = {
       institution_type: fd.get('institution_type') || null,
       status: fd.get('status'),
       address: fd.get('address') || null,
+      zip_code: fd.get('zip_code') || null,
       outreacher_id: fd.get('outreacher_id') || null,
       next_step: fd.get('next_step') || null,
       next_step_due: fd.get('next_step_due') || null
@@ -589,6 +595,11 @@ TSEB.outreach = {
       '</div>' +
 
       '<div class="form-group">' +
+      '<label class="form-label">Zip Code</label>' +
+      '<input name="zip_code" type="text" class="form-input" value="' + TSEB.util.esc(inst.zip_code || '') + '" placeholder="e.g. 94611" maxlength="10">' +
+      '</div>' +
+
+      '<div class="form-group">' +
       '<label class="form-label">Outreacher</label>' +
       '<select name="outreacher_id" class="form-select">' +
       '<option value="">Unassigned</option>' + singerOptions +
@@ -635,6 +646,7 @@ TSEB.outreach = {
       institution_type: fd.get('institution_type') || null,
       status: fd.get('status'),
       address: fd.get('address') || null,
+      zip_code: fd.get('zip_code') || null,
       outreacher_id: fd.get('outreacher_id') || null,
       recurrence: fd.get('recurrence') || null,
       next_step: fd.get('next_step') || null,
