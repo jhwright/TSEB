@@ -57,7 +57,7 @@ TSEB.schedule = {
 
         var gigsHTML = gigs.map(function(g) {
           var gigDt = new Date(g.gig_date + 'T00:00:00');
-          var timeStr = g.gig_time ? g.gig_time.slice(0, 5) : '';
+          var timeStr = g.gig_time ? TSEB.util.fmtTime(g.gig_time) : '';
           var singers = (g.gig_singers || []).map(function(gs) {
             var name = TSEB.util.singerName(gs.singer_id);
             return gs.is_anchor
@@ -176,7 +176,7 @@ TSEB.schedule = {
       html += '<div style="font-size:13px; font-weight:' + (isToday ? '700' : '400') + '; color:' + (isToday ? 'var(--accent)' : 'var(--text)') + ';">' + cursor.getDate() + '</div>';
 
       dayGigs.forEach(function(g) {
-        var timeLabel = g.gig_time ? g.gig_time.slice(0, 5) + ' ' : '';
+        var timeLabel = g.gig_time ? TSEB.util.fmtTime(g.gig_time) + ' ' : '';
         var tooltip = TSEB.util.esc((g.institution ? g.institution.name : '') + (g.gig_time ? ' at ' + g.gig_time.slice(0, 5) : '') + (g.institution && g.institution.address ? '\n' + g.institution.address : ''));
         html += '<div style="font-size:11px; background:var(--primary-light); color:var(--primary); padding:1px 4px; border-radius:3px; margin-top:2px; cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" ' +
           'onclick="TSEB.schedule.showGigDetail(\'' + g.id + '\')" title="' + tooltip + '">' +
@@ -336,7 +336,7 @@ TSEB.schedule = {
     var inst = gig.institution || {};
     var dt = new Date(gig.gig_date + 'T00:00:00');
     var dateLabel = dt.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
-    var timeStr = gig.gig_time ? gig.gig_time.slice(0, 5) : '';
+    var timeStr = gig.gig_time ? TSEB.util.fmtTime(gig.gig_time) : '';
 
     var contacts = ((inst.contacts || []).slice().sort(function(a, b) {
       return (b.is_primary ? 1 : 0) - (a.is_primary ? 1 : 0);

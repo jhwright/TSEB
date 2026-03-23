@@ -145,6 +145,17 @@ TSEB.util.statusBadge = function(status) {
   return '<span class="badge ' + (map[status] || 'badge-muted') + '">' + label + '</span>';
 };
 
+TSEB.util.fmtTime = function(t) {
+  if (!t) return '';
+  var parts = t.slice(0, 5).split(':');
+  var h = parseInt(parts[0], 10);
+  var m = parts[1];
+  var ampm = h >= 12 ? 'PM' : 'AM';
+  if (h === 0) h = 12;
+  else if (h > 12) h -= 12;
+  return h + ':' + m + ' ' + ampm;
+};
+
 TSEB.util.recurrenceLabel = function(r) {
   const map = { weekly: 'Weekly', biweekly: 'Biweekly', '2x_month': '2x/mo', monthly: 'Monthly', one_time: 'One-time' };
   return map[r] || r || '';
