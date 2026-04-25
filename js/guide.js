@@ -1,116 +1,90 @@
-// TSEB Guide module — help overlay
+// TSEB Guide module — manuscript-style help overlay
 TSEB.guide = {
-  show(screen) {
-    // Determine current screen if not specified
+  show: function(screen) {
     if (!screen) {
-      const active = document.querySelector('.tab.active');
+      var active = document.querySelector('.tab.active');
       screen = active ? active.dataset.screen : 'outreach';
     }
-
-    const content = this._content(screen);
-    const overlay = document.getElementById('guide-overlay');
-
+    var c = this._content(screen);
+    var overlay = document.getElementById('guide-overlay');
     overlay.innerHTML =
-      '<div style="background:var(--surface); border-radius:var(--radius-lg); width:100%; max-width:480px; max-height:80vh; overflow-y:auto; padding:28px; position:relative;">' +
-      '<button onclick="TSEB.guide.hide()" style="position:absolute; top:16px; right:16px; background:none; border:none; font-size:24px; cursor:pointer; color:var(--muted); line-height:1;" aria-label="Close">&times;</button>' +
-      '<div style="font-family:var(--font-display); font-size:22px; font-weight:700; color:var(--primary); margin-bottom:6px;">' + content.title + '</div>' +
-      '<div style="font-size:15px; color:var(--muted); margin-bottom:20px;">' + content.subtitle + '</div>' +
-      content.body +
-      '<button class="btn btn-primary" style="width:100%; margin-top:24px;" onclick="TSEB.guide.hide()">Got it</button>' +
+      '<div class="guide-content">' +
+        '<div class="guide-topbar">' +
+          '<div class="smcaps faint">Guide</div>' +
+          '<button type="button" class="guide-close" onclick="TSEB.guide.hide()" aria-label="Close">×</button>' +
+        '</div>' +
+        '<div class="guide-eyebrow">' + c.eyebrow + '</div>' +
+        '<h2 class="guide-title">' + c.title + '</h2>' +
+        '<p class="guide-lede">' + c.lede + '</p>' +
+        '<div class="guide-rule"></div>' +
+        c.body +
+        '<button type="button" class="guide-dismiss" onclick="TSEB.guide.hide()">Return to the work</button>' +
       '</div>';
-
     overlay.style.display = 'flex';
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() { overlay.classList.add('guide-open'); });
+    });
   },
 
-  hide() {
-    document.getElementById('guide-overlay').style.display = 'none';
+  hide: function() {
+    var overlay = document.getElementById('guide-overlay');
+    overlay.classList.remove('guide-open');
+    setTimeout(function() { overlay.style.display = 'none'; }, 200);
   },
 
-  _content(screen) {
-    const contents = {
+  _section: function(label, body) {
+    return '<div class="guide-section">' +
+      '<div class="smcaps accent guide-section-label">' + label + '</div>' +
+      '<div class="guide-section-body">' + body + '</div>' +
+      '</div>';
+  },
+
+  _content: function(screen) {
+    var sec = this._section;
+    var contents = {
       outreach: {
+        eyebrow: 'Chapter I',
         title: 'Outreach',
-        subtitle: 'Track care facilities from first contact to active venue.',
+        lede: 'Tend the network of care facilities — from first contact to active venue.',
         body:
-          '<div style="display:flex; flex-direction:column; gap:14px;">' +
-
-          '<div style="background:var(--accent-light); border-radius:var(--radius-sm); padding:14px;">' +
-          '<div style="font-weight:700; margin-bottom:4px;">Orange callout at the top</div>' +
-          '<div style="font-size:15px; color:var(--text);">Shows how many follow-ups are overdue or due this week — act on these first.</div>' +
-          '</div>' +
-
-          '<div style="background:var(--primary-light); border-radius:var(--radius-sm); padding:14px;">' +
-          '<div style="font-weight:700; margin-bottom:4px;">Status pills</div>' +
-          '<div style="font-size:15px; color:var(--text);">Quick count of facilities at each stage. Overdue cards sort to the top.</div>' +
-          '</div>' +
-
-          '<div style="background:var(--bg); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px;">' +
-          '<div style="font-weight:700; margin-bottom:4px;">Tap a facility card</div>' +
-          '<div style="font-size:15px; color:var(--text);">Opens the full detail: contacts, timeline, and status change buttons. From there you can log activity or edit the record.</div>' +
-          '</div>' +
-
-          '<div style="background:var(--bg); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px;">' +
-          '<div style="font-weight:700; margin-bottom:4px;">+ button (bottom right)</div>' +
-          '<div style="font-size:15px; color:var(--text);">Add a new care facility to your outreach list.</div>' +
-          '</div>' +
-
-          '<div style="background:var(--bg); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px;">' +
-          '<div style="font-weight:700; margin-bottom:4px;">All / Mine filter</div>' +
-          '<div style="font-size:15px; color:var(--text);">Switch to Mine to see only facilities assigned to you.</div>' +
-          '</div>' +
-
-          '</div>'
+          sec('The callout',
+            'A line at the top surfaces follow-ups that are <em>overdue</em> or <em>due this week</em>. Tend to those before anything else.') +
+          sec('Filter & status',
+            'Toggle <em>All</em> versus <em>Mine</em> to narrow to facilities you carry. Status pills below show counts at each stage.') +
+          sec('Cards',
+            'Each card shows the facility, its status pill, and the next step. Tap to open the full record — contacts, history, status changes.') +
+          sec('The plus',
+            'The ochre circle in the corner adds a new facility to the roster.')
       },
-
       schedule: {
+        eyebrow: 'Chapter II',
         title: 'Schedule',
-        subtitle: 'Upcoming singing gigs at active venues.',
+        lede: 'Three lenses on the same gigs — pick whichever fits the question you’re asking.',
         body:
-          '<div style="display:flex; flex-direction:column; gap:14px;">' +
-
-          '<div style="background:var(--primary-light); border-radius:var(--radius-sm); padding:14px;">' +
-          '<div style="font-weight:700; margin-bottom:4px;">Gigs grouped by month</div>' +
-          '<div style="font-size:15px; color:var(--text);">All upcoming gigs are shown, starting from today, sorted by date.</div>' +
-          '</div>' +
-
-          '<div style="background:var(--bg); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px;">' +
-          '<div style="font-weight:700; margin-bottom:4px;">Tap a gig</div>' +
-          '<div style="font-size:15px; color:var(--text);">Opens the gig detail with venue address, contact info, and the assigned singers. You can navigate to the facility from here too.</div>' +
-          '</div>' +
-
-          '<div style="background:var(--accent-light); border-radius:var(--radius-sm); padding:14px;">' +
-          '<div style="font-weight:700; margin-bottom:4px;">Singer chips</div>' +
-          '<div style="font-size:15px; color:var(--text);">Green chips show assigned singers. The anchor singer is marked — they\'re the primary contact for that gig.</div>' +
-          '</div>' +
-
-          '</div>'
+          sec('Calendar',
+            'A month grid. Ochre dots mark days with gigs. Tap a day to scroll the list below to that date.') +
+          sec('Agenda',
+            'A timeline of upcoming sessions. The italic numerals are dates; venue, time, and assigned singers sit on the right.') +
+          sec('Map',
+            'East Bay venues plotted on a quiet map. Pins are numbered so you can match each one to the timeline below.') +
+          sec('Gig detail',
+            'Tap any gig to see the venue, the assigned singers (the anchor is marked), and a link to open the facility record.')
       },
-
       singers: {
+        eyebrow: 'Chapter III',
         title: 'Singers',
-        subtitle: 'The volunteer roster for Threshold Singers East Bay.',
+        lede: 'The volunteer roster — filterable by readiness, groupable by role.',
         body:
-          '<div style="display:flex; flex-direction:column; gap:14px;">' +
-
-          '<div style="background:var(--primary-light); border-radius:var(--radius-sm); padding:14px;">' +
-          '<div style="font-weight:700; margin-bottom:4px;">Grouped by availability</div>' +
-          '<div style="font-size:15px; color:var(--text);">Singers are shown in three groups: Available, Limited, and Unavailable. Use this to staff gigs.</div>' +
-          '</div>' +
-
-          '<div style="background:var(--bg); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px;">' +
-          '<div style="font-weight:700; margin-bottom:4px;">Roles</div>' +
-          '<div style="font-size:15px; color:var(--text);">Some volunteers are singers, some handle outreach, and some do both. The badge on each card shows their role.</div>' +
-          '</div>' +
-
-          '<div style="background:var(--bg); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px;">' +
-          '<div style="font-weight:700; margin-bottom:4px;">Adding or editing singers</div>' +
-          '<div style="font-size:15px; color:var(--text);">Singer records are managed by the coordinator. Contact your coordinator to add someone or update availability.</div>' +
-          '</div>' +
-
-          '</div>'
+          sec('Filter',
+            '<em>All</em>, <em>Ready</em>, or <em>Limited</em>. Use Ready to see who can be staffed today.') +
+          sec('Group',
+            'Group by <em>Status</em> (Available · Limited · Unavailable) or by <em>Role</em> (Singers · Outreachers · Both).') +
+          sec('Singer detail',
+            'Tap a singer to see availability, limitation notes (when limited), and any upcoming gigs they’re on.') +
+          sec('Limitations',
+            'When availability is set to <em>Limited</em>, a small block appears for preferred days and a note for the coordinator.')
       }
     };
-
     return contents[screen] || contents.outreach;
   }
 };
