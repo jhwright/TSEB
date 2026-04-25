@@ -10,9 +10,9 @@ TSEB.currentSinger = null;
 // Navigation
 TSEB.nav = function(screen) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
   const el = document.getElementById('screen-' + screen);
-  const btn = document.querySelector('.nav-btn[data-screen="' + screen + '"]');
+  const btn = document.querySelector('.tab[data-screen="' + screen + '"]');
   if (el) el.classList.add('active');
   if (btn) btn.classList.add('active');
   // Lazy-load: fetch data on first tab switch

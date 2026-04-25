@@ -3,7 +3,7 @@ TSEB.guide = {
   show(screen) {
     // Determine current screen if not specified
     if (!screen) {
-      const active = document.querySelector('.nav-btn.active');
+      const active = document.querySelector('.tab.active');
       screen = active ? active.dataset.screen : 'outreach';
     }
 

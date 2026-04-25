@@ -1,7 +1,7 @@
 // TSEB Feedback module — collect tester/user feedback, notify via email
 TSEB.feedback = {
   open: function(context) {
-    var screen = document.querySelector('.nav-btn.active');
+    var screen = document.querySelector('.tab.active');
     var screenName = screen ? screen.dataset.screen : 'unknown';
     var contextNote = context || ('Screen: ' + screenName);
 

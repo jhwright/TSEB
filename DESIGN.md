@@ -2,92 +2,155 @@
 
 ## Product Context
 - **What this is:** Mobile-first web app for coordinating volunteer bedside singing at care facilities
-- **Who it's for:** Women in their 60s who coordinate outreach, scheduling, and singer assignments
+- **Who it's for:** Coordinators (often women in their 60s) who manage outreach, scheduling, and singer assignments
 - **Space/industry:** Volunteer coordination, nonprofit, bedside singing (Threshold Choir network)
 - **Project type:** Mobile-first web app (no build step, static HTML + Supabase)
 
 ## Aesthetic Direction
-- **Direction:** Organic/Natural
-- **Decoration level:** Minimal — typography and color do the work, no decorative elements
-- **Mood:** Warm, approachable, trustworthy. Like a well-organized community bulletin board, not a tech product. Every screen should feel like someone is guiding you by the hand.
-- **Reference sites:** None — this fills a genuine gap. No existing choir or volunteer management tool targets this demographic.
+- **Direction:** **Plainchant** — warm manuscript, cream paper, ochre accent
+- **Mood:** Quiet, contemplative, handcrafted. Feels like a chapter ledger, not a tech product. Italic Spectral display copy gives the app a literary, prayerful feel.
+- **Decoration level:** Minimal, near-flat. No drop shadows except the FAB and map pins. Borders and dotted dividers do the visual work.
+- **Reference:** Manuscript page; bone parchment; pen-and-ink ledger.
+- **Source:** Design handoff `design_handoff_tseb_redesign/TSEB Alternative Designs v4.html` (Plainchant lead direction).
+
+## Tokens (CSS variables)
+
+All tokens are scoped under `.dir-plainchant` on `<body>`. Tokens are also aliased in `:root` for legacy compatibility.
+
+```css
+.dir-plainchant {
+  --paper:    #f7f1e6;   /* base background */
+  --paper-2:  #efe6d4;   /* card hover, subtle band */
+  --paper-3:  #e6dcc4;   /* avatar fill, deepest paper */
+  --ink:      #271d12;   /* primary text */
+  --ink-soft: #5d4f3c;   /* secondary text */
+  --ink-faint:#8c7e6a;   /* tertiary text, eyebrow */
+  --rule:     #b9a886;   /* primary divider */
+  --rule-soft:#d4c5a4;   /* dotted/inner divider */
+  --accent:     #a36a2c; /* warm ochre — primary action color */
+  --accent-soft:#e3c790; /* accent tint */
+  --accent-deep:#7a4c1a; /* accent on hover, links */
+  --warning:    #a83c2a; /* overdue / urgent */
+  --warning-soft:#e9b8ad;
+  --radius: 1px;         /* near-square corners throughout */
+}
+```
+
+## Status pill colors
+
+Status hues are constants — same across all directions.
+
+| Status      | Hex        | Use                          |
+|-------------|------------|------------------------------|
+| Active      | `#6f7d5e`  | sage — currently singing     |
+| Talking     | `#c79436`  | ochre — in conversation      |
+| Site Visit  | `#b58348`  | warm tan — visit scheduled   |
+| Initial     | `#7a8aa3`  | cool blue — first contact    |
+| Hold        | `#8e8576`  | warm gray — paused           |
+| Previous    | `#6c6557`  | graphite — past relationship |
+| Inactive    | `#a4674a`  | rust — closed                |
 
 ## Typography
-- **Display/Hero:** Source Serif 4 — warm serif for headers. Feels human and literary, not corporate. Signals "we're people, not software." Pairs with the choir's identity of warmth and care.
-- **Body:** Source Sans 3 — clean, highly legible, designed for UI. Excellent at 18px+ for aging eyes. Free on Google Fonts.
-- **UI/Labels:** Source Sans 3 Semibold
-- **Data/Tables:** Source Sans 3 with font-variant-numeric: tabular-nums
-- **Code:** N/A (no code displayed in this app)
-- **Loading:** Google Fonts CDN: `https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Source+Serif+4:wght@400;600;700&display=swap`
-- **Scale:**
-  - xs: 13px — badges, timestamps
-  - sm: 15px — secondary labels, card details
-  - base: 18px — body text, form inputs (minimum readable size for 60+ users)
-  - lg: 20px — card titles, section headers
-  - xl: 24px — page titles
-  - 2xl: 28px — hero/display text
-  - 3xl: 36px — large display (used sparingly)
 
-## Color
-- **Approach:** Restrained — one accent + warm neutrals. Color is rare and meaningful.
-- **Primary:** `#4a6741` — Threshold Choir green. Trust, nature, calm. Used for header, active tab, primary buttons, focus indicators.
-- **Primary Light:** `#e8f0e6` — subtle green tint for active tab background, success highlights.
-- **Accent:** `#C67B3C` — warm amber. Urgency without alarm. Used for overdue items, follow-up callouts, CTAs that need attention. Deliberate departure from clinical blue/green palettes.
-- **Accent Light:** `#FFF3E0` — warm background tint for overdue cards and warning callouts.
-- **Background:** `#FAF8F5` — warm off-white. Not stark white. Reduces eye strain, easier on aging eyes.
-- **Surface:** `#FFFFFF` — white cards on warm background for visual lift.
-- **Text:** `#1A1A1A` — near-black. 7:1+ contrast ratio on both backgrounds (WCAG AAA).
-- **Muted:** `#6B7280` — cool gray for secondary text. 4.5:1 on white (WCAG AA).
-- **Border:** `#E5E5E0` — warm gray for card borders and dividers.
-- **Semantic:**
-  - Success: `#2D6A4F` / light: `#e8f5e9`
-  - Warning: `#C67B3C` / light: `#FFF3E0` (same as accent)
-  - Error: `#B91C1C` / light: `#FEE2E2`
-  - Info: `#1E5F8A` / light: `#E0F2FE`
-- **Dark mode:** Not planned for v1. If added later: reduce saturation 10-20%, use `#1A1A1A` background, `#2A2A2A` surfaces, lighten text to `#F0EDE8`.
+- **Display / body:** **Spectral** — italic for headlines and decorative copy, regular for body. Loaded weights: 300/400/500/600.
+- **UI / labels / buttons / smcaps:** **Inter** — 400/500/600. Used in eyebrow text, smcaps labels, button text, status pills.
+- **Mono / phone numbers:** **JetBrains Mono** — 400/500. Used for `tel:` numbers and any tabular data.
+- **Fallbacks:** Cormorant Garamond + Cardo are loaded for the Vespers/Nightfall directions; not used in Plainchant.
+- **Loading:** Single Google Fonts CDN call in `<head>`.
+- **Type scale (px):**
+  - Eyebrow / smcaps: 9–11 (letter-spacing .18–.22em, uppercase)
+  - Body: 13–15
+  - Sub-display (italic): 17–22
+  - Display (italic): 24–48
+  - Hero (italic): 60+ (sign-in only, used sparingly)
 
-## Spacing
-- **Base unit:** 8px
-- **Density:** Comfortable — more padding than typical. Accommodates larger touch targets (min 48px) and reduces visual crowding for older users.
-- **Scale:** 2xs(4) xs(8) sm(12) md(16) lg(24) xl(32) 2xl(48) 3xl(64)
-- **Card padding:** 20px (comfortable reading area)
-- **Form input padding:** 14px 16px (large enough for easy tapping)
-- **Section spacing:** 48px between major sections, 16px between cards
+## Spacing & rhythm
+
+- **Base unit:** 4px
+- **Card horizontal padding:** 22px
+- **Card vertical padding:** 14–18px
+- **Section dividers:**
+  - Inner row: `1px dotted var(--rule)`
+  - Section: `1px solid var(--rule)`
+  - App header bottom: `3px double var(--rule)` (Plainchant signature)
+
+## Borders & corners
+
+- **Radius:** 1–2px on buttons/inputs/cards (intentionally near-square — manuscript-feel)
+- **Pills (status, chips):** `999px` (capsule)
+- **Avatars:** `50%` (circle)
+
+## Shadows
+
+The aesthetic is flat. Two exceptions:
+- Map pin: `0 2px 8px rgba(0,0,0,.12)`
+- FAB: `0 4px 14px rgba(0,0,0,.12)`
 
 ## Layout
-- **Approach:** Grid-disciplined, single-column on mobile
-- **Mobile (375px):** Full-width cards, single column. This is the primary viewport.
-- **Tablet (640px):** 2-column card grid for outreach and singers. Schedule stays single column.
-- **Desktop (1024px):** Centered container, max-width 768px. No sidebar — keep the mobile mental model.
-- **Max content width:** 480px mobile, 768px desktop
-- **Border radius:** sm(6px) for buttons/inputs, md(12px) for cards, lg(16px) for modals/containers
-- **Navigation:** 3 bottom-aligned tabs (Outreach, Schedule, Singers). Always visible. Text + icon labels. Active tab: green text + green bottom border + light green background.
+
+- **Approach:** Mobile-first, single-column. Fixed phone-style frame on tablet/desktop.
+- **Mobile (default):** 390px content width, full-bleed cards.
+- **Tablet (640px+):** Cream surround (`--paper-2`), 480px max-width centered phone column.
+- **Desktop (1024px+):** Same — centered 480px column. No sidebar.
+- **Phone frame (when shown):** 390 × 780px in design canvas; production lets it grow with viewport.
+- **Tab bar:** 72px tall, fixed bottom, `1px solid var(--rule)` top border, active tab gets a 2px `var(--accent)` top accent.
+- **FAB:** 52px circle, bottom-right, 18px right + 88px bottom (clears tab bar).
+
+## Navigation
+
+- **3 tabs:** Outreach (I) · Schedule (II) · Singers (III).
+- **Tab icons:** Roman numerals in italic Spectral display — part of the manuscript aesthetic.
+- **Active state:** ink color text + 2px ochre top border. Inactive: `--ink-faint` text, no border.
+
+## Forms
+
+- **Inputs:** Borderless, `1px solid var(--ink)` underline only. No rounded boxes.
+- **Focus:** underline color shifts to `var(--accent)`.
+- **Labels:** eyebrow smcaps (Inter 10px, .22em letter-spacing).
+- **Textareas:** italic Spectral body in `--ink-soft` for placeholder voice.
+- **Primary action:** full-width `.btn .btn-accent` at the bottom — ochre fill, paper text, smcaps.
+
+## Buttons
+
+- **Default:** transparent, `1px solid var(--rule)`, smcaps Inter 11px.
+- **Accent / primary:** ochre fill (`var(--accent)`), paper text. Hover deepens to `--accent-deep`.
+- **Status pills:** outlined capsule with colored dot. Active state inverts to ink fill / paper text.
 
 ## Motion
-- **Approach:** Minimal-functional — only transitions that aid comprehension. Seniors find unexpected or bouncy animation disorienting.
-- **Easing:** enter(ease-out) exit(ease-in) move(ease-in-out)
-- **Duration:** micro(100ms) for button press, short(150ms) for toast appear, medium(200ms) for page transitions
-- **Specific animations:**
+
+- **Approach:** Minimal-functional. Only transitions that aid comprehension.
+- **Durations:** micro (100ms) for button press, short (150ms) toast, medium (200ms) page transition.
+- **Specific:**
   - Button press: `transform: scale(0.98)` over 100ms
-  - Toast banner: slide in from top, 150ms ease-out. Auto-dismiss after 4 seconds with fade-out.
-  - Full-screen form: slide in from right, 200ms ease-out. Back: slide out to right.
-  - Tab switch: instant (no animation — seniors expect immediate response to taps)
-- **Reduced motion:** Respect `prefers-reduced-motion: reduce`. Disable all animations except opacity changes.
+  - Toast: slide down + fade, 200ms ease-out, auto-dismiss 4s
+  - Modal: slide in from right, 200ms ease-out
+  - Tab switch: instant
+- **Reduced motion:** All animations disabled when `prefers-reduced-motion: reduce`.
 
 ## Accessibility
-- **Contrast:** 7:1 minimum for all text (WCAG AAA)
-- **Touch targets:** 48x48px minimum, 12px spacing between targets
-- **Focus indicators:** 3px outline in primary green (#4a6741), visible on all interactive elements
-- **Keyboard:** Tab through interactive elements, Enter/Space to activate, Escape to close
-- **ARIA:** nav landmark for tabs, main for content, role="dialog" for forms, descriptive aria-labels on all buttons
-- **Font size:** Never below 13px. Body text 18px minimum.
+
+- **Contrast:** ink on paper exceeds 7:1 (WCAG AAA) for body text. `--ink-soft` on paper passes AA at 4.5:1+.
+- **Touch targets:** 44x44px minimum (tab bar entries are 72px tall, comfortably above).
+- **Focus indicators:** 2px outline in `var(--accent)`, offset 2px.
+- **Keyboard:** Tab, Enter/Space to activate, Escape to close modals.
+- **ARIA:** `nav` for tabs, `main` for content, descriptive `aria-label`s on icon-only buttons, `aria-hidden` on decorative SVG.
+- **Min font size:** 13px (italic body footnote). Body text 15–17px.
+
+## Assets
+
+- **No raster images.** All visuals are inline SVG glyphs or Leaflet tiles.
+- **Sign-in glyph:** Concentric circles + crosshairs + italic "ts" centered.
+- **Map tiles:** CartoDB Light. Custom `divIcon` pins with italic display number + smcaps date.
 
 ## Decisions Log
-| Date | Decision | Rationale |
-|------|----------|-----------|
-| 2026-03-23 | Initial design system created | Created by /design-consultation based on office-hours product context and design review decisions |
-| 2026-03-23 | Source Serif 4 for display | Warm serif signals "people, not software" — deliberate departure from sans-serif-only app convention |
-| 2026-03-23 | Warm amber (#C67B3C) accent | Urgency without alarm. Deliberate departure from clinical blue/green palettes common in care/health apps |
-| 2026-03-23 | Warm off-white (#FAF8F5) background | Reduces eye strain for aging eyes. Standard for health/care apps but rarely done in web apps |
-| 2026-03-23 | No dark mode in v1 | Primary users don't typically use dark mode. Can be added as Phase 2 |
-| 2026-03-23 | Minimal motion only | Evidence-based: unexpected motion is disorienting for seniors. Only functional transitions |
+
+| Date       | Decision                                              | Rationale                                                                 |
+|------------|-------------------------------------------------------|---------------------------------------------------------------------------|
+| 2026-03-23 | Initial system created (Source Serif + green)         | First-pass design tied to office-hours product context                    |
+| 2026-04-25 | Replaced with **Plainchant** manuscript direction     | Per design handoff — three explored directions, Plainchant chosen as lead |
+| 2026-04-25 | Spectral italic for display, Inter for UI             | Manuscript feel without sacrificing UI legibility                         |
+| 2026-04-25 | Cream paper `#f7f1e6` background                      | Warmer than off-white; reduces eye strain; aligns with manuscript aesthetic |
+| 2026-04-25 | Ochre `#a36a2c` accent (replaces green)               | Warm, prayerful; deliberate departure from clinical care-app palettes     |
+| 2026-04-25 | Roman numeral tab icons in italic Spectral            | Reinforces manuscript identity in the navigation chrome                   |
+| 2026-04-25 | 1–2px radii throughout (near-square)                  | Manuscript-page feel; rounded corners would soften the typographic voice  |
+| 2026-04-25 | No dark mode in v1 (Nightfall available as alt)       | Coordinators don't typically use dark mode; can ship later if requested   |
