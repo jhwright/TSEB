@@ -6,100 +6,89 @@
   <title>Threshold Singers East Bay</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Source+Serif+4:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Cardo:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body class="dir-plainchant">
   <!-- CDN error fallback (shown if Supabase CDN fails) -->
   <div id="cdn-error" style="display:none; padding:2rem; text-align:center; font-family:system-ui;">
     <h2>Something went wrong</h2>
     <p>The app couldn't load. Please check your internet connection and <button onclick="location.reload()">try again</button>.</p>
   </div>
 
-  <!-- Login screen -->
-  <div id="login-screen" style="display:none; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; padding:24px; background:var(--bg);">
-    <div style="width:100%; max-width:400px;">
-      <!-- Logo / title -->
-      <div style="text-align:center; margin-bottom:40px;">
-        <div style="font-family:var(--font-display); font-size:28px; font-weight:700; color:var(--primary); line-height:1.2;">Threshold Singers</div>
-        <div style="font-family:var(--font-display); font-size:20px; font-weight:400; color:var(--primary); margin-top:2px;">East Bay</div>
-        <div style="font-size:16px; color:var(--muted); margin-top:12px;">Bedside Singing Manager</div>
+  <!-- Sign-in screen -->
+  <div id="login-screen" class="signin" style="display:none;">
+    <div class="signin-body">
+      <div class="signin-glyph">
+        <svg width="68" height="68" viewBox="0 0 68 68" aria-hidden="true">
+          <circle cx="34" cy="34" r="32" stroke="var(--rule)" fill="none"/>
+          <circle cx="34" cy="34" r="22" stroke="var(--rule)" fill="none"/>
+          <path d="M34 14 V54 M14 34 H54" stroke="var(--rule-soft)"/>
+          <text x="34" y="40" text-anchor="middle" font-family="var(--font-display)" font-style="italic" font-size="24" fill="var(--accent-deep)">ts</text>
+        </svg>
       </div>
+      <div class="signin-eyebrow">Threshold Singers · East Bay</div>
+      <h2 class="signin-heading">Welcome back.</h2>
+      <p class="signin-lede">Sign in to tend the roster, schedule, and outreach.</p>
 
       <!-- Login form (replaced by confirmation state after send) -->
       <div id="login-form">
-        <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-md); padding:28px;">
-          <h2 style="font-family:var(--font-display); font-size:22px; font-weight:600; margin-bottom:8px;">Sign in</h2>
-          <p style="font-size:16px; color:var(--muted); margin-bottom:24px;">Enter your email address and we'll send you a sign-in link — no password needed.</p>
-
-          <div class="form-group">
-            <label class="form-label" for="login-email">Email address</label>
-            <input
-              type="email"
-              id="login-email"
-              name="email"
-              class="form-input"
-              placeholder="you@example.com"
-              autocomplete="email"
-              autocapitalize="none"
-              inputmode="email"
-              onkeydown="if(event.key==='Enter') TSEB.auth.sendMagicLink(document.getElementById('login-email').value.trim())"
-            >
-          </div>
-
-          <button
-            id="login-btn"
-            class="btn btn-primary"
-            style="width:100%; margin-top:8px;"
-            onclick="TSEB.auth.sendMagicLink(document.getElementById('login-email').value.trim())"
+        <div class="signin-field">
+          <label for="login-email">Email</label>
+          <input
+            type="email"
+            id="login-email"
+            name="email"
+            class="signin-input"
+            placeholder="you@example.com"
+            autocomplete="email"
+            autocapitalize="none"
+            inputmode="email"
+            onkeydown="if(event.key==='Enter') TSEB.auth.sendMagicLink(document.getElementById('login-email').value.trim())"
           >
-            Send Me a Login Link
-          </button>
+        </div>
 
-          <p style="font-size:14px; color:var(--muted); margin-top:20px; text-align:center;">
-            Only active TSEB members can sign in. Contact your coordinator if you have trouble.
-          </p>
+        <button
+          id="login-btn"
+          class="btn btn-accent signin-submit"
+          onclick="TSEB.auth.sendMagicLink(document.getElementById('login-email').value.trim())"
+        >
+          Send sign-in link
+        </button>
+
+        <div class="signin-footnote">
+          Only active members can sign in.<br>
+          Contact your coordinator if you have trouble.
         </div>
       </div>
     </div>
+    <div class="signin-epigraph">&ldquo;We sing at the threshold.&rdquo;</div>
   </div>
 
   <!-- Main app (hidden until auth) -->
   <div id="app" style="display:none;">
-    <!-- Header -->
-    <header class="header">
-      <h1 id="header-greeting" class="header-title" style="flex:1;">Threshold Singers</h1>
-      <div style="display:flex; gap:6px;">
-        <a href="https://github.com/jhwright/TSEB/blob/main/docs/USER-GUIDE.md" target="_blank" style="background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.3); color:#fff; padding:6px 12px; border-radius:var(--radius-sm); font-size:14px; font-weight:600; text-decoration:none;">Guide</a>
-        <a href="admin.html" style="background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.3); color:#fff; padding:6px 12px; border-radius:var(--radius-sm); font-size:14px; font-weight:600; text-decoration:none;">Admin</a>
-        <button onclick="TSEB.feedback.open()" aria-label="Feedback" style="background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.3); color:#fff; padding:6px 12px; border-radius:var(--radius-sm); font-size:14px; font-weight:600; cursor:pointer;">Feedback</button>
-        <button class="btn-help" onclick="TSEB.guide.show()" aria-label="Help" style="background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.3); color:#fff; padding:6px 12px; border-radius:var(--radius-sm); font-size:14px; font-weight:600; cursor:pointer;">? Help</button>
+    <!-- Manuscript header -->
+    <header class="app-header">
+      <div class="app-header-row">
+        <div>
+          <h1 class="app-title" id="header-greeting">Threshold Singers</h1>
+          <div class="app-subtitle">Bedside Singing &mdash; East Bay</div>
+        </div>
+        <div class="header-icons">
+          <a href="https://github.com/jhwright/TSEB/blob/main/docs/USER-GUIDE.md" target="_blank" rel="noopener">Guide</a>
+          <a href="admin.html">Admin</a>
+          <button class="btn-help" onclick="TSEB.guide.show()" aria-label="Help">?</button>
+        </div>
       </div>
     </header>
-
-    <!-- 3-tab bottom navigation -->
-    <nav class="nav" role="navigation" aria-label="Main">
-      <button class="nav-btn active" data-screen="outreach" onclick="TSEB.nav('outreach')">
-        <span style="font-size:20px;">📋</span>
-        Outreach
-      </button>
-      <button class="nav-btn" data-screen="schedule" onclick="TSEB.nav('schedule')">
-        <span style="font-size:20px;">🎵</span>
-        Schedule
-      </button>
-      <button class="nav-btn" data-screen="singers" onclick="TSEB.nav('singers')">
-        <span style="font-size:20px;">👥</span>
-        Singers
-      </button>
-    </nav>
 
     <!-- Screen containers -->
     <main role="main">
       <!-- Outreach screen -->
       <div id="screen-outreach" class="screen active">
         <div id="outreach-callout" class="callout" style="display:none;"></div>
+        <div id="outreach-filter" class="filter-toggle"></div>
         <div id="outreach-pills" class="status-pills"></div>
-        <div id="outreach-filter" class="filter-toggle" style="margin-bottom:16px;"></div>
         <div id="outreach-list"></div>
         <button class="fab" onclick="TSEB.outreach.openAddForm()" aria-label="Add new facility">+</button>
       </div>
@@ -112,11 +101,27 @@
 
       <!-- Singers screen -->
       <div id="screen-singers" class="screen">
-        <div id="singers-header" style="margin-bottom:16px;"></div>
+        <div id="singers-header"></div>
         <div id="singers-list"></div>
         <button class="fab" onclick="TSEB.singers.openAddForm()" aria-label="Add new singer">+</button>
       </div>
     </main>
+
+    <!-- Bottom tab bar (Roman numeral icons) -->
+    <nav class="tab-bar" role="navigation" aria-label="Main">
+      <button class="tab active" data-screen="outreach" onclick="TSEB.nav('outreach')">
+        <span class="tab-icon">I</span>
+        <span>Outreach</span>
+      </button>
+      <button class="tab" data-screen="schedule" onclick="TSEB.nav('schedule')">
+        <span class="tab-icon">II</span>
+        <span>Schedule</span>
+      </button>
+      <button class="tab" data-screen="singers" onclick="TSEB.nav('singers')">
+        <span class="tab-icon">III</span>
+        <span>Singers</span>
+      </button>
+    </nav>
   </div>
 
   <!-- Toast container -->
