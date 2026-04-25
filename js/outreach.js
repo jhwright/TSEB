@@ -28,9 +28,11 @@ TSEB.outreach = {
   _renderFilter() {
     const el = document.getElementById('outreach-filter');
     if (!el) return;
+    const data = this._filtered();
     el.innerHTML =
-      '<button class="filter-toggle-btn' + (this._filter === 'all' ? ' active' : '') + '" onclick="TSEB.outreach.setFilter(\'all\')">All</button>' +
-      '<button class="filter-toggle-btn' + (this._filter === 'mine' ? ' active' : '') + '" onclick="TSEB.outreach.setFilter(\'mine\')">Mine</button>';
+      '<button class="filter-toggle-btn' + (this._filter === 'all' ? ' active' : '') + '" onclick="TSEB.outreach.setFilter(\'all\')">All facilities</button>' +
+      '<button class="filter-toggle-btn' + (this._filter === 'mine' ? ' active' : '') + '" onclick="TSEB.outreach.setFilter(\'mine\')">Mine</button>' +
+      '<span class="filter-toggle-count">' + data.length + '</span>';
   },
 
   setFilter(val) {
@@ -60,6 +62,7 @@ TSEB.outreach = {
     } else {
       this._statusFilter = (this._statusFilter === status) ? null : status;
     }
+    this._renderFilter();
     this._renderPills();
     this._renderCards();
     this._renderCallout();
@@ -88,14 +91,15 @@ TSEB.outreach = {
     }
 
     el.style.display = '';
-    const parts = [];
-    if (overdue.length > 0) {
-      parts.push('<strong style="color:var(--error);">' + overdue.length + ' overdue</strong>');
-    }
-    if (soon.length > 0) {
-      parts.push('<strong style="color:var(--warning);">' + soon.length + ' due this week</strong>');
-    }
-    el.innerHTML = 'Follow-up needed: ' + parts.join(' · ');
+    const overdueCount = overdue.length;
+    const soonCount = soon.length;
+    el.innerHTML =
+      '<span class="callout-numeral">' + overdueCount + '</span>' +
+      '<div class="callout-body">' +
+        '<div class="callout-headline">overdue follow-up' + (overdueCount === 1 ? '' : 's') + '</div>' +
+        (soonCount > 0 ? '<div class="eyebrow callout-sub">+' + soonCount + ' due this week</div>' : '') +
+      '</div>' +
+      '<span class="callout-action">tend &rarr;</span>';
   },
 
   _renderPills() {
@@ -103,50 +107,23 @@ TSEB.outreach = {
     if (!el) return;
     const data = this._data || [];
 
-    const statusGroups = {
-      initial_contact: 0,
-      in_conversation: 0,
-      site_visit: 0,
-      active: 0,
-      on_hold: 0,
-      previous: 0,
-      inactive: 0
-    };
+    const order = ['initial_contact', 'in_conversation', 'site_visit', 'active', 'on_hold', 'previous', 'inactive'];
+    const counts = {};
+    order.forEach(function(k) { counts[k] = 0; });
     data.forEach(function(i) {
-      if (i.status in statusGroups) statusGroups[i.status]++;
+      if (i.status in counts) counts[i.status]++;
     });
 
-    const labels = {
-      initial_contact: 'Initial',
-      in_conversation: 'Talking',
-      site_visit: 'Site Visit',
-      active: 'Active',
-      on_hold: 'Hold',
-      previous: 'Previous',
-      inactive: 'Inactive'
-    };
-    const badgeClass = {
-      initial_contact: 'badge-initial',
-      in_conversation: 'badge-conversation',
-      site_visit: 'badge-conversation',
-      active: 'badge-active',
-      on_hold: 'badge-muted',
-      previous: 'badge-muted',
-      inactive: 'badge-overdue'
-    };
-
     var self = this;
-    el.innerHTML = Object.keys(statusGroups).map(function(key) {
-      var count = statusGroups[key];
-      if (count === 0) return '';
-      var isActive = self._statusFilter === key;
-      var activeStyle = isActive ? 'outline:3px solid var(--primary); outline-offset:1px; font-weight:700;' : '';
-      return '<span class="badge ' + (badgeClass[key] || 'badge-muted') + '" ' +
-        'style="cursor:pointer; ' + activeStyle + '" ' +
+    el.innerHTML = order.map(function(key) {
+      if (counts[key] === 0) return '';
+      const isActive = self._statusFilter === key;
+      const label = TSEB.util.statusLabel(key);
+      return '<span class="status-pill' + (isActive ? ' is-active' : '') + '" data-status="' + key + '" ' +
         'onclick="TSEB.outreach.setStatusFilter(\'' + key + '\')">' +
-        labels[key] + ' · ' + count + '</span>';
-    }).join('') +
-    (self._statusFilter ? ' <span style="font-size:13px; color:var(--primary); cursor:pointer; text-decoration:underline;" onclick="TSEB.outreach.setStatusFilter(null)">Clear filter</span>' : '');
+        '<span class="dot"></span>' + label +
+        '<span class="status-pill-count">' + counts[key] + '</span></span>';
+    }).join('');
   },
 
   _renderCards() {
@@ -183,42 +160,47 @@ TSEB.outreach = {
 
   _cardHTML(i) {
     const overdue = TSEB.util.isOverdue(i.next_step_due);
-    const soon = TSEB.util.isSoon(i.next_step_due);
-    const cardClass = 'card' + (overdue ? ' card-overdue' : '');
 
+    // Subtitle: "{type} · {city or address head} · {zip}"
+    const typeLabel = i.institution_type
+      ? i.institution_type.replace(/_/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); })
+      : '';
+    const subtitleParts = [];
+    if (typeLabel) subtitleParts.push(TSEB.util.esc(typeLabel));
+    if (i.address) subtitleParts.push(TSEB.util.esc(i.address));
+    if (i.zip_code) subtitleParts.push(TSEB.util.esc(i.zip_code));
+    const subtitleHTML = subtitleParts.length
+      ? '<div class="card-subtitle">' + subtitleParts.join(' &middot; ') + '</div>'
+      : '';
+
+    // Next step block (italic body + accent left rule, warning if overdue)
     let nextStepHTML = '';
     if (i.next_step) {
-      const dateText = overdue ? 'Overdue' : (soon ? 'Due ' + TSEB.util.fmtDateShort(i.next_step_due) : TSEB.util.fmtDateShort(i.next_step_due));
-      const dateStyle = overdue ? 'color:var(--error); font-weight:700;' : (soon ? 'color:var(--warning); font-weight:600;' : 'color:var(--muted);');
-      nextStepHTML = '<div class="card-next-step">' +
-        '<span style="' + dateStyle + ' font-size:13px;">' + TSEB.util.esc(dateText) + '</span>' +
-        ' — ' + TSEB.util.esc(i.next_step) +
+      const dateText = overdue ? 'Overdue' : ('Due ' + TSEB.util.fmtDateShort(i.next_step_due));
+      nextStepHTML = '<div class="card-next-step' + (overdue ? ' card-next-step-overdue' : '') + '">' +
+        '<div class="card-next-step-eyebrow">Next &middot; ' + TSEB.util.esc(dateText) + '</div>' +
+        '<div class="card-next-step-body">' + TSEB.util.esc(i.next_step) + '</div>' +
         '</div>';
     }
 
-    const outreacherHTML = i.outreacher
-      ? '<span style="margin-right:8px;">' + TSEB.util.singerChip(i.outreacher.first_name) + '</span>'
-      : '';
-
-    // Primary contact
+    // Primary contact (smcaps "↳ Name")
     var primary = (i.contacts || []).find(function(c) { return c.is_primary; }) || (i.contacts || [])[0];
     var contactLine = '';
     if (primary) {
       var cName = ((primary.first_name || '') + ' ' + (primary.last_name || '')).trim();
-      contactLine = '<div class="card-detail">' + TSEB.util.esc(cName) +
-        (primary.phone ? ' · <a href="tel:' + TSEB.util.esc(primary.phone) + '" style="color:var(--primary);" onclick="event.stopPropagation();">' + TSEB.util.esc(primary.phone) + '</a>' : '') +
-        '</div>';
+      if (cName) {
+        contactLine = '<div class="card-contact">&#8627; ' + TSEB.util.esc(cName) + '</div>';
+      }
     }
 
-    return '<div class="' + cardClass + '" style="cursor:pointer;" onclick="TSEB.outreach.showDetail(\'' + i.id + '\')">' +
-      '<div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:6px;">' +
-      '<div class="card-title">' + TSEB.util.esc(i.name) + '</div>' +
-      TSEB.util.statusBadge(i.status) +
+    return '<div class="card outreach-card" onclick="TSEB.outreach.showDetail(\'' + i.id + '\')">' +
+      '<div class="card-head">' +
+      '<h3 class="card-title">' + TSEB.util.esc(i.name) + '</h3>' +
+      TSEB.util.statusPill(i.status, { compact: true }) +
       '</div>' +
-      (i.address || i.zip_code ? '<div class="card-detail">' + TSEB.util.esc(i.address || '') + (i.address && i.zip_code ? ' · ' : '') + (i.zip_code ? TSEB.util.esc(i.zip_code) : '') + '</div>' : '') +
-      contactLine +
+      subtitleHTML +
       nextStepHTML +
-      (outreacherHTML ? '<div style="margin-top:8px;">' + outreacherHTML + '</div>' : '') +
+      contactLine +
       '</div>';
   },
 
@@ -246,126 +228,127 @@ TSEB.outreach = {
       ? Math.floor((new Date() - new Date(inst.next_step_due)) / 86400000)
       : 0;
 
-    // Next step banner
-    let nextStepBanner = '';
-    if (inst.next_step) {
-      nextStepBanner = '<div style="background:' + (overdue ? 'var(--error-light)' : 'var(--accent-light)') + '; border-left:4px solid ' + (overdue ? 'var(--error)' : 'var(--accent)') + '; padding:14px 16px; border-radius:0 var(--radius-sm) var(--radius-sm) 0; margin-bottom:16px;">' +
-        '<div style="font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:' + (overdue ? 'var(--error)' : 'var(--warning)') + '; margin-bottom:4px;">Next Step</div>' +
-        '<div style="font-size:17px;">' + TSEB.util.esc(inst.next_step) + '</div>' +
-        '<div style="font-size:14px; color:var(--muted); margin-top:6px;">Due: ' + TSEB.util.fmtDate(inst.next_step_due) +
-        (overdue ? ' <strong style="color:var(--error);">· ' + daysOverdue + ' days overdue</strong>' : '') +
-        '</div></div>';
-    }
-
-    // Status change buttons
-    const allStatuses = [
-      { value: 'initial_contact', label: 'Initial Contact' },
-      { value: 'in_conversation', label: 'In Conversation' },
-      { value: 'site_visit', label: 'Site Visit' },
-      { value: 'active', label: 'Active' },
-      { value: 'on_hold', label: 'On Hold' },
-      { value: 'previous', label: 'Previous' },
-      { value: 'inactive', label: 'Inactive' }
-    ];
-    const statusButtons = allStatuses.map(function(s) {
-      const isCurrent = s.value === inst.status;
-      return '<button class="btn ' + (isCurrent ? 'btn-primary' : 'btn-secondary') + '" style="font-size:14px; min-height:40px; padding:8px 14px;' + (isCurrent ? ' cursor:default;' : '') + '" ' +
-        (isCurrent ? 'disabled' : 'onclick="TSEB.outreach.changeStatus(\'' + id + '\', \'' + s.value + '\')"') +
-        '>' + TSEB.util.esc(s.label) + '</button>';
-    }).join('');
-
-    // Contacts section
-    let contactsHTML = '<div style="margin-bottom:20px;">' +
-      '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">' +
-      '<h4 style="font-size:14px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin:0;">Contacts</h4>' +
-      '<button class="btn btn-secondary" style="font-size:13px; min-height:36px; padding:6px 12px;" onclick="TSEB.outreach.openAddContact(\'' + id + '\')">+ Add Contact</button>' +
-      '</div>';
-    if (contacts && contacts.length) {
-      contactsHTML += contacts.map(function(c) {
-          return '<div style="background:var(--bg); border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px; margin-bottom:8px;">' +
-            '<div style="display:flex; justify-content:space-between; align-items:flex-start;">' +
-            '<div><div style="font-weight:600; font-size:16px;">' + TSEB.util.esc((c.first_name || '') + ' ' + (c.last_name || '')).trim() +
-            (c.is_primary ? ' <span style="font-size:11px; color:var(--accent); font-weight:700;">PRIMARY</span>' : '') + '</div>' +
-            (c.job_title ? '<div style="font-size:14px; color:var(--muted);">' + TSEB.util.esc(c.job_title) + '</div>' : '') +
-            '<div style="font-size:14px; margin-top:4px;">' +
-            (c.phone ? '<a href="tel:' + TSEB.util.esc(c.phone) + '" style="color:var(--primary);">' + TSEB.util.esc(c.phone) + '</a>' : '') +
-            (c.phone && c.email ? ' · ' : '') +
-            (c.email ? '<a href="mailto:' + TSEB.util.esc(c.email) + '" style="color:var(--primary);">' + TSEB.util.esc(c.email) + '</a>' : '') +
-            '</div></div>' +
-            '<button class="btn btn-ghost" style="font-size:12px; min-height:32px; padding:4px 10px; align-self:flex-start;" onclick="event.stopPropagation(); TSEB.outreach.openEditContact(\'' + c.id + '\', \'' + id + '\')">Edit</button>' +
-            '</div></div>';
-        }).join('');
-    } else {
-      contactsHTML += '<p style="color:var(--muted); font-size:15px;">No contacts yet. Add one to track who to call.</p>';
-    }
-    contactsHTML += '</div>';
-
-    // Timeline section
-    let timelineHTML = '';
-    if (activities && activities.length) {
-      timelineHTML = activities.map(function(a) {
-        const isAction = ['phone_call','voicemail','email_sent','email_received','in_person','site_visit','first_sing'].includes(a.activity_type);
-        const isStatus = a.activity_type === 'status_change';
-        const dotColor = isStatus ? 'var(--info)' : isAction ? 'var(--primary)' : 'var(--muted)';
-        const typeLabel = (a.activity_type || '').replace(/_/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); });
-        return '<div style="display:flex; gap:12px; margin-bottom:16px;">' +
-          '<div style="flex-shrink:0; width:10px; height:10px; border-radius:50%; background:' + dotColor + '; margin-top:6px;"></div>' +
-          '<div style="flex:1;">' +
-          '<div style="font-size:13px; color:var(--muted); margin-bottom:2px;">' +
-          TSEB.util.fmtDate(a.activity_date) +
-          (a.singer ? ' · ' + TSEB.util.esc(a.singer.first_name) : '') +
-          ' · <em>' + TSEB.util.esc(typeLabel) + '</em>' +
-          '</div>' +
-          '<div style="font-size:15px;">' + TSEB.util.esc(a.description) + '</div>' +
-          '</div></div>';
-      }).join('');
-    } else {
-      timelineHTML = '<p style="color:var(--muted); font-size:15px;">No activity logged yet. Tap Log Activity to get started.</p>';
-    }
-
     const typeLabel = inst.institution_type
       ? inst.institution_type.replace(/_/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); })
       : '';
 
+    // Eyebrow line: type · address · zip
+    const eyebrowParts = [];
+    if (typeLabel) eyebrowParts.push(TSEB.util.esc(typeLabel));
+    if (inst.address) eyebrowParts.push(TSEB.util.esc(inst.address));
+    if (inst.zip_code) eyebrowParts.push(TSEB.util.esc(inst.zip_code));
+    const eyebrowHTML = eyebrowParts.length
+      ? '<div class="eyebrow detail-eyebrow">' + eyebrowParts.join(' &middot; ') + '</div>'
+      : '';
+
+    // Status pill row (all statuses, current is active)
+    const allStatuses = ['initial_contact','in_conversation','site_visit','active','on_hold','previous','inactive'];
+    const statusRow = allStatuses.map(function(s) {
+      const isCurrent = s === inst.status;
+      const onClick = isCurrent ? '' : ' onclick="TSEB.outreach.changeStatus(\'' + id + '\', \'' + s + '\')"';
+      return TSEB.util.statusPill(s, { active: isCurrent, attrs: onClick });
+    }).join(' ');
+
+    // Next-action banner — paper-2 background, italic display body
+    let nextActionHTML = '';
+    if (inst.next_step) {
+      const dueText = overdue
+        ? 'Overdue · ' + daysOverdue + ' day' + (daysOverdue === 1 ? '' : 's')
+        : 'Due ' + TSEB.util.fmtDate(inst.next_step_due);
+      nextActionHTML =
+        '<div class="detail-next-action">' +
+        '<div class="eyebrow detail-next-eyebrow' + (overdue ? ' is-overdue' : '') + '">Next action &middot; ' + TSEB.util.esc(dueText) + '</div>' +
+        '<div class="detail-next-body">' + TSEB.util.esc(inst.next_step) + '</div>' +
+        '<button class="btn btn-accent detail-next-cta" onclick="TSEB.outreach.openLogActivity(\'' + id + '\')">Log activity</button>' +
+        '</div>';
+    } else {
+      nextActionHTML =
+        '<div class="detail-next-action">' +
+        '<div class="eyebrow">No next step set</div>' +
+        '<button class="btn btn-accent detail-next-cta" onclick="TSEB.outreach.openLogActivity(\'' + id + '\')">Log activity</button>' +
+        '</div>';
+    }
+
+    // Contacts (line items, dotted divider between)
+    let contactsHTML = '<div class="detail-section">' +
+      '<div class="detail-section-head">' +
+      '<div class="eyebrow">Contacts</div>' +
+      '<button class="detail-section-action" onclick="TSEB.outreach.openAddContact(\'' + id + '\')">+ Add</button>' +
+      '</div>';
+    if (contacts && contacts.length) {
+      contactsHTML += contacts.map(function(c, i) {
+        const cName = ((c.first_name || '') + ' ' + (c.last_name || '')).trim();
+        const titleHTML = c.job_title
+          ? '<span class="smcaps faint">' + TSEB.util.esc(c.job_title) + (c.is_primary ? ' &middot; primary' : '') + '</span>'
+          : (c.is_primary ? '<span class="smcaps faint">primary</span>' : '');
+        const phoneHTML = c.phone
+          ? '<a class="detail-contact-phone" href="tel:' + TSEB.util.esc(c.phone) + '" onclick="event.stopPropagation();">' + TSEB.util.esc(c.phone) + '</a>'
+          : '';
+        const emailHTML = c.email
+          ? '<a class="detail-contact-email" href="mailto:' + TSEB.util.esc(c.email) + '" onclick="event.stopPropagation();">' + TSEB.util.esc(c.email) + '</a>'
+          : '';
+        return '<div class="detail-contact" onclick="TSEB.outreach.openEditContact(\'' + c.id + '\', \'' + id + '\')">' +
+          '<div class="detail-contact-row">' +
+          '<span class="detail-contact-name">' + TSEB.util.esc(cName) + '</span>' +
+          titleHTML +
+          '</div>' +
+          (phoneHTML || emailHTML
+            ? '<div class="detail-contact-meta">' + phoneHTML + (phoneHTML && emailHTML ? '<span class="meta-sep">·</span>' : '') + emailHTML + '</div>'
+            : '') +
+          '</div>';
+      }).join('');
+    } else {
+      contactsHTML += '<div class="detail-empty">No contacts yet.</div>';
+    }
+    contactsHTML += '</div>';
+
+    // Timeline
+    let timelineHTML = '<div class="detail-section">' +
+      '<div class="detail-section-head"><div class="eyebrow">Timeline</div></div>';
+    if (activities && activities.length) {
+      timelineHTML += '<div class="detail-timeline">' + activities.map(function(a) {
+        const tLabel = (a.activity_type || '').replace(/_/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+        const dateShort = TSEB.util.fmtDateShort(a.activity_date);
+        return '<div class="detail-timeline-row">' +
+          '<div class="detail-timeline-date">' +
+          '<div class="smcaps faint">' + TSEB.util.esc(dateShort) + '</div>' +
+          '<div class="smcaps detail-timeline-type">' + TSEB.util.esc(tLabel) + '</div>' +
+          '</div>' +
+          '<div class="detail-timeline-rule"><span class="dot"></span></div>' +
+          '<div class="detail-timeline-note">' + TSEB.util.esc(a.description || '') +
+          (a.singer ? ' <span class="smcaps faint">&middot; ' + TSEB.util.esc(a.singer.first_name) + '</span>' : '') +
+          '</div>' +
+          '</div>';
+      }).join('') + '</div>';
+    } else {
+      timelineHTML += '<div class="detail-empty">No activity logged yet.</div>';
+    }
+    timelineHTML += '</div>';
+
+    const notesHTML = inst.notes
+      ? '<div class="detail-section">' +
+          '<div class="detail-section-head"><div class="eyebrow">Notes</div></div>' +
+          '<div class="detail-notes">' + TSEB.util.esc(inst.notes) + '</div>' +
+        '</div>'
+      : '';
+
     const html =
-      '<div class="modal-header">' +
-      '<button class="modal-back-btn" onclick="TSEB.closeDetail()" aria-label="Close">&#8592;</button>' +
-      '<div class="modal-title">' + TSEB.util.esc(inst.name) + '</div>' +
+      '<div class="detail-topbar">' +
+      '<button class="topbar-link" onclick="TSEB.closeDetail()" aria-label="Close">&larr; Outreach</button>' +
+      '<button class="topbar-link topbar-link-accent" onclick="TSEB.outreach.openEditForm(\'' + id + '\')">Edit</button>' +
       '</div>' +
-      '<div class="modal-body">' +
-      '<div style="margin-bottom:16px;">' +
-      (typeLabel ? '<div style="font-size:15px; color:var(--muted);">' + TSEB.util.esc(typeLabel) + '</div>' : '') +
-      (inst.address || inst.zip_code ? '<div style="font-size:15px; color:var(--muted);">' + TSEB.util.esc(inst.address || '') + (inst.address && inst.zip_code ? ' · ' : '') + (inst.zip_code ? TSEB.util.esc(inst.zip_code) : '') + '</div>' : '') +
-      '<div style="margin-top:8px;">' + TSEB.util.statusBadge(inst.status) + '</div>' +
+      '<div class="detail-body">' +
+      '<div class="detail-hero">' +
+      eyebrowHTML +
+      '<h1 class="detail-title">' + TSEB.util.esc(inst.name) + '</h1>' +
+      '<div class="detail-status-row">' + statusRow + '</div>' +
       '</div>' +
-
-      nextStepBanner +
-
-      '<div style="display:flex; gap:10px; margin-bottom:20px;">' +
-      '<button class="btn btn-primary" style="flex:1;" onclick="TSEB.outreach.openLogActivity(\'' + id + '\')">Log Activity</button>' +
-      '<button class="btn btn-secondary" onclick="TSEB.outreach.openEditForm(\'' + id + '\')">Edit</button>' +
-      '</div>' +
-
-      (inst.outreacher
-        ? '<div style="margin-bottom:16px;"><span style="font-size:14px; color:var(--muted); margin-right:8px;">Outreacher:</span>' + TSEB.util.singerChip(inst.outreacher.first_name) + '</div>'
-        : '') +
-
+      '<hr class="h-rule">' +
+      nextActionHTML +
       contactsHTML +
-
-      '<div style="margin-bottom:20px;">' +
-      '<h4 style="font-size:14px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin-bottom:10px;">Change Status</h4>' +
-      '<div style="display:flex; flex-wrap:wrap; gap:8px;">' + statusButtons + '</div>' +
-      '</div>' +
-
-      '<div style="margin-bottom:20px;">' +
-      '<h4 style="font-size:14px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin-bottom:10px;">Timeline</h4>' +
+      '<hr class="h-rule">' +
       timelineHTML +
-      '</div>' +
-
-      (inst.notes
-        ? '<div style="margin-bottom:20px;"><h4 style="font-size:14px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin-bottom:10px;">Notes</h4><p style="font-size:15px;">' + TSEB.util.esc(inst.notes) + '</p></div>'
-        : '') +
-
+      notesHTML +
       '</div>';
 
     TSEB.showDetail(html);
@@ -679,73 +662,78 @@ TSEB.outreach = {
     const inst = this._data ? this._data.find(function(i) { return i.id === institutionId; }) : null;
     const instName = inst ? inst.name : 'Facility';
 
+    // Activity type buttons (status-pill style)
+    const activityTypes = [
+      { value: 'phone_call', label: 'Call' },
+      { value: 'email_sent', label: 'Email' },
+      { value: 'in_person', label: 'Visit' },
+      { value: 'site_visit', label: 'Site Visit' },
+      { value: 'voicemail', label: 'Voicemail' },
+      { value: 'note', label: 'Note' }
+    ];
+    const typeButtons = activityTypes.map(function(t) {
+      return '<button type="button" class="status-pill activity-type-btn" data-value="' + t.value +
+        '" onclick="TSEB.outreach._pickActivityType(this)">' +
+        '<span class="dot"></span>' + t.label + '</button>';
+    }).join('');
+
     const html =
-      '<div class="modal-header">' +
-      '<button class="modal-back-btn" onclick="TSEB.closeForm(); TSEB.outreach.showDetail(\'' + institutionId + '\')" aria-label="Back">&#8592;</button>' +
-      '<div class="modal-title">Log Activity</div>' +
+      '<div class="form-topbar">' +
+      '<button type="button" class="topbar-link" onclick="TSEB.closeForm(); TSEB.outreach.showDetail(\'' + institutionId + '\')">Cancel</button>' +
+      '<button type="submit" form="log-activity-form" class="topbar-link topbar-link-accent">Save</button>' +
       '</div>' +
-      '<div class="modal-body">' +
-      '<div style="font-size:15px; color:var(--muted); margin-bottom:20px;">For: <strong style="color:var(--text);">' + TSEB.util.esc(instName) + '</strong></div>' +
+      '<div class="form-body">' +
       '<form id="log-activity-form" onsubmit="event.preventDefault(); TSEB.outreach.submitLogActivity(this);">' +
       '<input type="hidden" name="institution_id" value="' + institutionId + '">' +
+      '<input type="hidden" name="activity_type" id="log-activity-type" required value="phone_call">' +
 
-      '<div class="form-group">' +
-      '<label class="form-label" for="log-singer">Who did this?</label>' +
-      '<select id="log-singer" name="singer_id" class="form-select">' +
-      '<option value="">Select singer...</option>' + singerOptions +
+      '<div class="eyebrow">Logging activity at</div>' +
+      '<h1 class="form-title">' + TSEB.util.esc(instName) + '</h1>' +
+
+      '<label class="eyebrow form-eyebrow-label">Type</label>' +
+      '<div class="form-pill-row">' + typeButtons + '</div>' +
+
+      '<label class="eyebrow form-eyebrow-label">Who did this?</label>' +
+      '<select name="singer_id" class="form-select form-select-bare">' +
+      '<option value="">Choose singer&hellip;</option>' + singerOptions +
       '</select>' +
+
+      '<label class="eyebrow form-eyebrow-label">Contact at the facility</label>' +
+      '<input name="contact_person" type="text" class="form-input" placeholder="Name (optional)">' +
+
+      '<label class="eyebrow form-eyebrow-label">What happened?</label>' +
+      '<textarea name="description" class="form-input form-textarea" rows="3" required placeholder="A few words about the interaction&hellip;"></textarea>' +
+
+      '<label class="eyebrow form-eyebrow-label">Date</label>' +
+      '<input name="activity_date" type="date" class="form-input form-input-display" value="' + today + '" required>' +
+
+      '<div class="form-next-step-block">' +
+      '<div class="eyebrow form-next-step-eyebrow">Next step (optional)</div>' +
+      '<input name="next_step" type="text" class="form-input form-input-italic" placeholder="What happens next?">' +
+      '<label class="smcaps faint form-next-step-due-label">Due</label>' +
+      '<input name="next_step_due" type="date" class="form-input form-input-italic">' +
       '</div>' +
 
-      '<div class="form-group">' +
-      '<label class="form-label" for="log-type">Activity Type *</label>' +
-      '<select id="log-type" name="activity_type" class="form-select" required>' +
-      '<option value="">Select type...</option>' +
-      '<option value="phone_call">Phone Call</option>' +
-      '<option value="voicemail">Voicemail</option>' +
-      '<option value="email_sent">Email Sent</option>' +
-      '<option value="email_received">Email Received</option>' +
-      '<option value="in_person">In Person</option>' +
-      '<option value="site_visit">Site Visit</option>' +
-      '<option value="first_sing">First Sing</option>' +
-      '<option value="status_change">Status Change</option>' +
-      '<option value="note">Note</option>' +
-      '</select>' +
-      '</div>' +
-
-      '<div class="form-group">' +
-      '<label class="form-label" for="log-date">Date *</label>' +
-      '<input id="log-date" name="activity_date" type="date" class="form-input" value="' + today + '" required>' +
-      '</div>' +
-
-      '<div class="form-group">' +
-      '<label class="form-label" for="log-contact">Who did you speak with?</label>' +
-      '<input id="log-contact" name="contact_person" type="text" class="form-input" placeholder="Name at the facility">' +
-      '</div>' +
-
-      '<div class="form-group">' +
-      '<label class="form-label" for="log-desc">What happened? *</label>' +
-      '<textarea id="log-desc" name="description" class="form-input" rows="4" placeholder="Describe the interaction..." required></textarea>' +
-      '</div>' +
-
-      '<details style="margin-bottom:16px;">' +
-      '<summary style="font-size:16px; font-weight:600; cursor:pointer; padding:8px 0; color:var(--primary);">Update next step (optional)</summary>' +
-      '<div style="margin-top:12px;">' +
-      '<div class="form-group">' +
-      '<label class="form-label" for="log-next-step">Next Step</label>' +
-      '<input id="log-next-step" name="next_step" type="text" class="form-input" placeholder="What happens next?">' +
-      '</div>' +
-      '<div class="form-group">' +
-      '<label class="form-label" for="log-next-due">Due Date</label>' +
-      '<input id="log-next-due" name="next_step_due" type="date" class="form-input">' +
-      '</div>' +
-      '</div></details>' +
-
-      '<button type="submit" class="btn btn-primary" style="width:100%;">Save Activity</button>' +
+      '<button type="submit" class="btn btn-accent form-submit">Save activity</button>' +
       '</form>' +
       '</div>';
 
     TSEB.closeDetail();
     TSEB.showForm(html);
+
+    // Mark first activity-type pill as active by default
+    setTimeout(function() {
+      const first = document.querySelector('.activity-type-btn[data-value="phone_call"]');
+      if (first) first.classList.add('is-active');
+    }, 50);
+  },
+
+  _pickActivityType: function(btn) {
+    const all = document.querySelectorAll('.activity-type-btn');
+    all.forEach(function(b) { b.classList.remove('is-active'); });
+    btn.classList.add('is-active');
+    const hidden = document.getElementById('log-activity-type');
+    if (hidden) hidden.value = btn.dataset.value;
   },
 
   async submitLogActivity(form) {

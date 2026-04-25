@@ -137,18 +137,37 @@ TSEB.util.isSoon = function(d) {
   return dt >= now && dt <= week;
 };
 
+TSEB.util.STATUS_LABELS = {
+  initial_contact: 'Initial',
+  in_conversation: 'Talking',
+  site_visit: 'Site Visit',
+  active: 'Active',
+  on_hold: 'Hold',
+  previous: 'Previous',
+  inactive: 'Inactive'
+};
+
+TSEB.util.statusLabel = function(status) {
+  return TSEB.util.STATUS_LABELS[status] ||
+    (status || '').replace(/_/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+};
+
+// Render a manuscript status pill. opts.compact=true drops the border for inline use.
+// opts.active=true inverts the pill (ink fill, paper text). opts.attrs adds raw HTML attrs.
+TSEB.util.statusPill = function(status, opts) {
+  opts = opts || {};
+  const label = TSEB.util.statusLabel(status);
+  const cls = ['status-pill'];
+  if (opts.active) cls.push('is-active');
+  const style = opts.compact ? ' style="border-color:transparent; padding:2px 0; font-size:9px;"' : '';
+  const attrs = opts.attrs ? ' ' + opts.attrs : '';
+  return '<span class="' + cls.join(' ') + '" data-status="' + status + '"' + style + attrs +
+    '><span class="dot"></span>' + TSEB.util.esc(label) + '</span>';
+};
+
+// Legacy alias — prefer statusPill in new code.
 TSEB.util.statusBadge = function(status) {
-  const map = {
-    active: 'badge-active',
-    initial_contact: 'badge-initial',
-    in_conversation: 'badge-conversation',
-    site_visit: 'badge-conversation',
-    on_hold: 'badge-muted',
-    previous: 'badge-muted',
-    inactive: 'badge-overdue'
-  };
-  const label = (status || '').replace(/_/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); });
-  return '<span class="badge ' + (map[status] || 'badge-muted') + '">' + label + '</span>';
+  return TSEB.util.statusPill(status);
 };
 
 TSEB.util.fmtTime = function(t) {
