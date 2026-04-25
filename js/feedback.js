@@ -1,4 +1,4 @@
-// TSEB Feedback module — collect tester/user feedback, notify via email
+// TSEB Feedback module — manuscript-style feedback form, notify via email
 TSEB.feedback = {
   open: function(context) {
     var screen = document.querySelector('.tab.active');
@@ -6,51 +6,52 @@ TSEB.feedback = {
     var contextNote = context || ('Screen: ' + screenName);
 
     TSEB.showForm(
-      '<div class="modal-header">' +
-      '<button class="modal-back-btn" onclick="TSEB.closeForm()" aria-label="Cancel">&#8592;</button>' +
-      '<div class="modal-title">Send Feedback</div>' +
+      '<div class="form-topbar">' +
+        '<button type="button" class="topbar-link" onclick="TSEB.closeForm()">← Cancel</button>' +
+        '<button type="button" class="topbar-link topbar-link-accent" onclick="document.getElementById(\'feedback-form\').requestSubmit()">Send</button>' +
       '</div>' +
-      '<div class="modal-body">' +
-      '<p style="font-size:16px; color:var(--muted); margin-bottom:20px;">Found a bug? Have a suggestion? Let us know — your feedback helps make this app better for everyone.</p>' +
-      '<form onsubmit="event.preventDefault(); TSEB.feedback.submit(this);">' +
-      '<input type="hidden" name="context" value="' + TSEB.util.esc(contextNote) + '">' +
+      '<form id="feedback-form" class="form-body" onsubmit="event.preventDefault(); TSEB.feedback.submit(this);">' +
+        '<div class="smcaps faint">Send feedback</div>' +
+        '<h2 class="form-title">A note to the coordinator</h2>' +
+        '<p class="form-italic-note">A bug, a suggestion, or simply an observation — anything that helps shape this tool.</p>' +
 
-      '<div class="form-group">' +
-      '<label class="form-label">Your Name (optional)</label>' +
-      '<input type="text" name="name" class="form-input" placeholder="So we can follow up">' +
-      '</div>' +
+        '<input type="hidden" name="context" value="' + TSEB.util.esc(contextNote) + '">' +
 
-      '<div class="form-group">' +
-      '<label class="form-label">What kind of feedback?</label>' +
-      '<select name="type" class="form-input form-select">' +
-      '<option value="bug">Something is broken</option>' +
-      '<option value="suggestion">I have a suggestion</option>' +
-      '<option value="question">I have a question</option>' +
-      '<option value="praise">Something is great!</option>' +
-      '</select>' +
-      '</div>' +
+        '<label class="smcaps faint form-eyebrow-label">Your name <span class="form-optional">— optional</span></label>' +
+        '<input type="text" name="name" class="form-input form-input-italic" placeholder="So we can follow up">' +
 
-      '<div class="form-group">' +
-      '<label class="form-label">Tell us more</label>' +
-      '<textarea name="message" class="form-input" rows="4" required placeholder="What happened? What did you expect?"></textarea>' +
-      '</div>' +
+        '<label class="smcaps faint form-eyebrow-label">Kind of note</label>' +
+        '<div class="form-pill-row" id="feedback-type-row">' +
+          '<button type="button" class="status-pill activity-type-btn is-active" data-type="bug" onclick="TSEB.feedback._pickType(this)">Bug</button>' +
+          '<button type="button" class="status-pill activity-type-btn" data-type="suggestion" onclick="TSEB.feedback._pickType(this)">Suggestion</button>' +
+          '<button type="button" class="status-pill activity-type-btn" data-type="question" onclick="TSEB.feedback._pickType(this)">Question</button>' +
+          '<button type="button" class="status-pill activity-type-btn" data-type="praise" onclick="TSEB.feedback._pickType(this)">Praise</button>' +
+        '</div>' +
+        '<input type="hidden" name="type" id="feedback-type-input" value="bug">' +
 
-      '<button type="submit" class="btn btn-primary" style="width:100%; margin-top:8px;">Send Feedback</button>' +
-      '</form>' +
-      '</div>'
+        '<label class="smcaps faint form-eyebrow-label">What happened?</label>' +
+        '<textarea name="message" class="form-input form-input-italic" rows="5" required placeholder="What did you expect — what did you see instead?"></textarea>' +
+      '</form>'
     );
   },
 
-  async submit(form) {
+  _pickType: function(btn) {
+    var row = document.getElementById('feedback-type-row');
+    if (row) Array.from(row.querySelectorAll('.activity-type-btn')).forEach(function(b) { b.classList.remove('is-active'); });
+    btn.classList.add('is-active');
+    var input = document.getElementById('feedback-type-input');
+    if (input) input.value = btn.dataset.type;
+  },
+
+  submit: async function(form) {
     var fd = new FormData(form);
     var name = fd.get('name') || 'Anonymous';
-    var type = fd.get('type');
+    var type = fd.get('type') || 'bug';
     var message = fd.get('message');
     var context = fd.get('context');
 
-    if (!message) { TSEB.toast('Please describe your feedback', 'warning'); return; }
+    if (!message) { TSEB.toast('A note is needed before sending.', 'warning'); return; }
 
-    // Try to save to Supabase feedback table (may not exist yet — that's OK)
     try {
       await TSEB.sb.from('feedback').insert({
         name: name,
@@ -60,11 +61,8 @@ TSEB.feedback = {
         url: window.location.href,
         user_agent: navigator.userAgent
       });
-    } catch (e) {
-      // Table may not exist — fall through to email
-    }
+    } catch (e) { /* table may not exist — fall through to email */ }
 
-    // Send email notification
     var subject = encodeURIComponent('TSEB Feedback: ' + type);
     var body = encodeURIComponent(
       'From: ' + name + '\n' +
@@ -77,6 +75,6 @@ TSEB.feedback = {
     window.open('mailto:jhwright@gmail.com?subject=' + subject + '&body=' + body, '_self');
 
     TSEB.closeForm();
-    TSEB.toast('Thanks for your feedback!', 'success');
+    TSEB.toast('Sent — thank you.', 'success');
   }
 };

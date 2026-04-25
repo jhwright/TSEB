@@ -147,6 +147,7 @@ hr.h-rule {
 
 .muted { color: var(--ink-soft); }
 .faint { color: var(--ink-faint); }
+.smcaps.accent { color: var(--accent-deep); }
 
 .display-italic {
   font-family: var(--font-display);
@@ -2119,30 +2120,228 @@ main[role="main"] {
 }
 
 /* =============================================================================
-   Guide overlay (full-screen modal sheet)
+   Guide overlay (manuscript modal sheet)
    ============================================================================= */
 
 .guide-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(20, 20, 20, .45);
-  z-index: 500;
+  background: rgba(20, 18, 14, .68);
+  z-index: 1100;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 18px;
+  opacity: 0;
+  transition: opacity 200ms ease-out;
+}
+
+.guide-overlay.guide-open {
+  opacity: 1;
 }
 
 .guide-content {
   background: var(--paper);
   border: 1px solid var(--rule);
-  padding: 22px 22px 18px;
+  padding: 0 24px 22px;
   max-width: 480px;
   width: 100%;
-  max-height: 80vh;
+  max-height: 86vh;
   overflow-y: auto;
-  border-radius: var(--radius);
   box-shadow: 0 24px 60px -10px rgba(0, 0, 0, .35);
+  transform: translateY(8px);
+  transition: transform 220ms ease-out;
+  -webkit-overflow-scrolling: touch;
+}
+
+.guide-overlay.guide-open .guide-content {
+  transform: translateY(0);
+}
+
+.guide-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0 14px;
+  border-bottom: 1px solid var(--rule);
+  position: sticky;
+  top: 0;
+  background: var(--paper);
+  margin: 0 -24px 22px;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+.guide-close {
+  background: none;
+  border: none;
+  font-size: 26px;
+  line-height: 1;
+  color: var(--ink-soft);
+  cursor: pointer;
+  padding: 0 4px;
+  font-family: var(--font-display);
+}
+
+.guide-close:hover { color: var(--ink); }
+
+.guide-eyebrow {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent-deep);
+  margin-bottom: 6px;
+}
+
+.guide-title {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 30px;
+  font-weight: 500;
+  line-height: 1.05;
+  margin: 0 0 10px;
+  color: var(--ink);
+}
+
+.guide-lede {
+  font-family: var(--font-body);
+  font-style: italic;
+  font-size: 16px;
+  color: var(--ink-soft);
+  line-height: 1.45;
+  margin: 0 0 18px;
+}
+
+.guide-rule {
+  height: 1px;
+  background: var(--rule);
+  margin: 8px 0 16px;
+}
+
+.guide-section {
+  padding: 12px 0 14px;
+  border-bottom: 1px dotted var(--rule);
+}
+
+.guide-section:last-of-type {
+  border-bottom: none;
+}
+
+.guide-section-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 10px;
+}
+
+.guide-section-body {
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.guide-section-body em {
+  color: var(--accent-deep);
+  font-style: italic;
+}
+
+.guide-dismiss {
+  display: block;
+  margin: 22px auto 4px;
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-style: italic;
+  font-size: 15px;
+  color: var(--accent-deep);
+  cursor: pointer;
+  padding: 8px 16px;
+  letter-spacing: 0.01em;
+}
+
+.guide-dismiss:hover {
+  color: var(--ink);
+}
+
+/* =============================================================================
+   Form bits used by the feedback form (and other manuscript forms)
+   ============================================================================= */
+
+.form-italic-note {
+  font-family: var(--font-body);
+  font-style: italic;
+  font-size: 15px;
+  color: var(--ink-soft);
+  line-height: 1.5;
+  margin: 0 0 22px;
+}
+
+.form-optional {
+  font-style: italic;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--ink-faint);
+  font-size: 11px;
+  margin-left: 4px;
+}
+
+/* =============================================================================
+   Micro-interactions — subtle press feedback on tappable rows / cards
+   Reduced-motion users get instant state changes only.
+   ============================================================================= */
+
+.singers-row,
+.sched-tl-row,
+.outreach-card {
+  transition: background-color 120ms ease-out, opacity 120ms ease-out;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.singers-row:active,
+.sched-tl-row:active,
+.outreach-card:active {
+  background-color: var(--paper-2);
+}
+
+@media (hover: hover) {
+  .singers-row:hover,
+  .outreach-card:hover { background-color: var(--paper-2); }
+  .sched-tl-row:hover .sched-tl-day { color: var(--ink); }
+}
+
+.tab,
+.btn,
+.fab,
+.topbar-link,
+.sched-picker-btn,
+.singers-control-btn,
+.singer-avail-btn,
+.activity-type-btn,
+.guide-close,
+.guide-dismiss,
+.btn-help {
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0ms !important;
+    animation-duration: 0ms !important;
+  }
+  .modal { transform: translateX(0) !important; }
+  .guide-overlay { opacity: 1; }
+  .guide-overlay .guide-content { transform: translateY(0); }
+}
+
+/* Subtle ink-bleed on focus for inputs (keeps the manuscript line, adds gravity) */
+.form-input:focus-visible,
+.singer-limit-input:focus-visible,
+.signin-input:focus-visible {
+  outline: none;
+  box-shadow: inset 0 -1px 0 0 var(--accent-deep);
 }
 
 /* =============================================================================
