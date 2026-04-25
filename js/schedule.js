@@ -66,17 +66,9 @@ TSEB.schedule = {
     var el = document.getElementById('schedule-list');
     if (!el) return;
 
+    if (!this._data) this._data = [];
+
     var picker = this._pickerHTML();
-
-    if (!this._data || this._data.length === 0) {
-      el.innerHTML = picker +
-        '<div class="empty-state">' +
-        '<div class="empty-state-title">No upcoming gigs</div>' +
-        '<div class="empty-state-body">No singing sessions scheduled yet. Tap + to add a gig.</div>' +
-        '</div>';
-      return;
-    }
-
     var body = '';
     if (this._view === 'agenda') body = this._agendaHTML();
     else if (this._view === 'map') body = this._mapHTML();
