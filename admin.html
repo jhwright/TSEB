@@ -6,151 +6,238 @@
 <title>TSEB Admin</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Source+Serif+4:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --primary: #4a6741;
-    --primary-light: #e8f0e6;
-    --accent: #C67B3C;
-    --accent-light: #FFF3E0;
-    --bg: #FAF8F5;
-    --surface: #FFFFFF;
-    --text: #1A1A1A;
-    --muted: #6B7280;
-    --border: #E5E5E0;
-    --success: #2D6A4F;
-    --success-light: #e8f5e9;
-    --error: #B91C1C;
-    --error-light: #FEE2E2;
-    --info: #1E5F8A;
-    --info-light: #E0F2FE;
+  /* ── Plainchant tokens (mirrors css/style.css; legacy aliases preserved
+     so JS-built inline styles still resolve) ── */
+  :root,
+  .dir-plainchant {
+    --paper:    #f7f1e6;
+    --paper-2:  #efe6d4;
+    --paper-3:  #e6dcc4;
+    --ink:      #271d12;
+    --ink-soft: #5d4f3c;
+    --ink-faint:#8c7e6a;
+    --rule:     #b9a886;
+    --rule-soft:#d4c5a4;
+    --accent:     #a36a2c;
+    --accent-soft:#e3c790;
+    --accent-deep:#7a4c1a;
+    --warning:    #a83c2a;
+    --warning-soft:#e9b8ad;
+    --sage:       #6f7d5e;
+    --sage-soft:  #dfe2cf;
+
+    --font-display: 'Spectral', Georgia, serif;
+    --font-ui:      'Inter', system-ui, sans-serif;
+    --font-mono:    'JetBrains Mono', ui-monospace, monospace;
+
+    /* Legacy aliases — JS-built inline styles reference these */
+    --primary:        #a36a2c;
+    --primary-light:  #efe6d4;
+    --accent-light:   #efe6d4;
+    --bg:             #f7f1e6;
+    --surface:        #f7f1e6;
+    --text:           #271d12;
+    --muted:          #8c7e6a;
+    --border:         #b9a886;
+    --success:        #6f7d5e;
+    --success-light:  #dfe2cf;
+    --error:          #a83c2a;
+    --error-light:    #e9b8ad;
+    --info:           #5d4f3c;
+    --info-light:     #efe6d4;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    font-family: 'Source Sans 3', sans-serif;
+    font-family: var(--font-ui);
     font-size: 14px;
-    color: var(--text);
-    background: var(--bg);
+    color: var(--ink);
+    background: var(--paper);
     min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
 
   /* ── Header ── */
   header {
-    background: var(--primary);
-    color: #fff;
-    padding: 0 24px;
-    height: 52px;
+    background: var(--paper);
+    color: var(--ink);
+    padding: 18px 28px 14px;
+    border-bottom: 3px double var(--rule);
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: space-between;
+    gap: 16px;
     position: sticky;
     top: 0;
     z-index: 100;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  }
+  .header-title-block {
+    display: flex;
+    flex-direction: column;
+  }
+  .header-eyebrow {
+    font-family: var(--font-ui);
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    color: var(--ink-faint);
+    margin-bottom: 4px;
   }
   header h1 {
-    font-family: 'Source Serif 4', serif;
-    font-size: 20px;
-    font-weight: 600;
-    letter-spacing: 0.01em;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 28px;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: 0.005em;
+    line-height: 1;
   }
+  .header-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .header-btn,
   header a {
-    color: #fff;
+    color: var(--ink-soft);
     text-decoration: none;
-    font-size: 13px;
-    opacity: 0.85;
-    border: 1px solid rgba(255,255,255,0.4);
-    padding: 4px 12px;
-    border-radius: 4px;
-    transition: opacity 0.15s;
+    font-family: var(--font-ui);
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    border: 1px solid var(--rule);
+    background: transparent;
+    padding: 8px 14px;
+    border-radius: 1px;
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
   }
-  header a:hover { opacity: 1; background: rgba(255,255,255,0.1); }
+  .header-btn:hover,
+  header a:hover {
+    color: var(--accent-deep);
+    border-color: var(--ink);
+    background: var(--paper-2);
+  }
 
   /* ── Auth banner ── */
   #auth-banner {
-    background: var(--info-light);
-    border-bottom: 1px solid #bbd4e8;
-    padding: 10px 24px;
+    background: var(--paper-2);
+    border-bottom: 1px solid var(--rule);
+    padding: 10px 28px;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 14px;
+    font-family: var(--font-ui);
     font-size: 13px;
-    color: var(--info);
+    color: var(--ink-soft);
+  }
+  #auth-banner > span:first-child {
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    color: var(--ink-faint);
   }
   #auth-banner input {
-    padding: 5px 10px;
-    border: 1px solid #bbd4e8;
-    border-radius: 4px;
+    padding: 6px 0;
+    border: none;
+    border-bottom: 1px solid var(--ink);
+    border-radius: 0;
+    background: transparent;
+    font-family: var(--font-ui);
     font-size: 13px;
+    color: var(--ink);
     width: 240px;
   }
+  #auth-banner input:focus {
+    outline: none;
+    border-bottom-color: var(--accent);
+  }
   #auth-banner button {
-    padding: 5px 14px;
-    background: var(--info);
-    color: #fff;
-    border: none;
-    border-radius: 4px;
+    padding: 7px 14px;
+    background: var(--accent);
+    color: var(--paper);
+    border: 1px solid var(--accent);
+    border-radius: 1px;
     cursor: pointer;
-    font-size: 13px;
+    font-family: var(--font-ui);
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  #auth-banner button:hover {
+    background: var(--accent-deep);
+    border-color: var(--accent-deep);
   }
   #auth-status {
     margin-left: auto;
+    font-family: var(--font-display);
+    font-style: italic;
     font-size: 13px;
-    color: var(--muted);
+    color: var(--ink-faint);
   }
 
   /* ── Tab bar ── */
   #tab-bar {
-    background: var(--surface);
-    border-bottom: 2px solid var(--border);
+    background: var(--paper);
+    border-bottom: 1px solid var(--rule);
     display: flex;
-    padding: 0 24px;
+    padding: 0 28px;
     gap: 0;
     position: sticky;
-    top: 52px;
+    top: 78px;
     z-index: 90;
+    overflow-x: auto;
   }
   .tab-btn {
-    padding: 12px 20px;
+    padding: 14px 18px 12px;
     border: none;
     background: none;
     cursor: pointer;
-    font-family: 'Source Sans 3', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--muted);
-    border-bottom: 3px solid transparent;
-    margin-bottom: -2px;
+    font-family: var(--font-ui);
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    color: var(--ink-faint);
+    border-top: 2px solid transparent;
+    border-bottom: none;
     transition: color 0.15s, border-color 0.15s;
     white-space: nowrap;
   }
-  .tab-btn:hover { color: var(--primary); }
+  .tab-btn:hover { color: var(--ink); }
   .tab-btn.active {
-    color: var(--primary);
-    border-bottom-color: var(--primary);
-    background: var(--primary-light);
+    color: var(--ink);
+    border-top-color: var(--accent);
+    background: transparent;
   }
   .tab-count {
     display: inline-block;
-    background: var(--border);
-    color: var(--muted);
-    font-size: 11px;
-    font-weight: 700;
-    border-radius: 10px;
-    padding: 1px 7px;
-    margin-left: 6px;
-    vertical-align: middle;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 400;
+    font-size: 14px;
+    color: var(--ink-faint);
+    margin-left: 8px;
+    vertical-align: baseline;
+    text-transform: none;
+    letter-spacing: 0;
   }
   .tab-btn.active .tab-count {
-    background: var(--primary);
-    color: #fff;
+    color: var(--accent-deep);
   }
 
   /* ── Main content ── */
   main {
-    padding: 20px 24px;
+    padding: 24px 28px 64px;
   }
 
   .tab-panel { display: none; }
@@ -160,50 +247,82 @@
   .toolbar {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 14px;
+    gap: 18px;
+    margin-bottom: 18px;
   }
   .toolbar input[type="text"] {
-    padding: 7px 12px;
-    border: 1px solid var(--border);
-    border-radius: 6px;
+    padding: 8px 0;
+    border: none;
+    border-bottom: 1px solid var(--ink);
+    border-radius: 0;
+    background: transparent;
+    font-family: var(--font-ui);
     font-size: 14px;
-    font-family: 'Source Sans 3', sans-serif;
+    color: var(--ink);
     width: 280px;
-    background: var(--surface);
-    color: var(--text);
+  }
+  .toolbar input[type="text"]::placeholder {
+    color: var(--ink-faint);
+    font-style: italic;
+    font-family: var(--font-display);
   }
   .toolbar input[type="text"]:focus {
-    outline: 2px solid var(--primary);
-    outline-offset: 1px;
+    outline: none;
+    border-bottom-color: var(--accent);
   }
   .btn {
-    padding: 7px 16px;
-    border: none;
-    border-radius: 6px;
-    font-size: 13px;
-    font-family: 'Source Sans 3', sans-serif;
-    font-weight: 600;
+    padding: 8px 16px;
+    border: 1px solid var(--rule);
+    background: transparent;
+    color: var(--ink-soft);
+    border-radius: 1px;
+    font-family: var(--font-ui);
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
     cursor: pointer;
-    transition: filter 0.15s, transform 0.1s;
+    transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.1s;
   }
-  .btn:hover { filter: brightness(0.93); }
+  .btn:hover {
+    color: var(--ink);
+    border-color: var(--ink);
+    background: var(--paper-2);
+  }
   .btn:active { transform: scale(0.98); }
-  .btn-primary { background: var(--primary); color: #fff; }
-  .btn-danger { background: var(--error); color: #fff; }
+  .btn-primary,
+  .btn.btn-primary {
+    background: var(--accent);
+    color: var(--paper);
+    border-color: var(--accent);
+  }
+  .btn-primary:hover {
+    background: var(--accent-deep);
+    border-color: var(--accent-deep);
+    color: var(--paper);
+  }
+  .btn-danger {
+    background: var(--warning);
+    color: var(--paper);
+    border-color: var(--warning);
+  }
+  .btn-danger:hover {
+    background: #8a3023;
+    border-color: #8a3023;
+    color: var(--paper);
+  }
   .btn-ghost {
-    background: none;
-    color: var(--muted);
-    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--ink-faint);
+    border: 1px solid var(--rule);
   }
 
   /* ── Table ── */
   .table-wrap {
     overflow-x: auto;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    background: var(--surface);
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    border: 1px solid var(--rule);
+    border-radius: 1px;
+    background: var(--paper);
   }
   table {
     width: 100%;
@@ -211,53 +330,56 @@
     font-variant-numeric: tabular-nums;
   }
   thead tr {
-    background: var(--bg);
-    border-bottom: 2px solid var(--border);
+    background: var(--paper-2);
+    border-bottom: 1px solid var(--rule);
   }
   th {
-    padding: 10px 12px;
+    padding: 12px 14px;
     text-align: left;
-    font-size: 12px;
-    font-weight: 700;
+    font-family: var(--font-ui);
+    font-size: 10px;
+    font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--muted);
+    letter-spacing: 0.22em;
+    color: var(--ink-faint);
     white-space: nowrap;
     user-select: none;
   }
   th.sortable { cursor: pointer; }
-  th.sortable:hover { color: var(--primary); }
-  th .sort-icon { margin-left: 4px; opacity: 0.4; font-style: normal; }
-  th.sort-asc .sort-icon, th.sort-desc .sort-icon { opacity: 1; color: var(--primary); }
+  th.sortable:hover { color: var(--accent-deep); }
+  th .sort-icon { margin-left: 4px; opacity: 0.4; font-style: normal; font-family: var(--font-ui); }
+  th.sort-asc .sort-icon, th.sort-desc .sort-icon { opacity: 1; color: var(--accent-deep); }
 
   tbody tr {
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px dotted var(--rule);
     transition: background 0.1s;
   }
-  tbody tr:nth-child(even) { background: #FAFAF8; }
-  tbody tr:hover { background: var(--primary-light); }
-  tbody tr.new-row { background: #fffde7; }
+  tbody tr:hover { background: var(--paper-2); }
+  tbody tr.new-row { background: var(--accent-soft); }
   tbody tr:last-child { border-bottom: none; }
 
   td {
-    padding: 7px 12px;
+    padding: 11px 14px;
+    font-family: var(--font-ui);
     font-size: 13px;
+    color: var(--ink);
     vertical-align: middle;
     max-width: 260px;
-  }
-  td.id-cell {
-    font-family: monospace;
-    font-size: 11px;
-    color: var(--muted);
-    max-width: 100px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+  td.id-cell {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink-faint);
+    max-width: 100px;
     cursor: help;
   }
   td.ts-cell {
-    font-size: 12px;
-    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink-faint);
     white-space: nowrap;
   }
 
@@ -265,7 +387,7 @@
   .cell-inner {
     display: block;
     min-height: 24px;
-    border-radius: 4px;
+    border-radius: 1px;
     padding: 2px 4px;
     cursor: text;
     overflow: hidden;
@@ -273,34 +395,35 @@
     white-space: nowrap;
     transition: background 0.15s;
   }
-  .cell-inner:hover { background: rgba(74,103,65,0.08); }
+  .cell-inner:hover { background: var(--accent-soft); }
   .cell-inner.editing { background: transparent; }
 
   td input.cell-input,
   td select.cell-input,
   td textarea.cell-input {
     width: 100%;
-    padding: 3px 6px;
-    border: 2px solid var(--primary);
-    border-radius: 4px;
+    padding: 4px 6px;
+    border: 1px solid var(--accent);
+    border-radius: 1px;
+    font-family: var(--font-ui);
     font-size: 13px;
-    font-family: 'Source Sans 3', sans-serif;
-    background: #fff;
-    color: var(--text);
+    background: var(--paper);
+    color: var(--ink);
     outline: none;
   }
   td input[type="checkbox"].cell-input {
     width: auto;
     cursor: pointer;
+    accent-color: var(--accent);
   }
 
   /* ── Save flash ── */
   @keyframes flashSuccess {
-    0%   { background: var(--success-light); }
+    0%   { background: var(--sage-soft); }
     100% { background: transparent; }
   }
   @keyframes flashError {
-    0%   { background: var(--error-light); }
+    0%   { background: var(--warning-soft); }
     100% { background: transparent; }
   }
   td.flash-success { animation: flashSuccess 1.2s ease-out forwards; }
@@ -310,33 +433,33 @@
   .del-btn {
     background: none;
     border: none;
-    color: var(--error);
+    color: var(--warning);
     cursor: pointer;
     font-size: 16px;
     line-height: 1;
     padding: 2px 6px;
-    border-radius: 4px;
-    opacity: 0.5;
+    border-radius: 1px;
+    opacity: 0.6;
     transition: opacity 0.15s, background 0.15s;
   }
-  .del-btn:hover { opacity: 1; background: var(--error-light); }
+  .del-btn:hover { opacity: 1; background: var(--warning-soft); }
 
   /* ── New row inputs ── */
   .new-row td input,
   .new-row td select {
     width: 100%;
-    padding: 4px 6px;
-    border: 1px solid var(--border);
-    border-radius: 4px;
+    padding: 5px 6px;
+    border: 1px solid var(--rule);
+    border-radius: 1px;
+    font-family: var(--font-ui);
     font-size: 13px;
-    font-family: 'Source Sans 3', sans-serif;
-    background: #fff;
+    background: var(--paper);
+    color: var(--ink);
   }
   .new-row td input:focus,
   .new-row td select:focus {
-    outline: 2px solid var(--primary);
-    outline-offset: 1px;
-    border-color: var(--primary);
+    outline: none;
+    border-color: var(--accent);
   }
 
   /* ── Toast ── */
@@ -352,10 +475,15 @@
   }
   .toast {
     padding: 10px 18px;
-    border-radius: 6px;
-    font-size: 13px;
-    font-weight: 600;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    border: 1px solid var(--ink);
+    border-left-width: 3px;
+    border-radius: 1px;
+    font-family: var(--font-ui);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    background: var(--paper);
+    color: var(--ink);
     animation: toastIn 0.15s ease-out;
     pointer-events: all;
     max-width: 360px;
@@ -364,40 +492,140 @@
     from { opacity: 0; transform: translateY(-8px); }
     to   { opacity: 1; transform: translateY(0); }
   }
-  .toast.success { background: var(--success); color: #fff; }
-  .toast.error   { background: var(--error);   color: #fff; }
-  .toast.info    { background: var(--info);    color: #fff; }
+  .toast.success { border-color: var(--rule); border-left-color: var(--sage); }
+  .toast.error   { border-color: var(--rule); border-left-color: var(--warning); }
+  .toast.info    { border-color: var(--rule); border-left-color: var(--ink-faint); }
 
   /* ── Loading state ── */
   .loading-row td {
-    color: var(--muted);
+    color: var(--ink-faint);
+    font-family: var(--font-display);
     font-style: italic;
-    padding: 24px 12px;
+    font-size: 15px;
+    padding: 28px 14px;
     text-align: center;
   }
 
   /* ── Null display ── */
-  .null-val { color: var(--border); font-style: italic; font-size: 12px; }
+  .null-val { color: var(--rule); font-style: italic; font-size: 12px; }
 
   /* ── Boolean display ── */
-  .bool-true  { color: var(--success); font-weight: 700; }
-  .bool-false { color: var(--muted); }
+  .bool-true  { color: var(--sage); font-weight: 600; }
+  .bool-false { color: var(--ink-faint); }
+
+  /* ── Edit modal — Plainchant overlay (overrides JS inline styles) ── */
+  #edit-overlay {
+    background: rgba(39, 29, 18, 0.45) !important;
+  }
+  #edit-modal {
+    background: var(--paper) !important;
+    border: 1px solid var(--ink) !important;
+    border-radius: 1px !important;
+    box-shadow: 0 8px 32px rgba(39, 29, 18, 0.25) !important;
+  }
+  #edit-modal h2 {
+    font-family: var(--font-display) !important;
+    font-style: italic !important;
+    font-weight: 500 !important;
+    font-size: 24px !important;
+    color: var(--ink) !important;
+    letter-spacing: 0.005em !important;
+  }
+  #edit-modal label {
+    font-family: var(--font-ui) !important;
+    font-size: 10px !important;
+    font-weight: 500 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.22em !important;
+    color: var(--ink-faint) !important;
+  }
+  #edit-modal input[type="text"],
+  #edit-modal input[type="email"],
+  #edit-modal input[type="date"],
+  #edit-modal input[type="time"],
+  #edit-modal select,
+  #edit-modal textarea {
+    font-family: var(--font-ui) !important;
+    background: transparent !important;
+    color: var(--ink) !important;
+    border: none !important;
+    border-bottom: 1px solid var(--ink) !important;
+    border-radius: 0 !important;
+    padding: 8px 2px !important;
+  }
+  #edit-modal textarea {
+    border: 1px solid var(--rule) !important;
+    border-radius: 1px !important;
+    padding: 10px !important;
+    font-family: var(--font-display) !important;
+    font-style: italic !important;
+    color: var(--ink-soft) !important;
+    background: var(--paper) !important;
+  }
+  #edit-modal input:focus,
+  #edit-modal select:focus,
+  #edit-modal textarea:focus {
+    outline: none !important;
+    border-color: var(--accent) !important;
+    border-bottom-color: var(--accent) !important;
+  }
+  #edit-modal input[type="checkbox"] {
+    border: 1px solid var(--ink) !important;
+    accent-color: var(--accent) !important;
+  }
+  #edit-modal button[type="submit"] {
+    background: var(--accent) !important;
+    color: var(--paper) !important;
+    border: 1px solid var(--accent) !important;
+    border-radius: 1px !important;
+    font-family: var(--font-ui) !important;
+    font-size: 11px !important;
+    font-weight: 500 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.22em !important;
+    padding: 12px !important;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  #edit-modal button[type="submit"]:hover {
+    background: var(--accent-deep) !important;
+    border-color: var(--accent-deep) !important;
+  }
+  #edit-modal button[type="button"] {
+    background: transparent !important;
+    color: var(--ink-soft) !important;
+    border: 1px solid var(--rule) !important;
+    border-radius: 1px !important;
+    font-family: var(--font-ui) !important;
+    font-size: 11px !important;
+    font-weight: 500 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.22em !important;
+    padding: 12px 22px !important;
+  }
+  #edit-modal button[type="button"]:hover {
+    color: var(--ink) !important;
+    border-color: var(--ink) !important;
+    background: var(--paper-2) !important;
+  }
 </style>
 </head>
-<body>
+<body class="dir-plainchant">
 
 <header>
-  <h1>TSEB Admin</h1>
-  <div style="display:flex; gap:10px; align-items:center;">
-    <button onclick="exportAllToXLS()" style="background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.4); color:#fff; padding:5px 14px; border-radius:4px; cursor:pointer; font-size:13px;">Download All (.xlsx)</button>
-    <a href="index.html">&#8592; Back to App</a>
+  <div class="header-title-block">
+    <div class="header-eyebrow">Threshold Singers · East Bay</div>
+    <h1>The Ledger</h1>
+  </div>
+  <div class="header-actions">
+    <button class="header-btn" onclick="exportAllToXLS()">Download .xlsx</button>
+    <a href="index.html">&larr; Back to app</a>
   </div>
 </header>
 
 <div id="auth-banner">
-  <span>Sign in to edit:</span>
+  <span>Sign in to edit</span>
   <input type="email" id="auth-email" placeholder="your@email.com">
-  <button onclick="sendMagicLink()">Send magic link</button>
+  <button onclick="sendMagicLink()">Send link</button>
   <span id="auth-status">Not signed in</span>
 </div>
 
@@ -562,8 +790,8 @@
 </main>
 
 <!-- Edit form modal -->
-<div id="edit-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:200; display:none; align-items:center; justify-content:center;">
-  <div id="edit-modal" style="background:var(--surface); border-radius:8px; width:560px; max-height:85vh; overflow-y:auto; box-shadow:0 8px 32px rgba(0,0,0,0.2);">
+<div id="edit-overlay" style="display:none; position:fixed; inset:0; z-index:200; align-items:center; justify-content:center;">
+  <div id="edit-modal" style="width:560px; max-width:calc(100vw - 32px); max-height:85vh; overflow-y:auto;">
     <div id="edit-modal-content"></div>
   </div>
 </div>
@@ -1315,7 +1543,7 @@ function openEditForm(tableName, row) {
 
   let html = '<div style="padding:24px;">' +
     '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">' +
-    '<h2 style="font-family:Source Serif 4,serif; font-size:20px; font-weight:600;">' + (isNew ? 'Add' : 'Edit') + ' ' + tableName.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase()).replace(/s$/,'') + '</h2>' +
+    '<h2>' + (isNew ? 'Add' : 'Edit') + ' ' + tableName.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase()).replace(/s$/,'') + '</h2>' +
     '<button onclick="closeEditForm()" style="background:none; border:none; font-size:24px; cursor:pointer; color:var(--muted);">&times;</button>' +
     '</div>' +
     '<form onsubmit="event.preventDefault(); submitEditForm(\'' + tableName + '\', ' + (isNew ? 'null' : '\'' + row.id + '\'') + ', this);">';
