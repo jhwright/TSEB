@@ -5,74 +5,79 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>TSEB Library Guide</title>
 <meta name="description" content="How the Threshold Singers of the East Bay file library is organized, shared and looked after. Plain-English guide for volunteers.">
+<meta name="theme-color" content="#7E0C6E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --paper:#f7f1e6; --paper-2:#efe6d4; --paper-3:#e6dcc4;
-  --ink:#271d12; --ink-soft:#5d4f3c; --ink-faint:#8c7e6a;
-  --rule:#b9a886; --rule-soft:#d4c5a4;
-  --accent:#a36a2c; --accent-soft:#e3c790; --accent-deep:#7a4c1a;
-  --warning:#a83c2a; --warning-soft:#e9b8ad;
-  --sage:#6f7d5e; --blue:#7a8aa3;
-  --serif:'Spectral',Georgia,serif; --sans:'Inter',system-ui,sans-serif;
+  --paper:#FAFBFD; --card:#FFFFFF; --paper-2:#F3EEF4; --paper-3:#E0D3E0;
+  --ink:#3C096C; --ink-soft:#5E4380; --ink-faint:#7C6B92;
+  --rule:#DDD2E2; --rule-soft:#ECE5EF;
+  --accent:#7E0C6E; --accent-soft:#E0D3E0; --accent-deep:#5C0850;
+  --link:#3F5FB0; --warning:#B3342A; --warning-soft:#F6DAD6;
+  --sage:#4E7A5B; --blue:#5775B8; --sky:#98C1D9;
+  --head:'Georgia','Times New Roman',serif; --body:'EB Garamond',Garamond,Georgia,serif; --sans:'Inter',system-ui,sans-serif;
+  --shadow:0 1px 2px rgba(60,9,108,.06),0 6px 20px rgba(60,9,108,.06);
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --paper:#1d1812; --paper-2:#262017; --paper-3:#30281d;
-    --ink:#f1e8d8; --ink-soft:#cdbfa8; --ink-faint:#9c8e78;
-    --rule:#6b5d47; --rule-soft:#4a4032;
-    --accent:#d39a55; --accent-soft:#5c4426; --accent-deep:#e8b877;
-    --warning:#e07a64; --warning-soft:#5a2a22;
-    --sage:#9aab86; --blue:#9fb0c9;
+    --paper:#150C1F; --card:#1E1230; --paper-2:#261A3A; --paper-3:#34264C;
+    --ink:#EEE6F6; --ink-soft:#CBBCDD; --ink-faint:#9D8CB3;
+    --rule:#43335C; --rule-soft:#32264A;
+    --accent:#D68AC9; --accent-soft:#4A2A52; --accent-deep:#EBB5E2;
+    --link:#9DB5F0; --warning:#F08A7E; --warning-soft:#4F2420;
+    --sage:#8FB79B; --blue:#9DB5F0; --sky:#6E9BB5;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.25);
   }
-}
-:root[data-theme="dark"]{
-  --paper:#1d1812; --paper-2:#262017; --paper-3:#30281d;
-  --ink:#f1e8d8; --ink-soft:#cdbfa8; --ink-faint:#9c8e78;
-  --rule:#6b5d47; --rule-soft:#4a4032;
-  --accent:#d39a55; --accent-soft:#5c4426; --accent-deep:#e8b877;
-  --warning:#e07a64; --warning-soft:#5a2a22;
-  --sage:#9aab86; --blue:#9fb0c9;
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--serif);font-size:18px;line-height:1.6}
-a{color:var(--accent-deep);text-underline-offset:3px}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:20px;line-height:1.55}
+a{color:var(--link);text-underline-offset:3px;text-decoration-thickness:1px}
 a:hover{color:var(--accent)}
-.wrap{max-width:1120px;margin:0 auto;padding:0 16px;display:grid;grid-template-columns:1fr;gap:32px}
-@media (min-width:960px){.wrap{grid-template-columns:240px 1fr;padding:0 32px}}
-header.top{border-bottom:3px double var(--rule);padding:40px 16px 28px;text-align:center}
-.eyebrow{font-family:var(--sans);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-faint)}
-h1{font-style:italic;font-weight:400;font-size:clamp(34px,6vw,52px);margin:8px 0 6px;line-height:1.1}
-.lede{font-size:19px;color:var(--ink-soft);max-width:640px;margin:0 auto}
+header.top{background:var(--card);border-bottom:1px solid var(--rule)}
+.bar{max-width:1120px;margin:0 auto;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.mark{font-family:var(--head);font-weight:700;font-size:18px;color:var(--accent);letter-spacing:.01em}
+.mark span{font-family:var(--sans);font-weight:500;font-size:13px;color:var(--ink-faint);margin-left:10px;letter-spacing:.02em}
+.pillbtn{white-space:nowrap;font-family:var(--sans);font-size:13px;font-weight:600;color:#fff!important;background:var(--accent);padding:8px 16px;border-radius:50px;text-decoration:none}
+.pillbtn:hover{background:var(--accent-deep)}
+.hero{max-width:1120px;margin:0 auto;padding:44px 16px 34px}
+.eyebrow{font-family:var(--sans);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);font-weight:600}
+h1{font-family:var(--head);font-weight:700;font-size:clamp(32px,5.5vw,48px);margin:8px 0 10px;line-height:1.12;color:var(--ink)}
+.lede{font-size:22px;color:var(--ink-soft);max-width:660px;margin:0}
+.wrap{max-width:1120px;margin:0 auto;padding:0 16px;display:grid;grid-template-columns:1fr;gap:28px}
+@media (min-width:960px){.wrap{grid-template-columns:230px 1fr;gap:44px}}
 nav.toc{font-family:var(--sans);font-size:14px}
-@media (min-width:960px){nav.toc{position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto;padding-top:32px}}
-nav.toc ol{list-style:none;margin:0;padding:0;border-left:1px solid var(--rule)}
-nav.toc li a{display:block;padding:5px 0 5px 14px;color:var(--ink-soft);text-decoration:none}
-nav.toc li a:hover{color:var(--accent-deep);background:var(--paper-2)}
+@media (min-width:960px){nav.toc{position:sticky;top:20px;align-self:start;padding-top:8px}}
+nav.toc ol{list-style:none;margin:0;padding:0}
+nav.toc li a{display:block;padding:7px 12px;color:var(--ink-soft);text-decoration:none;border-radius:6px;border-left:3px solid transparent}
+nav.toc li a:hover{background:var(--paper-2);color:var(--accent)}
 main{min-width:0;padding-bottom:80px}
-section{padding:36px 0 8px;border-bottom:1px dotted var(--rule)}
-section:last-of-type{border-bottom:none}
-h2{font-style:italic;font-weight:400;font-size:30px;margin:0 0 4px;line-height:1.2}
-h2 .num{font-family:var(--sans);font-style:normal;font-size:12px;letter-spacing:.18em;color:var(--accent);display:block;margin-bottom:4px}
-h3{font-family:var(--sans);font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin:26px 0 8px;font-weight:600}
+section{background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:26px 28px 14px;margin:0 0 20px;box-shadow:var(--shadow)}
+@media (max-width:600px){section{padding:20px 18px 10px}}
+h2{font-family:var(--head);font-weight:700;font-size:28px;margin:0 0 10px;line-height:1.2;color:var(--ink)}
+h2 .num{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;font-family:var(--sans);font-size:14px;font-weight:600;margin-right:12px;vertical-align:3px}
+h3{font-family:var(--sans);font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin:24px 0 8px;font-weight:700}
 p{margin:0 0 14px}
 ul,ol.steps{margin:0 0 16px;padding-left:22px}
-li{margin:4px 0}
-.note{background:var(--paper-2);border-left:3px solid var(--accent);padding:12px 16px;margin:16px 0;font-size:16px}
-.note.warn{border-left-color:var(--warning)}
-.feedback{font-family:var(--sans);font-size:13px;margin:18px 0 6px}
-.feedback a{display:inline-block;border:1px solid var(--rule);padding:6px 12px;border-radius:2px;text-decoration:none;color:var(--ink-soft);background:var(--paper)}
-.feedback a:hover{border-color:var(--accent);color:var(--accent-deep)}
+li{margin:5px 0}
+b{color:var(--ink)}
+.note{background:var(--paper-2);border-left:4px solid var(--accent);border-radius:0 8px 8px 0;padding:12px 16px;margin:16px 0;font-size:18px}
+.note.warn{border-left-color:var(--warning);background:var(--warning-soft)}
+.signin{font-family:var(--sans);font-size:14px;line-height:1.5;background:var(--paper-2);border:1px solid var(--accent-soft);border-radius:10px;padding:12px 16px;margin:16px 0}
+.signin b{color:var(--accent)}
+.hero .signin{max-width:680px}
+.feedback{font-family:var(--sans);font-size:13px;margin:18px 0 12px}
+.feedback a{display:inline-block;border:1px solid var(--accent);padding:7px 14px;border-radius:50px;text-decoration:none;color:var(--accent);background:transparent;font-weight:500}
+.feedback a:hover{background:var(--accent);color:#fff}
 figure{margin:18px 0 22px}
 figure svg{width:100%;height:auto;display:block}
 figcaption{font-family:var(--sans);font-size:13px;color:var(--ink-faint);margin-top:6px}
 svg .box{fill:var(--paper-2);stroke:var(--rule);stroke-width:1.2}
 svg .box.accent{fill:var(--accent-soft);stroke:var(--accent)}
 svg .box.lock{fill:var(--warning-soft);stroke:var(--warning)}
-svg .box.future{fill:var(--paper);stroke:var(--rule);stroke-dasharray:5 4}
+svg .box.future{fill:var(--card);stroke:var(--rule);stroke-dasharray:5 4}
 svg .t{font-family:var(--sans);font-size:13px;fill:var(--ink)}
 svg .t.b{font-weight:600}
 svg .t.s{font-size:11px;fill:var(--ink-soft)}
@@ -81,37 +86,40 @@ svg .line.dash{stroke-dasharray:4 4}
 svg .arrowhead{fill:var(--ink-faint)}
 .table-wrap{overflow-x:auto;margin:10px 0 16px}
 table{border-collapse:collapse;width:100%;font-family:var(--sans);font-size:14px;min-width:520px}
-th{text-align:left;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);border-bottom:1px solid var(--rule);padding:8px 10px 6px;font-weight:600}
-td{border-bottom:1px dotted var(--rule-soft);padding:8px 10px;vertical-align:top}
-.pill{display:inline-block;font-family:var(--sans);font-size:11px;padding:2px 8px;border-radius:999px;color:#fff;white-space:nowrap}
-.pill.done{background:var(--sage)}
-.pill.open{background:#c79436}
-.pill.next{background:var(--blue)}
-.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin:12px 0 18px}
-.card{border:1px solid var(--rule);background:var(--paper);padding:12px 14px;border-radius:2px;font-family:var(--sans);font-size:14px}
-.card b{display:block;font-family:var(--serif);font-style:italic;font-weight:500;font-size:18px;margin-bottom:4px}
+th{text-align:left;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);border-bottom:2px solid var(--rule);padding:8px 10px 6px;font-weight:700}
+td{border-bottom:1px solid var(--rule-soft);padding:9px 10px;vertical-align:top}
+.pill{display:inline-block;font-family:var(--sans);font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;color:#fff;white-space:nowrap}
+.pill.done{background:var(--sage)} .pill.open{background:#B8862E} .pill.next{background:var(--blue)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin:14px 0 18px}
+.card{border:1px solid var(--rule);background:var(--card);padding:16px 18px;border-radius:12px;font-family:var(--sans);font-size:14px;line-height:1.5;box-shadow:var(--shadow)}
+.card b{display:block;font-family:var(--head);font-weight:700;font-size:18px;margin-bottom:6px;color:var(--accent)}
 .card a{word-break:break-word}
 dl.gloss{margin:0;display:grid;grid-template-columns:1fr;gap:2px 20px}
-@media (min-width:700px){dl.gloss{grid-template-columns:220px 1fr}}
-dl.gloss dt{font-family:var(--sans);font-weight:600;font-size:15px;padding-top:10px}
-dl.gloss dd{margin:0;padding:0 0 10px;border-bottom:1px dotted var(--rule-soft)}
+@media (min-width:700px){dl.gloss{grid-template-columns:200px 1fr}}
+dl.gloss dt{font-family:var(--sans);font-weight:700;font-size:15px;padding-top:10px;color:var(--accent)}
+dl.gloss dd{margin:0;padding:0 0 10px;border-bottom:1px solid var(--rule-soft)}
 @media (min-width:700px){dl.gloss dd{padding-top:10px}}
-footer{border-top:3px double var(--rule);padding:22px 16px 40px;text-align:center;font-family:var(--sans);font-size:13px;color:var(--ink-faint)}
-.fmap{list-style:none;padding:0;margin:0 0 16px}.fmap li{padding:10px 0;border-bottom:1px dotted var(--rule-soft)}.fmap .kids{font-family:var(--sans);font-size:13px;color:var(--ink-faint);margin-top:4px;line-height:1.7}
+.fmap{list-style:none;padding:0;margin:0 0 16px}
+.fmap li{padding:10px 0;border-bottom:1px solid var(--rule-soft)}
+.fmap .kids{font-family:var(--sans);font-size:13px;color:var(--ink-faint);margin-top:5px;line-height:1.8}
+@media (max-width:959px){.mark span{display:none}nav.toc ol{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px}nav.toc li a{white-space:nowrap;border:1px solid var(--rule);background:var(--card);border-radius:50px;padding:6px 14px}}
+footer{border-top:1px solid var(--rule);background:var(--card);padding:24px 16px 40px;text-align:center;font-family:var(--sans);font-size:13px;color:var(--ink-faint)}
 a[href*="drive.google.com"]::after,a[href*="docs.google.com"]::after{content:"";display:inline-block;width:.72em;height:.72em;margin-left:.3em;vertical-align:-.04em;background:currentColor;opacity:.65;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M17 9h-1V7a4 4 0 0 0-8 0v2H7a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2zm-7-2a2 2 0 0 1 4 0v2h-4V7z'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M17 9h-1V7a4 4 0 0 0-8 0v2H7a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2zm-7-2a2 2 0 0 1 4 0v2h-4V7z'/%3E%3C/svg%3E") center/contain no-repeat}
-.signin{font-family:var(--sans);font-size:14px;background:var(--paper-2);border:1px solid var(--accent);border-radius:2px;padding:10px 14px;margin:14px 0}
-.signin b{color:var(--accent-deep)}
+.feedback a:hover::after{opacity:1}
 </style>
 </head>
 <body>
 
 <header class="top">
-  <div class="eyebrow">Threshold Singers of the East Bay</div>
+  <div class="bar"><div class="mark">Threshold Singers of the East Bay<span>Library Guide</span></div>
+  <a class="pillbtn" href="https://thresholdchoir.org/eastbay/">About TSEB</a></div>
+</header>
+<div class="hero">
+  <div class="eyebrow">Last updated October 14, 2026</div>
   <h1>The TSEB Library Guide</h1>
   <p class="lede">Where TSEB's files live, how to add new ones, and who can see what. Plain English, five-minute read.</p>
-  <p class="signin" style="max-width:640px;margin:18px auto 0;text-align:left"><b>Links with a padlock</b> open in Google and need you to <b>sign in with a Google account that has been given access</b>. Without access you will see "You need permission." Ask Hadas or Jeff to add you. Links without a padlock open for everyone.</p>
-  <p class="eyebrow" style="margin-top:14px">Last updated October 13, 2026</p>
-</header>
+  <p class="signin"><b>Links with a padlock</b> open in Google and need you to <b>sign in with a Google account that has been given access</b>. Without access you will see "You need permission." Ask Hadas or Jeff to add you. Links without a padlock open for everyone.</p>
+</div>
 
 <div class="wrap">
 <nav class="toc" aria-label="Contents">
@@ -166,7 +174,7 @@ a[href*="drive.google.com"]::after,a[href*="docs.google.com"]::after{content:"";
   <p>For now the library sits in Jeff's Drive. When TSEB's Google Workspace is ready, it moves there in one step. Nothing has been deleted from Groups.io or anyone's Drive.</p>
   <div class="note"><b>This page is public. The library is private.</b> Anyone can read this guide, but the library, the FAQ and the comment pages are in Google Drive and require a Google sign-in with access. Their links are marked with a padlock.</div>
   <p><b>Questions?</b> Each section ends with a button that opens that topic's page in a shared Google Doc. Write there; Jeff answers there.</p>
-  <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.7llmhcqlfxnx">Questions or comments on this section (opens in Google, sign-in needed) →</a></p>
+  <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.7llmhcqlfxnx">Questions or comments (Google sign-in) →</a></p>
 </section>
 
 <section id="add">
@@ -179,7 +187,7 @@ a[href*="drive.google.com"]::after,a[href*="docs.google.com"]::after{content:"";
     <li>Passwords or logins.</li>
   </ul>
   <p>Filed in the wrong place? Say so on this section's feedback page. Nothing is ever deleted, so it's easy to fix.</p>
-  <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.zgen7h57se3p">Questions or comments on this section (opens in Google, sign-in needed) →</a></p>
+  <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.zgen7h57se3p">Questions or comments (Google sign-in) →</a></p>
 </section>
 
 <section id="find">
@@ -216,7 +224,7 @@ a[href*="drive.google.com"]::after,a[href*="docs.google.com"]::after{content:"";
   <li><a href="https://drive.google.com/drive/folders/1BTik81VgfoJ4NotMxqF982_fbqLeEzuv"><b>H Archives</b></a> — Business meetings before 2026, history, superseded forms.<div class="kids"><a href="https://drive.google.com/drive/folders/1tfkgWhi3bBcI1-srwKYtZO_l1z6B9sVU">Governance pre-2026 (Business Meetings prior to 2026)</a>, <a href="https://drive.google.com/drive/folders/1j3GznWU-TpA9hUpx5LyfUDizH4EpdrFk">Groups.io era</a>, <a href="https://drive.google.com/drive/folders/10LwWY_b0KwzNpYTlCzu8FD4HYKXH7yzC">History and press</a>, <a href="https://drive.google.com/drive/folders/1u3XFF6KkIPQX1_A3tiy-EjW0neDYbB0F">Superseded forms</a></div></li>
   <li><a href="https://drive.google.com/drive/folders/185fjByGWMXXvHDi7LyK2Ph5n9vf43Xb9"><b>I Photos</b></a> — Photos.</li>
   </ul>
-  <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.sywesztf0310">Questions or comments on this section (opens in Google, sign-in needed) →</a></p>
+  <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.sywesztf0310">Questions or comments (Google sign-in) →</a></p>
 </section>
 
 <section id="access">
@@ -269,7 +277,7 @@ a[href*="drive.google.com"]::after,a[href*="docs.google.com"]::after{content:"";
     <li><b>A file used in two places</b> gets a shortcut in the second place, not a second copy.</li>
     <li><b>People outside TSEB</b> aren't added to the library; send them a copy.</li>
   </ul>
-  <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.hy5jbo3kj4pp">Questions or comments on this section (opens in Google, sign-in needed) →</a></p>
+  <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.hy5jbo3kj4pp">Questions or comments (Google sign-in) →</a></p>
 </section>
 
 <section id="sensitive">
@@ -280,7 +288,7 @@ a[href*="drive.google.com"]::after,a[href*="docs.google.com"]::after{content:"";
     <li>Rosters are the member directory: members view, only the roster keeper edits.</li>
     <li>Passwords don't belong in meeting notes. One old set of minutes has a retired website login that should be blanked out.</li>
   </ul>
-  <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.631bn1122er1">Questions or comments on this section (opens in Google, sign-in needed) →</a></p>
+  <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.631bn1122er1">Questions or comments (Google sign-in) →</a></p>
 </section>
 
 <section id="ai">
@@ -291,7 +299,7 @@ a[href*="drive.google.com"]::after,a[href*="docs.google.com"]::after{content:"";
     <li><b>Rules for any AI helper:</b> it acts only as the person using it, links every file its answer relies on, never shares or deletes, labels what it writes, and stays out of bedside reports.</li>
     <li><b>Tools:</b> Claude does the bulk filing and summaries. Gemini, built into Google Workspace, is handy for everyday questions.</li>
   </ul>
-  <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.hawijx7ubgzo">Questions or comments on this section (opens in Google, sign-in needed) →</a></p>
+  <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.hawijx7ubgzo">Questions or comments (Google sign-in) →</a></p>
 </section>
 
 <section id="decisions">
@@ -320,7 +328,7 @@ a[href*="drive.google.com"]::after,a[href*="docs.google.com"]::after{content:"";
   </table></div>
   <h3>Next</h3>
   <p>Iris sets up TSEB's Workspace (about Oct 23), then the library moves there and folder access is set. Kit's files come next, then the members with the largest collections.</p>
-  <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.wdueixjp9kmw">Questions or comments on this section (opens in Google, sign-in needed) →</a></p>
+  <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.wdueixjp9kmw">Questions or comments (Google sign-in) →</a></p>
 </section>
 
 <section id="words">
@@ -337,7 +345,7 @@ a[href*="drive.google.com"]::after,a[href*="docs.google.com"]::after{content:"";
     <dt>HIPAA</dt><dd>A U.S. law protecting people's health information.</dd>
     <dt>Circle</dt><dd>A group responsible for one area: Leadership (TLC), Communications, Finance, Membership or Music.</dd>
   </dl>
-  <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.a5m5gb2fqja9">Questions or comments on this section (opens in Google, sign-in needed) →</a></p>
+  <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.a5m5gb2fqja9">Questions or comments (Google sign-in) →</a></p>
 </section>
 
 </main>
