@@ -98,6 +98,9 @@ dl.gloss dd{margin:0;padding:0 0 10px;border-bottom:1px dotted var(--rule-soft)}
 @media (min-width:700px){dl.gloss dd{padding-top:10px}}
 footer{border-top:3px double var(--rule);padding:22px 16px 40px;text-align:center;font-family:var(--sans);font-size:13px;color:var(--ink-faint)}
 .fmap{list-style:none;padding:0;margin:0 0 16px}.fmap li{padding:10px 0;border-bottom:1px dotted var(--rule-soft)}.fmap .kids{font-family:var(--sans);font-size:13px;color:var(--ink-faint);margin-top:4px;line-height:1.7}
+a[href*="drive.google.com"]::after,a[href*="docs.google.com"]::after{content:"";display:inline-block;width:.72em;height:.72em;margin-left:.3em;vertical-align:-.04em;background:currentColor;opacity:.65;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M17 9h-1V7a4 4 0 0 0-8 0v2H7a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2zm-7-2a2 2 0 0 1 4 0v2h-4V7z'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M17 9h-1V7a4 4 0 0 0-8 0v2H7a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2zm-7-2a2 2 0 0 1 4 0v2h-4V7z'/%3E%3C/svg%3E") center/contain no-repeat}
+.signin{font-family:var(--sans);font-size:14px;background:var(--paper-2);border:1px solid var(--accent);border-radius:2px;padding:10px 14px;margin:14px 0}
+.signin b{color:var(--accent-deep)}
 </style>
 </head>
 <body>
@@ -106,6 +109,7 @@ footer{border-top:3px double var(--rule);padding:22px 16px 40px;text-align:cente
   <div class="eyebrow">Threshold Singers of the East Bay</div>
   <h1>The TSEB Library Guide</h1>
   <p class="lede">Where TSEB's files live, how to add new ones, and who can see what. Plain English, five-minute read.</p>
+  <p class="signin" style="max-width:640px;margin:18px auto 0;text-align:left"><b>Links with a padlock</b> open in Google and need you to <b>sign in with a Google account that has been given access</b>. Without access you will see "You need permission." Ask Hadas or Jeff to add you. Links without a padlock open for everyone.</p>
   <p class="eyebrow" style="margin-top:14px">Last updated October 13, 2026</p>
 </header>
 
@@ -160,9 +164,9 @@ footer{border-top:3px double var(--rule);padding:22px 16px 40px;text-align:cente
     <figcaption>Groups.io and personal Drives feed the library. AI helpers work on the library only through the access of the person using them.</figcaption>
   </figure>
   <p>For now the library sits in Jeff's Drive. When TSEB's Google Workspace is ready, it moves there in one step. Nothing has been deleted from Groups.io or anyone's Drive.</p>
-  <div class="note"><b>This page is public; the library is not.</b> Its links open only for people who have access.</div>
+  <div class="note"><b>This page is public. The library is private.</b> Anyone can read this guide, but the library, the FAQ and the comment pages are in Google Drive and require a Google sign-in with access. Their links are marked with a padlock.</div>
   <p><b>Questions?</b> Each section ends with a button that opens that topic's page in a shared Google Doc. Write there; Jeff answers there.</p>
-  <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.7llmhcqlfxnx">Questions or comments on this section →</a></p>
+  <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.7llmhcqlfxnx">Questions or comments on this section (opens in Google, sign-in needed) →</a></p>
 </section>
 
 <section id="add">
@@ -175,19 +179,19 @@ footer{border-top:3px double var(--rule);padding:22px 16px 40px;text-align:cente
     <li>Passwords or logins.</li>
   </ul>
   <p>Filed in the wrong place? Say so on this section's feedback page. Nothing is ever deleted, so it's easy to fix.</p>
-  <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.zgen7h57se3p">Questions or comments on this section →</a></p>
+  <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.zgen7h57se3p">Questions or comments on this section (opens in Google, sign-in needed) →</a></p>
 </section>
 
 <section id="find">
   <h2><span class="num">3</span>Finding things</h2>
-  <p>Three ways in:</p>
+  <p>Three ways in. All of them open in Google Drive and ask you to sign in.</p>
   <div class="cards">
     <div class="card"><b>FAQ</b>Common questions answered from ten years of meeting notes, with links to the minutes. <a href="https://docs.google.com/document/d/1sq5wHFshfHq9oZn7XgRyAP9HtceHcmR6ena47ZkvFms/edit">Read the FAQ</a></div>
     <div class="card"><b>Ask your own question</b>Open the library in Google Drive and click <i>Ask Gemini</i> at the top. It searches only files you're allowed to open. End your question with <i>"Link every file you used."</i> <a href="https://drive.google.com/drive/folders/1wiXzm1CPQGpaUWhbvn0Ks03SD0EMzbuI">Open the library</a></div>
     <div class="card"><b>Browse</b>Use the folder map below; each name opens that folder.</div>
   </div>
   <h3>Want a list of everything?</h3>
-  <p>Open the library, click <i>Ask Gemini</i>, and paste:</p>
+  <p>Open the library (sign in to Google first), click <i>Ask Gemini</i>, and paste:</p>
   <p class="note" style="font-family:var(--sans);font-size:15px">List every file in this folder and its subfolders, grouped by folder, with the date each was last changed and a link to it.</p>
   <p>Gemini may shorten very long lists. For a complete, sortable spreadsheet, ask Jeff and one will be made from the library as it is that day.</p>
   <h3>Questions people ask</h3>
@@ -199,6 +203,7 @@ footer{border-top:3px double var(--rule);padding:22px 16px 40px;text-align:cente
   </ul>
   <p>The answers are in the FAQ, each with links to the minutes it comes from. Or ask Gemini, adding <i>"Link every file you used."</i> so you can check the source.</p>
   <h3>Folder map</h3>
+  <p class="signin">Every folder name below opens in Google Drive. If it says "You need permission," you have not been given access yet.</p>
   <ul class="fmap">
   <li><a href="https://drive.google.com/drive/folders/1ep521zcZ4OfMpmpfA4qCjuN1sGB33hBe"><b>00 Intake</b></a> — drop new files here.</li>
   <li><a href="https://drive.google.com/drive/folders/1hkeiIVgQlSr75RXOYOpxT0qPDjnwWt1C"><b>A Quick links</b></a> — Roster, current rehearsal roles, rides, calendar.<div class="kids"><a href="https://drive.google.com/drive/folders/1hDI15Jz4vhw5_GOFv8UN29UTAmKJX6Zj">Current rehearsal roles</a>, <a href="https://drive.google.com/drive/folders/110x9J805cyCPJ5mtycw8v3qhDLUINs3n">Process for Becoming a Bedside Singer</a>, <a href="https://drive.google.com/drive/folders/1Qprzc9CBP8NmvtHljEeIfNNV6nXsmNBH">Rides to rehearsals</a>, <a href="https://drive.google.com/drive/folders/1mMXGk3rNmW2yUDEsXp1NWDq-ulsIE6nq">Roster</a></div></li>
@@ -211,7 +216,7 @@ footer{border-top:3px double var(--rule);padding:22px 16px 40px;text-align:cente
   <li><a href="https://drive.google.com/drive/folders/1BTik81VgfoJ4NotMxqF982_fbqLeEzuv"><b>H Archives</b></a> — Business meetings before 2026, history, superseded forms.<div class="kids"><a href="https://drive.google.com/drive/folders/1tfkgWhi3bBcI1-srwKYtZO_l1z6B9sVU">Governance pre-2026 (Business Meetings prior to 2026)</a>, <a href="https://drive.google.com/drive/folders/1j3GznWU-TpA9hUpx5LyfUDizH4EpdrFk">Groups.io era</a>, <a href="https://drive.google.com/drive/folders/10LwWY_b0KwzNpYTlCzu8FD4HYKXH7yzC">History and press</a>, <a href="https://drive.google.com/drive/folders/1u3XFF6KkIPQX1_A3tiy-EjW0neDYbB0F">Superseded forms</a></div></li>
   <li><a href="https://drive.google.com/drive/folders/185fjByGWMXXvHDi7LyK2Ph5n9vf43Xb9"><b>I Photos</b></a> — Photos.</li>
   </ul>
-  <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.sywesztf0310">Questions or comments on this section →</a></p>
+  <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.sywesztf0310">Questions or comments on this section (opens in Google, sign-in needed) →</a></p>
 </section>
 
 <section id="access">
@@ -264,7 +269,7 @@ footer{border-top:3px double var(--rule);padding:22px 16px 40px;text-align:cente
     <li><b>A file used in two places</b> gets a shortcut in the second place, not a second copy.</li>
     <li><b>People outside TSEB</b> aren't added to the library; send them a copy.</li>
   </ul>
-  <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.hy5jbo3kj4pp">Questions or comments on this section →</a></p>
+  <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.hy5jbo3kj4pp">Questions or comments on this section (opens in Google, sign-in needed) →</a></p>
 </section>
 
 <section id="sensitive">
@@ -275,7 +280,7 @@ footer{border-top:3px double var(--rule);padding:22px 16px 40px;text-align:cente
     <li>Rosters are the member directory: members view, only the roster keeper edits.</li>
     <li>Passwords don't belong in meeting notes. One old set of minutes has a retired website login that should be blanked out.</li>
   </ul>
-  <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.631bn1122er1">Questions or comments on this section →</a></p>
+  <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.631bn1122er1">Questions or comments on this section (opens in Google, sign-in needed) →</a></p>
 </section>
 
 <section id="ai">
@@ -286,7 +291,7 @@ footer{border-top:3px double var(--rule);padding:22px 16px 40px;text-align:cente
     <li><b>Rules for any AI helper:</b> it acts only as the person using it, links every file its answer relies on, never shares or deletes, labels what it writes, and stays out of bedside reports.</li>
     <li><b>Tools:</b> Claude does the bulk filing and summaries. Gemini, built into Google Workspace, is handy for everyday questions.</li>
   </ul>
-  <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.hawijx7ubgzo">Questions or comments on this section →</a></p>
+  <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.hawijx7ubgzo">Questions or comments on this section (opens in Google, sign-in needed) →</a></p>
 </section>
 
 <section id="decisions">
@@ -315,7 +320,7 @@ footer{border-top:3px double var(--rule);padding:22px 16px 40px;text-align:cente
   </table></div>
   <h3>Next</h3>
   <p>Iris sets up TSEB's Workspace (about Oct 23), then the library moves there and folder access is set. Kit's files come next, then the members with the largest collections.</p>
-  <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.wdueixjp9kmw">Questions or comments on this section →</a></p>
+  <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.wdueixjp9kmw">Questions or comments on this section (opens in Google, sign-in needed) →</a></p>
 </section>
 
 <section id="words">
@@ -332,7 +337,7 @@ footer{border-top:3px double var(--rule);padding:22px 16px 40px;text-align:cente
     <dt>HIPAA</dt><dd>A U.S. law protecting people's health information.</dd>
     <dt>Circle</dt><dd>A group responsible for one area: Leadership (TLC), Communications, Finance, Membership or Music.</dd>
   </dl>
-  <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.a5m5gb2fqja9">Questions or comments on this section →</a></p>
+  <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.a5m5gb2fqja9">Questions or comments on this section (opens in Google, sign-in needed) →</a></p>
 </section>
 
 </main>
