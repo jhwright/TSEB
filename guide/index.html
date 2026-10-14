@@ -152,14 +152,14 @@ details.script ol{padding-left:22px;margin:10px 0 14px}
   <div class="note">Files from the old Groups.io file area are being moved in separately by Hadas, so they are not covered here.</div>
   <figure>
     <svg viewBox="0 0 760 330" role="img" aria-labelledby="pic-t">
-      <title id="pic-t">Files from members' own Drives and new files dropped in Intake go into the TSEB Library, which will move into TSEB's Google Workspace.</title>
+      <title id="pic-t">Files from members' own Drives and new files sent with the Add a file form go into the TSEB Library, which will move into TSEB's Google Workspace.</title>
       <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="arrowhead"/></marker></defs>
       <rect class="box" x="10" y="30" width="190" height="70" rx="2"/>
       <text class="t b" x="105" y="60" text-anchor="middle">Members' own Drives</text>
       <text class="t s" x="105" y="80" text-anchor="middle">about 12 volunteers</text>
       <rect class="box" x="10" y="140" width="190" height="70" rx="2"/>
       <text class="t b" x="105" y="170" text-anchor="middle">New files</text>
-      <text class="t s" x="105" y="190" text-anchor="middle">dropped in 00 Intake</text>
+      <text class="t s" x="105" y="190" text-anchor="middle">sent with the form</text>
       <path class="line" d="M200 65 C 240 65, 240 110, 272 110" marker-end="url(#ah)"/>
       <path class="line" d="M200 175 C 240 175, 240 130, 272 130" marker-end="url(#ah)"/>
       <rect class="box accent" x="275" y="70" width="210" height="100" rx="2"/>
@@ -188,17 +188,18 @@ details.script ol{padding-left:22px;margin:10px 0 14px}
 
 <section id="add">
   <h2><span class="num">2</span>Adding a file</h2>
-  <p style="font-size:22px;font-style:italic">Drop it in <a href="https://drive.google.com/drive/folders/1ep521zcZ4OfMpmpfA4qCjuN1sGB33hBe"><b>00 Intake</b></a>. That's it.</p>
-  <p>Use it for any single file: minutes, notes, music, forms or photos. No need to pick a folder or rename it. Each file gets filed, renamed date first and logged. Meeting notes get a short AI summary.</p>
-  <p><b>Please don't drop</b> bedside reports, anything about a patient, or passwords. Send bedside reports to the bedside coordinator.</p>
+  <p style="font-size:22px;font-style:italic">Upload it with the <a href="https://docs.google.com/forms/d/e/1FAIpQLSc1lmZxOA-giI02puLPwZZcMrn85sZ5uGJO4Ledk4TBvciynQ/viewform"><b>Add a file form</b></a>. That's it.</p>
+  <p>Use it for any file: minutes, notes, music, forms or photos. No need to pick a folder or rename it. Each night the file is filed, renamed date first and logged. Meeting notes get a short AI summary.</p>
+  <p><b>Sign-in:</b> the form asks you to sign in to Google. Any Google account works, such as your Gmail. You don't need a TSEB account and you don't need to be added to anything. Your upload goes to a private folder that only the library owner can see, not to other members.</p>
+  <p><b>Please don't upload</b> bedside reports, anything about a patient, or passwords. Send bedside reports to the bedside coordinator.</p>
   <p>Filed in the wrong place? Say so below. Nothing is deleted, so it's easy to fix.</p>
   <h3>How intake is processed</h3>
-  <p>For now Jeff runs it on request ("process the intake folder"). Once it has run cleanly a few times, it will run weekly.</p>
+  <p>A nightly script (or Jeff, on request) does this. It starts in dry-run mode, so you can see what it would do before it moves anything.</p>
   <details class="script">
     <summary>Show the processing script</summary>
     <div class="in">
     <ol>
-      <li>List everything in the <b>00 Intake</b> folder.</li>
+      <li>List everything the form has collected (the private upload folder).</li>
       <li>For each file, pick the right folder from the folder map. Rename it date first: <i>YYYY.MM.DD Title</i>.</li>
       <li>Minutes or notes: add a short AI summary at the top, clearly labelled, listing topics and decisions. Leave the notes unchanged. For a PDF, put a companion Google Doc beside it: summary on top, the PDF's text below.</li>
       <li>Add a row to the <b>_Intake log</b> sheet: date, original name, new name, folder, why, and how sure.</li>
@@ -209,7 +210,7 @@ details.script ol{padding-left:22px;margin:10px 0 14px}
     <p>Prompt to paste into an AI helper:</p>
     <div class="prompt"><button class="copy" type="button" data-copy="intake-prompt">Copy</button><pre id="intake-prompt">Please process the TSEB Library intake folder. Use only my Google access.
 
-1. List every file in the "00 Intake" folder.
+1. List every file in the Add a file form's private upload folder.
 2. For each file, choose the right folder in the TSEB Library (A Quick links, B Threshold Leadership Circle, C Communications Circle, D Finance Circle, E Membership Circle, F Music Circle, G Board of Directors, H Archives, I Photos), using the deepest subfolder that fits. Rename it date first: YYYY.MM.DD Title.
 3. If it is meeting minutes or notes, add this line at the top: "AI SUMMARY (generated by &lt;tool&gt; on &lt;date&gt;; may contain errors; original notes below, unchanged)". Under it, list the topics discussed and the decisions made. Do not change the original notes. If it is a PDF, make a companion Google Doc beside it with the summary on top and the extracted text below.
 4. Add a row to the "_Intake log" sheet: date, original name, new name, folder, why, confidence.
@@ -238,7 +239,7 @@ When done, list what you moved, what needs a decision, and what you moved to "He
   <h3>Folder map</h3>
   <p class="signin">Every folder name below opens in Google Drive. If it says "You need permission," you have not been given access yet.</p>
   <ul class="fmap">
-  <li><a href="https://drive.google.com/drive/folders/1ep521zcZ4OfMpmpfA4qCjuN1sGB33hBe"><b>00 Intake</b></a> — drop new files here.</li>
+  <li><a href="https://drive.google.com/drive/folders/1ep521zcZ4OfMpmpfA4qCjuN1sGB33hBe"><b>00 Intake</b></a> — files the nightly run couldn't place wait here for Hadas.</li>
   <li><a href="https://drive.google.com/drive/folders/1hkeiIVgQlSr75RXOYOpxT0qPDjnwWt1C"><b>A Quick links</b></a> — Roster, current rehearsal roles, rides, calendar.<div class="kids"><a href="https://drive.google.com/drive/folders/1hDI15Jz4vhw5_GOFv8UN29UTAmKJX6Zj">Current rehearsal roles</a>, <a href="https://drive.google.com/drive/folders/110x9J805cyCPJ5mtycw8v3qhDLUINs3n">Process for Becoming a Bedside Singer</a>, <a href="https://drive.google.com/drive/folders/1Qprzc9CBP8NmvtHljEeIfNNV6nXsmNBH">Rides to rehearsals</a>, <a href="https://drive.google.com/drive/folders/1mMXGk3rNmW2yUDEsXp1NWDq-ulsIE6nq">Roster</a></div></li>
   <li><a href="https://drive.google.com/drive/folders/1SEDtuGPIsVfyPe_wb26kTDcNuoHAFV9r"><b>B Threshold Leadership Circle</b></a> — TLC meetings, planning, governance.<div class="kids"><a href="https://drive.google.com/drive/folders/1obTNZWgc5J0L3MQvLhCzsFh5wQNnM-MV">Meeting Agendas and Minutes</a>, <a href="https://drive.google.com/drive/folders/1RFUOqQv97BrX8UJbXi5wSYweR8s_vMZW">Strategic planning</a></div></li>
   <li><a href="https://drive.google.com/drive/folders/18JvNEy-C6QmsKCBuvy05JJItjjlHqypJ"><b>C Communications Circle</b></a> — Outreach, website, file-sharing project, reports.<div class="kids"><a href="https://drive.google.com/drive/folders/1Q7xLaYqfpaUXDp6L5oyiZ7pprbKqrUiQ">Circle Meeting Agendas and Minutes</a>, <a href="https://drive.google.com/drive/folders/1NwXoaBkL5h_ao_VJfpSLY9TFhEdxIg4g">Circle membership</a>, <a href="https://drive.google.com/drive/folders/1rEDsIvMxsL2QHot2-KBYWikl5HGVOZIT">Internal Communication</a>, <a href="https://drive.google.com/drive/folders/19KUlqJudMxXfQA6GoVmL70zrw-Bh7cxO">Reports</a>, <a href="https://drive.google.com/drive/folders/1RGSF-q-AImu_BA5vYJdWnwnV-oja2bso">Team File-Sharing Project</a>, <a href="https://drive.google.com/drive/folders/1EUMGYcpuIiiWhUfK0eVXVETBeKQlst04">Team Outreach</a>, <a href="https://drive.google.com/drive/folders/1WNmNoh2ah8BkebIqvV6Vf4qIqumhm80-">Team Web site revision</a></div></li>
