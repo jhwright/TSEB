@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TSEB Library Guide</title>
+<meta name="description" content="How the Threshold Singers of the East Bay file library is organized, shared and looked after. Plain-English guide for volunteers.">
+<meta name="theme-color" content="#7E0C6E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F6F6F7; --card:#FFFFFF; --paper-2:#F2F2F3; --paper-3:#E6E6E9;
+  --ink:#1E1E22; --ink-soft:#45454D; --ink-faint:#66666F; --title:#3C096C;
+  --rule:#DCDCE0; --rule-soft:#EAEAED;
+  --accent:#7E0C6E; --accent-deep:#3C096C; --on-accent:#FFFFFF;
+  --link:#3F5FB0; --warning:#B3342A;
+  --sage:#3F6B4C; --amber:#8A6418; --blue:#4A66A8;
+  --head:'Georgia','Times New Roman',serif; --body:'EB Garamond',Garamond,Georgia,serif; --sans:'Inter',system-ui,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --shadow:0 1px 2px rgba(0,0,0,.04),0 6px 20px rgba(0,0,0,.04);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#121214; --card:#1B1B1E; --paper-2:#242428; --paper-3:#2E2E33;
+    --ink:#ECECEE; --ink-soft:#C6C6CC; --ink-faint:#9E9EA7; --title:#EBC3E3;
+    --rule:#36363C; --rule-soft:#2A2A2F;
+    --accent:#D68AC9; --accent-deep:#EBB5E2; --on-accent:#121214;
+    --link:#9DB5F0; --warning:#F08A7E;
+    --sage:#8FB79B; --amber:#E0B565; --blue:#9DB5F0;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.25);
+  }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:20px;line-height:1.55}
+a{color:var(--link);text-underline-offset:3px;text-decoration-thickness:1px}
+a:hover{color:var(--accent)}
+header.top{background:var(--card);border-bottom:1px solid var(--rule)}
+.bar{max-width:1120px;margin:0 auto;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.mark{font-family:var(--head);font-weight:700;font-size:18px;color:var(--accent);letter-spacing:.01em}
+.mark span{font-family:var(--sans);font-weight:500;font-size:13px;color:var(--ink-faint);margin-left:10px;letter-spacing:.02em}
+.pillbtn{white-space:nowrap;font-family:var(--sans);font-size:13px;font-weight:600;color:var(--on-accent)!important;background:var(--accent);padding:8px 16px;border-radius:50px;text-decoration:none}
+.pillbtn:hover{background:var(--accent-deep)}
+.hero{max-width:1120px;margin:0 auto;padding:44px 16px 34px}
+.eyebrow{font-family:var(--sans);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);font-weight:600}
+h1{font-family:var(--head);font-weight:700;font-size:clamp(32px,5.5vw,48px);margin:8px 0 10px;line-height:1.12;color:var(--title)}
+.lede{font-size:22px;color:var(--ink-soft);max-width:660px;margin:0}
+.wrap{max-width:1120px;margin:0 auto;padding:0 16px;display:grid;grid-template-columns:minmax(0,1fr);gap:28px}
+@media (min-width:960px){.wrap{grid-template-columns:230px minmax(0,1fr);gap:44px}}
+nav.toc{font-family:var(--sans);font-size:14px}
+@media (min-width:960px){nav.toc{position:sticky;top:20px;align-self:start;padding-top:8px}}
+nav.toc ol{list-style:none;margin:0;padding:0}
+nav.toc li a{display:block;padding:7px 12px;color:var(--ink-soft);text-decoration:none;border-radius:6px;border-left:3px solid transparent}
+nav.toc li a:hover{background:var(--paper-2);color:var(--accent)}
+main{min-width:0;padding-bottom:80px}
+section{background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:26px 28px 14px;margin:0 0 20px;box-shadow:var(--shadow)}
+@media (max-width:600px){section{padding:20px 18px 10px}}
+h2{font-family:var(--head);font-weight:700;font-size:28px;margin:0 0 10px;line-height:1.2;color:var(--title)}
+h2 .num{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--accent);color:var(--on-accent);font-family:var(--sans);font-size:14px;font-weight:600;margin-right:12px;vertical-align:3px}
+h3{font-family:var(--sans);font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin:24px 0 8px;font-weight:700}
+p{margin:0 0 14px}
+ul,ol.steps{margin:0 0 16px;padding-left:22px}
+li{margin:5px 0}
+b{color:var(--ink)}
+.note{background:var(--paper-2);border-left:4px solid var(--accent);border-radius:0 8px 8px 0;padding:12px 16px;margin:16px 0;font-size:18px}
+.note.warn{border-left-color:var(--warning);background:var(--paper-2)}
+.signin{font-family:var(--sans);font-size:14px;line-height:1.5;background:var(--paper-2);border:1px solid var(--rule);border-left:4px solid var(--accent);border-radius:0 10px 10px 0;padding:12px 16px;margin:16px 0}
+.signin b{color:var(--accent)}
+.hero .signin{max-width:680px}
+.feedback{font-family:var(--sans);font-size:13px;margin:18px 0 12px}
+.feedback a{display:inline-block;border:1px solid var(--accent);padding:7px 14px;border-radius:50px;text-decoration:none;color:var(--accent);background:transparent;font-weight:500}
+.feedback a:hover{background:var(--accent);color:var(--on-accent)}
+figure{margin:18px 0 22px}
+figure svg{width:100%;height:auto;display:block}
+figcaption{font-family:var(--sans);font-size:13px;color:var(--ink-faint);margin-top:6px}
+svg .box{fill:var(--paper-2);stroke:var(--ink-faint);stroke-width:1}
+svg .box.accent{fill:var(--paper-2);stroke:var(--accent);stroke-width:2.2}
+svg .box.lock{fill:var(--paper-2);stroke:var(--warning);stroke-width:2}
+svg .box.future{fill:var(--card);stroke:var(--ink-faint);stroke-dasharray:5 4}
+svg .t{font-family:var(--sans);font-size:13px;fill:var(--ink)}
+svg .t.b{font-weight:600}
+svg .t.s{font-size:11px;fill:var(--ink-soft)}
+svg .line{stroke:var(--ink-faint);stroke-width:1.4;fill:none}
+svg .line.dash{stroke-dasharray:4 4}
+svg .arrowhead{fill:var(--ink-faint)}
+.table-wrap{overflow-x:auto;margin:10px 0 16px}
+table{border-collapse:collapse;width:100%;font-family:var(--sans);font-size:14px;min-width:520px}
+th{text-align:left;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);border-bottom:2px solid var(--rule);padding:8px 10px 6px;font-weight:700}
+td{border-bottom:1px solid var(--rule-soft);padding:9px 10px;vertical-align:top}
+.pill{display:inline-block;font-family:var(--sans);font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--paper-2);border:1px solid currentColor;white-space:nowrap}
+.pill.done{color:var(--sage)} .pill.open{color:var(--amber)} .pill.next{color:var(--blue)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin:14px 0 18px}
+.card{border:1px solid var(--rule);background:var(--card);padding:16px 18px;border-radius:12px;font-family:var(--sans);font-size:14px;line-height:1.5;box-shadow:var(--shadow)}
+.card b{display:block;font-family:var(--head);font-weight:700;font-size:18px;margin-bottom:6px;color:var(--accent)}
+.card a{word-break:break-word}
+dl.gloss{margin:0;display:grid;grid-template-columns:1fr;gap:2px 20px}
+@media (min-width:700px){dl.gloss{grid-template-columns:200px 1fr}}
+dl.gloss dt{font-family:var(--sans);font-weight:700;font-size:15px;padding-top:10px;color:var(--accent)}
+dl.gloss dd{margin:0;padding:0 0 10px;border-bottom:1px solid var(--rule-soft)}
+@media (min-width:700px){dl.gloss dd{padding-top:10px}}
+.fmap{list-style:none;padding:0;margin:0 0 16px}
+.fmap li{padding:10px 0;border-bottom:1px solid var(--rule-soft)}
+.fmap .kids{font-family:var(--sans);font-size:13px;color:var(--ink-faint);margin-top:5px;line-height:1.8}
+@media (max-width:959px){.mark span{display:none}nav.toc ol{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px}nav.toc li a{white-space:nowrap;border:1px solid var(--rule);background:var(--card);border-radius:50px;padding:6px 14px}}
+footer{border-top:1px solid var(--rule);background:var(--card);padding:24px 16px 40px;text-align:center;font-family:var(--sans);font-size:13px;color:var(--ink-faint)}
+a[href*="drive.google.com"]::after,a[href*="docs.google.com"]::after{content:"";display:inline-block;width:.72em;height:.72em;margin-left:.3em;vertical-align:-.04em;background:currentColor;opacity:.65;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M17 9h-1V7a4 4 0 0 0-8 0v2H7a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2zm-7-2a2 2 0 0 1 4 0v2h-4V7z'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M17 9h-1V7a4 4 0 0 0-8 0v2H7a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2zm-7-2a2 2 0 0 1 4 0v2h-4V7z'/%3E%3C/svg%3E") center/contain no-repeat}
+.feedback a:hover::after{opacity:1}
+details.script{border:1px solid var(--rule);border-left:4px solid var(--accent);border-radius:0 10px 10px 0;background:var(--paper-2);margin:12px 0 18px;font-family:var(--sans);font-size:15px;line-height:1.55}
+details.script summary{cursor:pointer;padding:12px 16px;font-weight:600;color:var(--accent)}
+details.script[open] summary{border-bottom:1px solid var(--rule)}
+details.script .in{padding:4px 16px 14px}
+details.script ol{padding-left:22px;margin:10px 0 14px}
+.prompt{position:relative;background:var(--card);border:1px solid var(--rule);border-radius:8px;padding:14px 14px 12px;margin:8px 0 6px}
+.prompt pre{margin:0;white-space:pre-wrap;word-wrap:break-word;font-family:var(--mono);font-size:13px;line-height:1.55;color:var(--ink)}
+.copy{float:right;margin:0 0 6px 10px;font-family:var(--sans);font-size:12px;font-weight:600;color:var(--accent);background:transparent;border:1px solid var(--accent);border-radius:50px;padding:4px 12px;cursor:pointer}
+.copy:hover{background:var(--accent);color:var(--on-accent)}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="bar"><div class="mark">Threshold Singers of the East Bay<span>Library Guide</span></div>
+  <a class="pillbtn" href="https://thresholdchoir.org/eastbay/">About TSEB</a></div>
+</header>
+<div class="hero">
+  <div class="eyebrow">Last updated October 14, 2026</div>
+  <h1>The TSEB Library Guide</h1>
+  <p class="lede">Where TSEB's files live, how to add new ones, and who can see what. Plain English, five-minute read.</p>
+  <p class="signin"><b>Links with a padlock</b> open in Google and need you to <b>sign in with a Google account that has been given access</b>. Without access you will see "You need permission." Ask Hadas or Jeff to add you. Links without a padlock open for everyone.</p>
+</div>
+
+<div class="wrap">
+<nav class="toc" aria-label="Contents">
+  <ol>
+    <li><a href="#what">1. What this is</a></li>
+    <li><a href="#add">2. Adding a file</a></li>
+    <li><a href="#find">3. Finding things</a></li>
+    <li><a href="#access">4. Who can see what</a></li>
+    <li><a href="#sensitive">5. Sensitive material and AI</a></li>
+    <li><a href="#decisions">6. Decisions and open questions</a></li>
+    <li><a href="#words">7. Words we use</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<section id="what">
+  <h2><span class="num">1</span>What this is</h2>
+  <p>The <b>TSEB Library</b> is one Google Drive folder for TSEB's shared files. It is sorted the way every circle agreed in September 2026.</p>
+  <div class="note">Files from the old Groups.io file area are being moved in separately by Hadas, so they are not covered here. Any cleanup of Groups.io is separate from the library: a list of files to remove from Groups.io is not permission to delete the library's Drive copies, and nothing in the library is deleted without approval.</div>
+  <figure>
+    <svg viewBox="0 0 760 330" role="img" aria-labelledby="pic-t">
+      <title id="pic-t">Files from members' own Drives and new files sent with the Add a file form go into the TSEB Library, which will move into TSEB's Google Workspace.</title>
+      <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="arrowhead"/></marker></defs>
+      <rect class="box" x="10" y="30" width="190" height="70" rx="2"/>
+      <text class="t b" x="105" y="60" text-anchor="middle">Members' own Drives</text>
+      <text class="t s" x="105" y="80" text-anchor="middle">about 12 volunteers</text>
+      <rect class="box" x="10" y="140" width="190" height="70" rx="2"/>
+      <text class="t b" x="105" y="170" text-anchor="middle">New files</text>
+      <text class="t s" x="105" y="190" text-anchor="middle">sent with the form</text>
+      <path class="line" d="M200 65 C 240 65, 240 110, 272 110" marker-end="url(#ah)"/>
+      <path class="line" d="M200 175 C 240 175, 240 130, 272 130" marker-end="url(#ah)"/>
+      <rect class="box accent" x="275" y="70" width="210" height="100" rx="2"/>
+      <text class="t b" x="380" y="105" text-anchor="middle">TSEB Library</text>
+      <text class="t s" x="380" y="125" text-anchor="middle">one place, sorted by circle</text>
+      <text class="t s" x="380" y="143" text-anchor="middle">(in Jeff's Drive for now)</text>
+      <path class="line" d="M485 120 L 538 120" marker-end="url(#ah)"/>
+      <rect class="box future" x="540" y="70" width="210" height="100" rx="2"/>
+      <text class="t b" x="645" y="105" text-anchor="middle">TSEB Google Workspace</text>
+      <text class="t s" x="645" y="125" text-anchor="middle">Shared Drive owned by TSEB</text>
+      <text class="t s" x="645" y="143" text-anchor="middle">coming soon (Iris)</text>
+      <rect class="box" x="275" y="240" width="210" height="70" rx="2"/>
+      <text class="t b" x="380" y="270" text-anchor="middle">AI helpers</text>
+      <text class="t s" x="380" y="290" text-anchor="middle">file, summarize, answer questions</text>
+      <path class="line dash" d="M380 240 L 380 172" marker-end="url(#ah)"/>
+      <rect class="box" x="540" y="240" width="210" height="70" rx="2"/>
+      <text class="t b" x="645" y="270" text-anchor="middle">This guide</text>
+      <text class="t s" x="645" y="290" text-anchor="middle">how it all works</text>
+    </svg>
+    <figcaption>AI helpers work on the library only through the access of the person using them.</figcaption>
+  </figure>
+  <p>For now the library sits in Jeff's Drive. When TSEB's Google Workspace is ready, it moves there in one step.</p>
+  <p><b>This page is public; the library is private.</b> Questions? Each section ends with a button to a shared Google Doc. Jeff answers there.</p>
+  <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.7llmhcqlfxnx">Questions or comments (Google sign-in) →</a></p>
+</section>
+
+<section id="add">
+  <h2><span class="num">2</span>Adding a file</h2>
+  <p style="font-size:22px;font-style:italic">Upload it with the <a href="https://docs.google.com/forms/d/e/1FAIpQLSc1lmZxOA-giI02puLPwZZcMrn85sZ5uGJO4Ledk4TBvciynQ/viewform"><b>Add a file form</b></a>. That's it.</p>
+  <p>The form first asks <b>what you're sending</b>. Pick minutes or notes, music, photos or something else, then add your file. No need to pick a folder or rename it. Each night the file is filed, renamed date first and logged. Meeting notes get a short AI summary.</p>
+  <div class="note warn"><b>Bedside reports never go through the form.</b> If you pick &ldquo;bedside report&rdquo; on the first question, the form shows no upload box and tells you to email the report to the bedside coordinator instead. Nothing with client names or patient information goes in the library. No passwords either.</div>
+  <p><b>Large music files:</b> the form's upload limit is 10 MB per file. Bigger music files can go straight into the <a href="https://drive.google.com/drive/folders/18bhRh533ooENXBLgeemB94aA8frsVRA7"><b>Audio recordings folder</b></a>, which the form links to. Files added there directly skip the nightly filing and summary.</p>
+  <p><b>Sign-in:</b> any Google account works, such as your Gmail. For now, uploads go to a private folder only the library owner can open.</p>
+  <div class="note"><b>Still being decided:</b> whether other new files go by this form or by email to a TSEB address, and how bedside reports should be emailed. Hadas and the bedside coordinator will choose the way that best keeps patient information safe. Until then, use the form.</div>
+  <p>Filed in the wrong place? Say so below. Nothing is deleted, so it's easy to fix.</p>
+  <h3>How intake is processed</h3>
+  <p>A nightly script (or Jeff, on request) does this. It starts in dry-run mode, so you can see what it would do before it moves anything.</p>
+  <details class="script">
+    <summary>Show the processing script</summary>
+    <div class="in">
+    <ol>
+      <li>List everything the form has collected (the private upload folder).</li>
+      <li>For each file, pick the right folder from the folder map. Rename it date first: <i>YYYY.MM.DD Title</i>.</li>
+      <li>Minutes or notes: add a short AI summary at the top, clearly labelled, listing topics and decisions. Leave the notes unchanged. For a PDF, put a companion Google Doc beside it: summary on top, the PDF's text below.</li>
+      <li>Add a row to the <b>_Intake log</b> sheet: date, original name, new name, folder, why, and how sure.</li>
+      <li>Not sure? Move it to <i>Intake / Needs a decision</i> for Hadas.</li>
+      <li>Looks like a roster, contact list, bedside report, patient or health information, or has a password? Don't open or summarize it. Move it to the private "Held privately" folder (only the owner can open it) and flag it for the bedside coordinator or Jeff.</li>
+      <li>Never delete, share or overwrite anything. Link every file an answer or summary relies on.</li>
+    </ol>
+    <p>Prompt to paste into an AI helper:</p>
+    <div class="prompt"><button class="copy" type="button" data-copy="intake-prompt">Copy</button><pre id="intake-prompt">Please process the TSEB Library intake folder. Use only my Google access.
+
+1. List every file in the Add a file form's private upload folder.
+2. For each file, choose the right folder in the TSEB Library (A Quick links, B Threshold Leadership Circle, C Communications Circle, D Finance Circle, E Membership Circle, F Music Circle, G Board of Directors, H Archives, I Photos), using the deepest subfolder that fits. Rename it date first: YYYY.MM.DD Title.
+3. If it is meeting minutes or notes, add this line at the top: "AI SUMMARY (generated by &lt;tool&gt; on &lt;date&gt;; may contain errors; original notes below, unchanged)". Under it, list the topics discussed and the decisions made. Do not change the original notes. If it is a PDF, make a companion Google Doc beside it with the summary on top and the extracted text below.
+4. Add a row to the "_Intake log" sheet: date, original name, new name, folder, why, confidence.
+5. If you are unsure where a file goes, move it to "Intake / Needs a decision" for Hadas.
+6. If a file's name suggests a roster, contact list, bedside report, patient or health information, or a password, do not open or summarize it. Move it to the private "Held privately" folder outside the library, and flag it for the bedside coordinator or Jeff.
+7. Never delete, share or overwrite anything. Link every file your summary or report relies on.
+
+When done, list what you moved, what needs a decision, and what you moved to "Held privately".</pre></div>
+    </div>
+  </details>
+  <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.zgen7h57se3p">Questions or comments (Google sign-in) →</a></p>
+</section>
+
+<section id="find">
+  <h2><span class="num">3</span>Finding things</h2>
+  <p>Three ways in. All of them open in Google Drive and ask you to sign in.</p>
+  <div class="cards">
+    <div class="card"><b>FAQ</b>Common questions answered from ten years of meeting notes, with links to the minutes. <a href="https://docs.google.com/document/d/1sq5wHFshfHq9oZn7XgRyAP9HtceHcmR6ena47ZkvFms/edit">Read the FAQ</a></div>
+    <div class="card"><b>Ask your own question</b>Open the library in Google Drive and click <i>Ask Gemini</i> at the top. It searches only files you're allowed to open. End your question with <i>"Link every file you used."</i> <a href="https://drive.google.com/drive/folders/1wiXzm1CPQGpaUWhbvn0Ks03SD0EMzbuI">Open the library</a></div>
+    <div class="card"><b>Browse</b>Use the folder map below; each name opens that folder.</div>
+  </div>
+  <h3>Want a list of everything?</h3>
+  <p>Open the library (sign in to Google first), click <i>Ask Gemini</i>, and paste:</p>
+  <p class="note" style="font-family:var(--sans);font-size:15px">List every file in this folder and its subfolders, grouped by folder, with the date each was last changed and a link to it.</p>
+  <p>Gemini may shorten very long lists. For a complete, sortable spreadsheet, ask Jeff and one will be made from the library as it is that day.</p>
+  <h3>Folder map</h3>
+  <p class="signin">Every folder name below opens in Google Drive. If it says "You need permission," you have not been given access yet.</p>
+  <ul class="fmap">
+  <li><a href="https://drive.google.com/drive/folders/1ep521zcZ4OfMpmpfA4qCjuN1sGB33hBe"><b>00 Intake</b></a> — files the nightly run couldn't place wait here for Hadas.</li>
+  <li><a href="https://drive.google.com/drive/folders/1hkeiIVgQlSr75RXOYOpxT0qPDjnwWt1C"><b>A Quick links</b></a> — Roster, current rehearsal roles, rides, calendar.<div class="kids"><a href="https://drive.google.com/drive/folders/1hDI15Jz4vhw5_GOFv8UN29UTAmKJX6Zj">Current rehearsal roles</a>, <a href="https://drive.google.com/drive/folders/110x9J805cyCPJ5mtycw8v3qhDLUINs3n">Process for Becoming a Bedside Singer</a>, <a href="https://drive.google.com/drive/folders/1Qprzc9CBP8NmvtHljEeIfNNV6nXsmNBH">Rides to rehearsals</a>, <a href="https://drive.google.com/drive/folders/1mMXGk3rNmW2yUDEsXp1NWDq-ulsIE6nq">Roster</a></div></li>
+  <li><a href="https://drive.google.com/drive/folders/1SEDtuGPIsVfyPe_wb26kTDcNuoHAFV9r"><b>B Threshold Leadership Circle</b></a> — TLC meetings, planning, governance.<div class="kids"><a href="https://drive.google.com/drive/folders/1obTNZWgc5J0L3MQvLhCzsFh5wQNnM-MV">Meeting Agendas and Minutes</a>, <a href="https://drive.google.com/drive/folders/1RFUOqQv97BrX8UJbXi5wSYweR8s_vMZW">Strategic planning</a></div></li>
+  <li><a href="https://drive.google.com/drive/folders/18JvNEy-C6QmsKCBuvy05JJItjjlHqypJ"><b>C Communications Circle</b></a> — Outreach, website, file-sharing project, reports.<div class="kids"><a href="https://drive.google.com/drive/folders/1Q7xLaYqfpaUXDp6L5oyiZ7pprbKqrUiQ">Circle Meeting Agendas and Minutes</a>, <a href="https://drive.google.com/drive/folders/1NwXoaBkL5h_ao_VJfpSLY9TFhEdxIg4g">Circle membership</a>, <a href="https://drive.google.com/drive/folders/1rEDsIvMxsL2QHot2-KBYWikl5HGVOZIT">Internal Communication</a>, <a href="https://drive.google.com/drive/folders/19KUlqJudMxXfQA6GoVmL70zrw-Bh7cxO">Reports</a>, <a href="https://drive.google.com/drive/folders/1RGSF-q-AImu_BA5vYJdWnwnV-oja2bso">Team File-Sharing Project</a>, <a href="https://drive.google.com/drive/folders/1EUMGYcpuIiiWhUfK0eVXVETBeKQlst04">Team Outreach</a>, <a href="https://drive.google.com/drive/folders/1WNmNoh2ah8BkebIqvV6Vf4qIqumhm80-">Team Web site revision</a></div></li>
+  <li><a href="https://drive.google.com/drive/folders/1zOoHl3DoAhuC_cF0UGfSLdV2p0R6LAaZ"><b>D Finance Circle</b></a> — Budgets and finance reports by year.<div class="kids"><a href="https://drive.google.com/drive/folders/1Rd5Sl0G-wCS8C2guN44SCF-2a5ayvn9j">Budgets</a>, <a href="https://drive.google.com/drive/folders/1T1d25yxhqm3i9-Oe7-VhqNLfM4vf4YaK">Circle Meeting Agendas and Minutes</a>, <a href="https://drive.google.com/drive/folders/1K6A-ykeB2o4nA8OK1TLzBQwiZPtY2PC5">Circle membership</a>, <a href="https://drive.google.com/drive/folders/1MvcpT1qmM_XDIA2XbjF4pXYpESkQGsJo">Finance reports</a></div></li>
+  <li><a href="https://drive.google.com/drive/folders/1vmbwDPa-Op4EBg-a5n-I4Pb1txP2Q7RM"><b>E Membership Circle</b></a> — Newcomers and buddies, workshops, rosters, inclusivity, picnic.<div class="kids"><a href="https://drive.google.com/drive/folders/15EiOEsLbhCSgky0k2530zb2hQUTuSVPB">Accessibility Team</a>, <a href="https://drive.google.com/drive/folders/1NjZDiTDZ_BMzBw0OcOCfyO6gGNc18BPM">Community Building and Support Team</a>, <a href="https://drive.google.com/drive/folders/1QvItkryQG5dp5_eCHAQ3kC0fXUX-hR3r">Diversity Team</a>, <a href="https://drive.google.com/drive/folders/18nJP9k46tWDpvK8yQ3EhKPp6PFF7i1H6">Member names and email addresses</a>, <a href="https://drive.google.com/drive/folders/1NL6KOsuGcF2vyMIjSkM6eI4UDSX13ryk">Onboarding, Engagement and Retention Team</a>, <a href="https://drive.google.com/drive/folders/1QxuFV5ivFZsGti2smAromOzAcXjzzvxa">Picnic and Social Activities team</a>, <a href="https://drive.google.com/drive/folders/1bqjarMceLlcxyN5W6yQmI6UT8JWmbcvU">Singer Rosters</a>, <a href="https://drive.google.com/drive/folders/1hAXHiQ3OSvta0tNeSBD5_olnknJnbNeD">Workshop Team</a></div></li>
+  <li><a href="https://drive.google.com/drive/folders/1q_GZLay5yZ_zkmW0wWw6GllI-9ArrThZ"><b>F Music Circle</b></a> — Songbook and recordings, rehearsal roles, bedside roles, meetings.<div class="kids"><a href="https://drive.google.com/drive/folders/1BgJMNPP0HACM5Qk2bUG6FkFRq7LWBKBL">Bedside singers and anchors</a>, <a href="https://drive.google.com/drive/folders/1E8f_q1tXu-sxsK3T8ll4cEBr1jyuOdiD">Circle Meeting Agendas and Minutes</a>, <a href="https://drive.google.com/drive/folders/1Z_vOpeuuUdj83j6DmyzBWmR2OFg-qSap">Circle membership</a>, <a href="https://drive.google.com/drive/folders/1TfpD1p5QECXYKLg619Ie8UvVv_P3blCS">Rehearsal Roles Signup</a>, <a href="https://drive.google.com/drive/folders/1ZRJrGuaUZ-6dw_65mO92M0d8PrWyxJ6s">Song repertoire</a></div></li>
+  <li><a href="https://drive.google.com/drive/folders/1yzvmf1nTJl-g7JIbOhBPVyhkEN1YEM3A"><b>G Board of Directors</b></a> — Board minutes and bylaws.<div class="kids"><a href="https://drive.google.com/drive/folders/17c_Pf97la3CkgbR0m0_4hpIzd5I1HNqx">Meeting Agendas and Minutes</a>, <a href="https://drive.google.com/drive/folders/1TgtkEZO3MfSw1P4HpO0Yvty5u1E_KofH">TSEB Bylaws</a></div></li>
+  <li><a href="https://drive.google.com/drive/folders/1BTik81VgfoJ4NotMxqF982_fbqLeEzuv"><b>H Archives</b></a> — Business meetings before 2026, history, superseded forms.<div class="kids"><a href="https://drive.google.com/drive/folders/1tfkgWhi3bBcI1-srwKYtZO_l1z6B9sVU">Governance pre-2026 (Business Meetings prior to 2026)</a>, <a href="https://drive.google.com/drive/folders/10LwWY_b0KwzNpYTlCzu8FD4HYKXH7yzC">History and press</a>, <a href="https://drive.google.com/drive/folders/1u3XFF6KkIPQX1_A3tiy-EjW0neDYbB0F">Superseded forms</a></div></li>
+  <li><a href="https://drive.google.com/drive/folders/185fjByGWMXXvHDi7LyK2Ph5n9vf43Xb9"><b>I Photos</b></a> — Photos.</li>
+  </ul>
+  <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.sywesztf0310">Questions or comments (Google sign-in) →</a></p>
+</section>
+
+<section id="access">
+  <h2><span class="num">4</span>Who can see what</h2>
+  <p>Access is given to <b>folders</b>, and everything inside a folder inherits it. An AI helper sees only what the person using it can see.</p>
+  <figure>
+    <svg viewBox="0 0 760 300" role="img" aria-labelledby="acc-t">
+      <title id="acc-t">A person, or an AI helper working for them, reaches only the folders that person's Google account is allowed to open.</title>
+      <defs><marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="arrowhead"/></marker></defs>
+      <rect class="box" x="10" y="40" width="170" height="64" rx="2"/>
+      <text class="t b" x="95" y="68" text-anchor="middle">A member</text>
+      <text class="t s" x="95" y="88" text-anchor="middle">signs in with Google</text>
+      <rect class="box" x="10" y="170" width="170" height="64" rx="2"/>
+      <text class="t b" x="95" y="198" text-anchor="middle">An AI helper</text>
+      <text class="t s" x="95" y="218" text-anchor="middle">uses that same sign-in</text>
+      <path class="line dash" d="M95 170 L95 106" marker-end="url(#ah2)"/>
+      <rect class="box accent" x="250" y="100" width="170" height="70" rx="2"/>
+      <text class="t b" x="335" y="130" text-anchor="middle">Their Google account</text>
+      <text class="t s" x="335" y="150" text-anchor="middle">decides what opens</text>
+      <path class="line" d="M180 72 C 215 72, 215 125, 248 125" marker-end="url(#ah2)"/>
+      <path class="line" d="M180 202 C 215 202, 215 145, 248 145" marker-end="url(#ah2)"/>
+      <rect class="box" x="500" y="20" width="250" height="56" rx="2"/>
+      <text class="t b" x="625" y="44" text-anchor="middle">Circle folders</text>
+      <text class="t s" x="625" y="63" text-anchor="middle">all members view · that circle edits</text>
+      <rect class="box" x="500" y="104" width="250" height="56" rx="2"/>
+      <text class="t b" x="625" y="128" text-anchor="middle">Board folder</text>
+      <text class="t s" x="625" y="147" text-anchor="middle">all members view · current Board edits</text>
+      <rect class="box lock" x="500" y="188" width="250" height="56" rx="2"/>
+      <text class="t b" x="625" y="212" text-anchor="middle">Bedside reports</text>
+      <text class="t s" x="625" y="231" text-anchor="middle">locked · coordinator decides who reads</text>
+      <path class="line" d="M420 125 C 460 125, 460 48, 498 48" marker-end="url(#ah2)"/>
+      <path class="line" d="M420 135 L 498 132" marker-end="url(#ah2)"/>
+      <path class="line dash" d="M420 145 C 460 145, 460 216, 498 216"/>
+      <text class="t s" x="455" y="270" text-anchor="middle">dashed: only if the account is on the list</text>
+    </svg>
+    <figcaption>Access follows the person. An AI helper can never see more than the person using it.</figcaption>
+  </figure>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Folder</th><th>Can view</th><th>Can change</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td>Circle folders</td><td>All members</td><td>That circle</td><td><span class="pill open">suggested</span></td></tr>
+      <tr><td>Board minutes and bylaws</td><td>All members</td><td>Current Board</td><td><span class="pill done">decided</span></td></tr>
+      <tr><td>Rosters, rides list</td><td>All members</td><td>Its keeper</td><td><span class="pill done">decided</span></td></tr>
+      <tr><td>Intake</td><td>All members</td><td>All members can add</td><td><span class="pill open">suggested</span></td></tr>
+      <tr><td>Bedside reports</td><td colspan="2">Bedside coordinator decides</td><td><span class="pill open">open</span></td></tr>
+    </tbody>
+  </table></div>
+  <ul>
+    <li><b>Links are safe to share inside TSEB:</b> they open only for people who already have access.</li>
+    <li><b>A file used in two places</b> gets a shortcut in the second place, not a second copy.</li>
+    <li><b>People outside TSEB</b> aren't added to the library; send them a copy.</li>
+  </ul>
+  <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.hy5jbo3kj4pp">Questions or comments (Google sign-in) →</a></p>
+</section>
+
+<section id="sensitive">
+  <h2><span class="num">5</span>Sensitive material and AI</h2>
+  <div class="note warn"><b>Bedside reports may mention patients, and TSEB abides by HIPAA.</b> They are held privately, in a folder only Jeff can open, until the bedside coordinator decides who may read them.</div>
+  <ul>
+    <li>Google offers its HIPAA agreement to Workspace customers, not personal accounts, so the form and its upload folder move to a TSEB admin account once TSEB's Workspace exists.</li>
+    <li>A folder inside a shared folder is shared too, so restricted files must sit apart.</li>
+    <li>Rosters: members view, only the roster keeper edits.</li>
+    <li>No passwords in meeting notes or the library.</li>
+  </ul>
+  <h3>Rules for any AI helper</h3>
+  <ul>
+    <li>It sees only what the person using it can see.</li>
+    <li>It links every file its answer relies on.</li>
+    <li>It never shares or deletes, and labels what it writes.</li>
+    <li>Nothing sensitive, bedside reports included, goes into AI.</li>
+  </ul>
+  <p>Claude does the filing and summaries. Gemini, built into Google, is handy for everyday questions.</p>
+  <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.631bn1122er1">Questions or comments (Google sign-in) →</a></p>
+</section>
+
+<section id="decisions">
+  <h2><span class="num">6</span>Decisions and open questions</h2>
+  <h3>Decided</h3>
+  <ul>
+    <li>The folder plan (A–I) is the library's layout. <i>All circles, Sept 2026</i></li>
+    <li>Build in Jeff's Drive until Workspace is ready. Nothing deleted or shared without approval. <i>Oct 9</i></li>
+    <li>Date-first names for now (being confirmed by Hadas's team); "Current" and "Archive" folders, not "final" or "v3". <i>Hadas, Oct 13</i></li>
+    <li>Labelled AI summaries on meeting notes. <i>Hadas and Jeff, Oct 13</i></li>
+    <li>Bedside reports belong to the Music Circle; TSEB abides by HIPAA. <i>Hadas, Oct 13</i></li>
+    <li>Rosters stay PDFs. Board minutes, bylaws and the rides list are open to all members. <i>Hadas, Oct 13</i></li>
+  </ul>
+  <h3>Open</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Question</th><th>Who decides</th></tr></thead>
+    <tbody>
+      <tr><td>New files: the upload form, email to a TSEB address, or both?</td><td>Hadas, bedside coordinator</td></tr>
+      <tr><td>Bedside reports are emailed to the bedside coordinator and never uploaded. Which address (later a TSEB role address), and who else may read that mailbox? If one is uploaded by mistake, who is told and what happens?</td><td>Hadas, bedside coordinator</td></tr>
+      <tr><td>File names: text first, then date? Periods or dashes in dates?</td><td>Hadas's team</td></tr>
+      <tr><td><b>Pending confirmation:</b> Hadas's Oct 14 list of 4 files to remove from Groups.io includes &ldquo;2025 3rd Quarter Summary (corrected).pdf&rdquo; (02 Finance Circle / Annual Finance Reports / 2025 Finance Reports). That differs from the earlier plan to keep corrected versions, and the two 2025 Q3 files have different figures. Both stay in the library's Finance reports/2025 folder, and nothing is removed from Groups.io or Drive until this is confirmed.</td><td>Jeff, with the Finance Circle</td></tr>
+      <tr><td>Who may read bedside reports?</td><td>Bedside coordinator</td></tr>
+      <tr><td>Google Groups per circle, or a drive per circle?</td><td>Hadas, Iris</td></tr>
+      <tr><td>A budget for an AI account</td><td>File-sharing team, Oct 18</td></tr>
+    </tbody>
+  </table></div>
+  <h3>Next</h3>
+  <p>Iris sets up TSEB's Workspace (about Oct 23). The library moves there, then Kit's files come in.</p>
+  <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.wdueixjp9kmw">Questions or comments (Google sign-in) →</a></p>
+</section>
+
+<section id="words">
+  <h2><span class="num">7</span>Words we use</h2>
+  <dl class="gloss">
+    <dt>_Intake log</dt><dd>The sheet that records where each Intake file went, and why.</dd>
+    <dt>Companion doc</dt><dd>A Google Doc beside a PDF, holding its text and an AI summary.</dd>
+    <dt>Circle</dt><dd>A group in charge of one area: Leadership (TLC), Communications, Finance, Membership or Music.</dd>
+    <dt>Google Workspace</dt><dd>Google's service for organizations, free for TSEB as a nonprofit.</dd>
+    <dt>Shared Drive</dt><dd>Storage owned by TSEB, not a person, so files stay when people leave.</dd>
+    <dt>Google Group</dt><dd>A named list of people; folders can be shared with it.</dd>
+    <dt>Shortcut</dt><dd>A pointer to a file from a second folder. It doesn't grant access.</dd>
+    <dt>HIPAA</dt><dd>A U.S. law protecting health information.</dd>
+  </dl>
+  <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.a5m5gb2fqja9">Questions or comments (Google sign-in) →</a></p>
+</section>
+
+</main>
+</div>
+
+<footer>
+  TSEB Library Guide · maintained by Jeff with Hadas · questions go in the <a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit">comments doc</a>
+</footer>
+<script>
+document.querySelectorAll('.copy').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    var text=document.getElementById(btn.dataset.copy).innerText;
+    var done=function(){btn.textContent='Copied';setTimeout(function(){btn.textContent='Copy'},1500)};
+    if(navigator.clipboard){navigator.clipboard.writeText(text).then(done,function(){})}
+  });
+});
+</script>
+</body>
+</html>
