@@ -97,6 +97,7 @@ dl.gloss dt{font-family:var(--sans);font-weight:600;font-size:15px;padding-top:1
 dl.gloss dd{margin:0;padding:0 0 10px;border-bottom:1px dotted var(--rule-soft)}
 @media (min-width:700px){dl.gloss dd{padding-top:10px}}
 footer{border-top:3px double var(--rule);padding:22px 16px 40px;text-align:center;font-family:var(--sans);font-size:13px;color:var(--ink-faint)}
+.fmap{list-style:none;padding:0;margin:0 0 16px}.fmap li{padding:10px 0;border-bottom:1px dotted var(--rule-soft)}.fmap .kids{font-family:var(--sans);font-size:13px;color:var(--ink-faint);margin-top:4px;line-height:1.7}
 </style>
 </head>
 <body>
@@ -104,7 +105,7 @@ footer{border-top:3px double var(--rule);padding:22px 16px 40px;text-align:cente
 <header class="top">
   <div class="eyebrow">Threshold Singers of the East Bay</div>
   <h1>The TSEB Library Guide</h1>
-  <p class="lede">How our shared files are organized, who can see what, and how new files get added. Written for volunteers, in plain English.</p>
+  <p class="lede">Where TSEB's files live, how to add new ones, and who can see what. Plain English, five-minute read.</p>
   <p class="eyebrow" style="margin-top:14px">Last updated October 13, 2026</p>
 </header>
 
@@ -112,19 +113,13 @@ footer{border-top:3px double var(--rule);padding:22px 16px 40px;text-align:cente
 <nav class="toc" aria-label="Contents">
   <ol>
     <li><a href="#what">1. What this is</a></li>
-    <li><a href="#picture">2. The big picture</a></li>
-    <li><a href="#layout">3. How the library is organized</a></li>
-    <li><a href="#access">4. Who can see and change what</a></li>
-    <li><a href="#adding">5. How a member's files get added</a></li>
-    <li><a href="#naming">6. Naming and tidying rules</a></li>
-    <li><a href="#sensitive">7. Sensitive material</a></li>
-    <li><a href="#summaries">8. AI summaries of meeting notes</a></li>
-    <li><a href="#ai">9. Using AI helpers</a></li>
-    <li><a href="#decisions">10. Decisions so far</a></li>
-    <li><a href="#open">11. Open questions</a></li>
-    <li><a href="#progress">12. Progress and next steps</a></li>
-    <li><a href="#words">13. Words we use</a></li>
-    <li><a href="#links">14. Links</a></li>
+    <li><a href="#add">2. Adding a file</a></li>
+    <li><a href="#find">3. Finding things</a></li>
+    <li><a href="#access">4. Who can see what</a></li>
+    <li><a href="#sensitive">5. Sensitive material</a></li>
+    <li><a href="#ai">6. AI in the library</a></li>
+    <li><a href="#decisions">7. Decisions and open questions</a></li>
+    <li><a href="#words">8. Words we use</a></li>
   </ol>
 </nav>
 
@@ -132,16 +127,7 @@ footer{border-top:3px double var(--rule);padding:22px 16px 40px;text-align:cente
 
 <section id="what">
   <h2><span class="num">1</span>What this is</h2>
-  <p>For years TSEB's files have lived in two kinds of places: the Groups.io file area, and the personal Google Drives of about a dozen volunteers. When a volunteer steps away, their files can go with them.</p>
-  <p>The <b>TSEB Library</b> brings those files together in one place that belongs to TSEB, sorted into the folder plan that every circle approved in September 2026. This guide explains how the library works so anyone can find things and help keep it tidy.</p>
-  <div class="note"><b>This page is public; the library is not.</b> Anyone can read this guide. The links on it open only for people who have been given access to the library.</div>
-  <p><b>Have a question or comment?</b> Every section ends with a button like the one below. It opens a page in a shared Google Doc, one page per topic, where you can write your note. Jeff answers there.</p>
-  <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.7llmhcqlfxnx">Questions or comments on this section →</a></p>
-</section>
-
-<section id="picture">
-  <h2><span class="num">2</span>The big picture</h2>
-  <p>Files are moving from scattered places into one library. For now the library sits in Jeff's Google Drive. When TSEB's Google Workspace is ready, the whole library moves there in one step and belongs to the organization.</p>
+  <p>TSEB's files used to live in Groups.io and in a dozen volunteers' own Google Drives. The <b>TSEB Library</b> gathers them in one Google Drive folder that belongs to TSEB, sorted the way every circle agreed in September 2026.</p>
   <figure>
     <svg viewBox="0 0 760 330" role="img" aria-labelledby="pic-t">
       <title id="pic-t">Files move from Groups.io and personal Drives into the TSEB Library, which will move into TSEB's Google Workspace.</title>
@@ -173,55 +159,64 @@ footer{border-top:3px double var(--rule);padding:22px 16px 40px;text-align:cente
     </svg>
     <figcaption>Groups.io and personal Drives feed the library. AI helpers work on the library only through the access of the person using them.</figcaption>
   </figure>
-  <h3>What has not changed</h3>
-  <ul>
-    <li>Nothing has been deleted from Groups.io or from anyone's personal Drive.</li>
-    <li>The library is shared only with the people working on it: Hadas can edit and Kit can comment.</li>
-  </ul>
-  <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.oh8i0pqp6cfv">Questions or comments on this section →</a></p>
+  <p>For now the library sits in Jeff's Drive. When TSEB's Google Workspace is ready, it moves there in one step. Nothing has been deleted from Groups.io or anyone's Drive.</p>
+  <div class="note"><b>This page is public; the library is not.</b> Its links open only for people who have access.</div>
+  <p><b>Questions?</b> Each section ends with a button that opens that topic's page in a shared Google Doc. Write there; Jeff answers there.</p>
+  <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.7llmhcqlfxnx">Questions or comments on this section →</a></p>
 </section>
 
-<section id="layout">
-  <h2><span class="num">3</span>How the library is organized</h2>
-  <p>The library follows the <b>Proposed Outline of TSEB folders</b>, drafted by Margit and approved by every circle in September 2026. Each circle has its own folder. Older material that no current circle owns goes to Archives.</p>
-  <figure>
-    <svg viewBox="0 0 760 360" role="img" aria-labelledby="lay-t">
-      <title id="lay-t">The library has nine top folders, A to I.</title>
-      <rect class="box accent" x="290" y="10" width="180" height="44" rx="2"/>
-      <text class="t b" x="380" y="37" text-anchor="middle">TSEB Library</text>
-      <path class="line" d="M380 54 L380 74 M90 74 L670 74 M90 74 L90 92 M285 74 L285 92 M475 74 L475 92 M670 74 L670 92"/>
-      <g>
-        <rect class="box" x="10" y="92" width="160" height="72" rx="2"/><text class="t b" x="90" y="118" text-anchor="middle">A  Quick links</text><text class="t s" x="90" y="138" text-anchor="middle">roster, rehearsal roles,</text><text class="t s" x="90" y="153" text-anchor="middle">rides, calendar</text>
-        <rect class="box" x="205" y="92" width="160" height="72" rx="2"/><text class="t b" x="285" y="118" text-anchor="middle">B  Leadership Circle</text><text class="t s" x="285" y="138" text-anchor="middle">TLC meetings,</text><text class="t s" x="285" y="153" text-anchor="middle">planning, governance</text>
-        <rect class="box" x="395" y="92" width="160" height="72" rx="2"/><text class="t b" x="475" y="118" text-anchor="middle">C  Communications</text><text class="t s" x="475" y="138" text-anchor="middle">outreach, website,</text><text class="t s" x="475" y="153" text-anchor="middle">file-sharing project</text>
-        <rect class="box" x="590" y="92" width="160" height="72" rx="2"/><text class="t b" x="670" y="118" text-anchor="middle">D  Finance Circle</text><text class="t s" x="670" y="138" text-anchor="middle">budgets,</text><text class="t s" x="670" y="153" text-anchor="middle">reports by year</text>
-      </g>
-      <path class="line" d="M380 54 L380 74"/>
-      <path class="line" d="M90 190 L670 190 M90 190 L90 206 M285 190 L285 206 M475 190 L475 206 M670 190 L670 206 M380 74 L380 190"/>
-      <g>
-        <rect class="box" x="10" y="206" width="160" height="72" rx="2"/><text class="t b" x="90" y="232" text-anchor="middle">E  Membership</text><text class="t s" x="90" y="252" text-anchor="middle">buddies, workshops,</text><text class="t s" x="90" y="267" text-anchor="middle">rosters, picnic</text>
-        <rect class="box" x="205" y="206" width="160" height="72" rx="2"/><text class="t b" x="285" y="232" text-anchor="middle">F  Music Circle</text><text class="t s" x="285" y="252" text-anchor="middle">songbook, audio, roles,</text><text class="t s" x="285" y="267" text-anchor="middle">bedside reports</text>
-        <rect class="box" x="395" y="206" width="160" height="72" rx="2"/><text class="t b" x="475" y="232" text-anchor="middle">G  Board</text><text class="t s" x="475" y="252" text-anchor="middle">minutes, bylaws,</text><text class="t s" x="475" y="267" text-anchor="middle">annual reporting</text>
-        <rect class="box" x="590" y="206" width="160" height="72" rx="2"/><text class="t b" x="670" y="232" text-anchor="middle">H  Archives</text><text class="t s" x="670" y="252" text-anchor="middle">business meetings before</text><text class="t s" x="670" y="267" text-anchor="middle">2026, history</text>
-      </g>
-      <path class="line" d="M380 190 L380 300"/>
-      <rect class="box" x="300" y="300" width="160" height="50" rx="2"/><text class="t b" x="380" y="330" text-anchor="middle">I  Photos</text>
-    </svg>
-    <figcaption>Nine top folders. Inside each, the outline lists the circle's teams and record types.</figcaption>
-  </figure>
-  <h3>Also at the top of the library</h3>
+<section id="add">
+  <h2><span class="num">2</span>Adding a file</h2>
+  <p style="font-size:22px;font-style:italic">Drop it in <b>00 Intake</b>. That's it.</p>
+  <p>You don't need to choose a folder or rename anything. An AI helper files it in the right circle folder, gives it a date-first name, notes it in the <b>_Intake log</b>, and adds a short summary to meeting notes. Anything it isn't sure about waits in <i>Intake → Needs a decision</i> for Hadas.</p>
+  <h3>Please don't drop</h3>
   <ul>
-    <li><b>_START HERE</b>: a two-minute explanation of the library.</li>
-    <li><b>_Manifest and descriptions</b>: every file from the first export, one row each, with its old Groups.io note and link.</li>
-    <li><b>_For Hadas</b> and <b>_Questions and comments on the TSEB Library Guide</b>: the places to answer questions and leave notes.</li>
+    <li>Bedside reports or anything about a patient. Send those to the bedside coordinator.</li>
+    <li>Passwords or logins.</li>
   </ul>
-  <p>Files whose names start with an underscore ( _ ) sort to the top, so these are easy to find.</p>
+  <p>Filed in the wrong place? Say so on this section's feedback page. Nothing is ever deleted, so it's easy to fix.</p>
+  <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.zgen7h57se3p">Questions or comments on this section →</a></p>
+</section>
+
+<section id="find">
+  <h2><span class="num">3</span>Finding things</h2>
+  <p>Three ways in:</p>
+  <div class="cards">
+    <div class="card"><b>FAQ</b>Common questions answered from ten years of meeting notes, with links to the minutes. <a href="https://docs.google.com/document/d/1sq5wHFshfHq9oZn7XgRyAP9HtceHcmR6ena47ZkvFms/edit">Read the FAQ</a></div>
+    <div class="card"><b>Ask your own question</b>Open the library in Google Drive and click <i>Ask Gemini</i> at the top. It searches only files you're allowed to open. End your question with <i>"Link every file you used."</i> <a href="https://drive.google.com/drive/folders/1wiXzm1CPQGpaUWhbvn0Ks03SD0EMzbuI">Open the library</a></div>
+    <div class="card"><b>Browse</b>Use the folder map below; each name opens that folder.</div>
+  </div>
+  <h3>Want a list of everything?</h3>
+  <p>Open the library, click <i>Ask Gemini</i>, and paste:</p>
+  <p class="note" style="font-family:var(--sans);font-size:15px">List every file in this folder and its subfolders, grouped by folder, with the date each was last changed and a link to it.</p>
+  <p>Gemini may shorten very long lists. For a complete, sortable spreadsheet, ask Jeff and one will be made from the library as it is that day.</p>
+  <h3>Questions people ask</h3>
+  <ul>
+    <li>When did TSEB become a 501(c)(3)?</li>
+    <li>How does a newcomer become a bedside singer?</li>
+    <li>What is the fragrance policy?</li>
+    <li>Where is the current songbook, and who updates it?</li>
+  </ul>
+  <p>The answers are in the FAQ, each with links to the minutes it comes from. Or ask Gemini, adding <i>"Link every file you used."</i> so you can check the source.</p>
+  <h3>Folder map</h3>
+  <ul class="fmap">
+  <li><a href="https://drive.google.com/drive/folders/1ep521zcZ4OfMpmpfA4qCjuN1sGB33hBe"><b>00 Intake</b></a> — drop new files here.</li>
+  <li><a href="https://drive.google.com/drive/folders/1hkeiIVgQlSr75RXOYOpxT0qPDjnwWt1C"><b>A Quick links</b></a> — Roster, current rehearsal roles, rides, calendar.<div class="kids"><a href="https://drive.google.com/drive/folders/1hDI15Jz4vhw5_GOFv8UN29UTAmKJX6Zj">Current rehearsal roles</a>, <a href="https://drive.google.com/drive/folders/110x9J805cyCPJ5mtycw8v3qhDLUINs3n">Process for Becoming a Bedside Singer</a>, <a href="https://drive.google.com/drive/folders/1Qprzc9CBP8NmvtHljEeIfNNV6nXsmNBH">Rides to rehearsals</a>, <a href="https://drive.google.com/drive/folders/1mMXGk3rNmW2yUDEsXp1NWDq-ulsIE6nq">Roster</a></div></li>
+  <li><a href="https://drive.google.com/drive/folders/1SEDtuGPIsVfyPe_wb26kTDcNuoHAFV9r"><b>B Threshold Leadership Circle</b></a> — TLC meetings, planning, governance.<div class="kids"><a href="https://drive.google.com/drive/folders/1obTNZWgc5J0L3MQvLhCzsFh5wQNnM-MV">Meeting Agendas and Minutes</a>, <a href="https://drive.google.com/drive/folders/1RFUOqQv97BrX8UJbXi5wSYweR8s_vMZW">Strategic planning</a></div></li>
+  <li><a href="https://drive.google.com/drive/folders/18JvNEy-C6QmsKCBuvy05JJItjjlHqypJ"><b>C Communications Circle</b></a> — Outreach, website, file-sharing project, reports.<div class="kids"><a href="https://drive.google.com/drive/folders/1Q7xLaYqfpaUXDp6L5oyiZ7pprbKqrUiQ">Circle Meeting Agendas and Minutes</a>, <a href="https://drive.google.com/drive/folders/1NwXoaBkL5h_ao_VJfpSLY9TFhEdxIg4g">Circle membership</a>, <a href="https://drive.google.com/drive/folders/1rEDsIvMxsL2QHot2-KBYWikl5HGVOZIT">Internal Communication</a>, <a href="https://drive.google.com/drive/folders/19KUlqJudMxXfQA6GoVmL70zrw-Bh7cxO">Reports</a>, <a href="https://drive.google.com/drive/folders/1RGSF-q-AImu_BA5vYJdWnwnV-oja2bso">Team File-Sharing Project</a>, <a href="https://drive.google.com/drive/folders/1EUMGYcpuIiiWhUfK0eVXVETBeKQlst04">Team Outreach</a>, <a href="https://drive.google.com/drive/folders/1WNmNoh2ah8BkebIqvV6Vf4qIqumhm80-">Team Web site revision</a></div></li>
+  <li><a href="https://drive.google.com/drive/folders/1zOoHl3DoAhuC_cF0UGfSLdV2p0R6LAaZ"><b>D Finance Circle</b></a> — Budgets and finance reports by year.<div class="kids"><a href="https://drive.google.com/drive/folders/1Rd5Sl0G-wCS8C2guN44SCF-2a5ayvn9j">Budgets</a>, <a href="https://drive.google.com/drive/folders/1T1d25yxhqm3i9-Oe7-VhqNLfM4vf4YaK">Circle Meeting Agendas and Minutes</a>, <a href="https://drive.google.com/drive/folders/1K6A-ykeB2o4nA8OK1TLzBQwiZPtY2PC5">Circle membership</a>, <a href="https://drive.google.com/drive/folders/1MvcpT1qmM_XDIA2XbjF4pXYpESkQGsJo">Finance reports</a></div></li>
+  <li><a href="https://drive.google.com/drive/folders/1vmbwDPa-Op4EBg-a5n-I4Pb1txP2Q7RM"><b>E Membership Circle</b></a> — Newcomers and buddies, workshops, rosters, inclusivity, picnic.<div class="kids"><a href="https://drive.google.com/drive/folders/15EiOEsLbhCSgky0k2530zb2hQUTuSVPB">Accessibility Team</a>, <a href="https://drive.google.com/drive/folders/1NjZDiTDZ_BMzBw0OcOCfyO6gGNc18BPM">Community Building and Support Team</a>, <a href="https://drive.google.com/drive/folders/1QvItkryQG5dp5_eCHAQ3kC0fXUX-hR3r">Diversity Team</a>, <a href="https://drive.google.com/drive/folders/18nJP9k46tWDpvK8yQ3EhKPp6PFF7i1H6">Member names and email addresses</a>, <a href="https://drive.google.com/drive/folders/1NL6KOsuGcF2vyMIjSkM6eI4UDSX13ryk">Onboarding, Engagement and Retention Team</a>, <a href="https://drive.google.com/drive/folders/1QxuFV5ivFZsGti2smAromOzAcXjzzvxa">Picnic and Social Activities team</a>, <a href="https://drive.google.com/drive/folders/1bqjarMceLlcxyN5W6yQmI6UT8JWmbcvU">Singer Rosters</a>, <a href="https://drive.google.com/drive/folders/1hAXHiQ3OSvta0tNeSBD5_olnknJnbNeD">Workshop Team</a></div></li>
+  <li><a href="https://drive.google.com/drive/folders/1q_GZLay5yZ_zkmW0wWw6GllI-9ArrThZ"><b>F Music Circle</b></a> — Songbook and recordings, rehearsal roles, bedside roles, meetings.<div class="kids"><a href="https://drive.google.com/drive/folders/1BgJMNPP0HACM5Qk2bUG6FkFRq7LWBKBL">Bedside singers and anchors</a>, <a href="https://drive.google.com/drive/folders/1E8f_q1tXu-sxsK3T8ll4cEBr1jyuOdiD">Circle Meeting Agendas and Minutes</a>, <a href="https://drive.google.com/drive/folders/1Z_vOpeuuUdj83j6DmyzBWmR2OFg-qSap">Circle membership</a>, <a href="https://drive.google.com/drive/folders/1TfpD1p5QECXYKLg619Ie8UvVv_P3blCS">Rehearsal Roles Signup</a>, <a href="https://drive.google.com/drive/folders/1ZRJrGuaUZ-6dw_65mO92M0d8PrWyxJ6s">Song repertoire</a></div></li>
+  <li><a href="https://drive.google.com/drive/folders/1yzvmf1nTJl-g7JIbOhBPVyhkEN1YEM3A"><b>G Board of Directors</b></a> — Board minutes and bylaws.<div class="kids"><a href="https://drive.google.com/drive/folders/17c_Pf97la3CkgbR0m0_4hpIzd5I1HNqx">Meeting Agendas and Minutes</a>, <a href="https://drive.google.com/drive/folders/1TgtkEZO3MfSw1P4HpO0Yvty5u1E_KofH">TSEB Bylaws</a></div></li>
+  <li><a href="https://drive.google.com/drive/folders/1BTik81VgfoJ4NotMxqF982_fbqLeEzuv"><b>H Archives</b></a> — Business meetings before 2026, history, superseded forms.<div class="kids"><a href="https://drive.google.com/drive/folders/1tfkgWhi3bBcI1-srwKYtZO_l1z6B9sVU">Governance pre-2026 (Business Meetings prior to 2026)</a>, <a href="https://drive.google.com/drive/folders/1j3GznWU-TpA9hUpx5LyfUDizH4EpdrFk">Groups.io era</a>, <a href="https://drive.google.com/drive/folders/10LwWY_b0KwzNpYTlCzu8FD4HYKXH7yzC">History and press</a>, <a href="https://drive.google.com/drive/folders/1u3XFF6KkIPQX1_A3tiy-EjW0neDYbB0F">Superseded forms</a></div></li>
+  <li><a href="https://drive.google.com/drive/folders/185fjByGWMXXvHDi7LyK2Ph5n9vf43Xb9"><b>I Photos</b></a> — Photos.</li>
+  </ul>
   <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.sywesztf0310">Questions or comments on this section →</a></p>
 </section>
 
 <section id="access">
-  <h2><span class="num">4</span>Who can see and change what</h2>
-  <p>In Google Drive, access is given to <b>folders</b>, not to single files. Whoever can open a folder can open everything inside it, including files added later. That keeps things simple: set each folder once and leave it.</p>
+  <h2><span class="num">4</span>Who can see what</h2>
+  <p>Access is given to <b>folders</b>, and everything inside a folder inherits it. An AI helper sees only what the person using it can see.</p>
   <figure>
     <svg viewBox="0 0 760 300" role="img" aria-labelledby="acc-t">
       <title id="acc-t">A person, or an AI helper working for them, reaches only the folders that person's Google account is allowed to open.</title>
@@ -254,234 +249,90 @@ footer{border-top:3px double var(--rule);padding:22px 16px 40px;text-align:cente
     </svg>
     <figcaption>Access follows the person. An AI helper can never see more than the person using it.</figcaption>
   </figure>
-  <h3>The plan</h3>
   <div class="table-wrap"><table>
     <thead><tr><th>Folder</th><th>Can view</th><th>Can change</th><th>Status</th></tr></thead>
     <tbody>
-      <tr><td>Circle folders (B–F)</td><td>All members</td><td>That circle</td><td><span class="pill open">suggested</span></td></tr>
-      <tr><td>Board minutes and bylaws</td><td>All members</td><td>Current Board members</td><td><span class="pill done">decided</span></td></tr>
-      <tr><td>Rosters</td><td>All members</td><td>The roster keeper only</td><td><span class="pill done">decided</span></td></tr>
-      <tr><td>Rides to rehearsals</td><td>All members</td><td>Its author</td><td><span class="pill done">decided</span></td></tr>
-      <tr><td>Bedside singing reports</td><td>To be decided</td><td>Bedside coordinator</td><td><span class="pill open">open</span></td></tr>
-      <tr><td>Archives</td><td>All members</td><td>Leadership Circle</td><td><span class="pill open">suggested</span></td></tr>
-      <tr><td>Whole library</td><td colspan="2">Hadas manages as admin</td><td><span class="pill open">suggested</span></td></tr>
+      <tr><td>Circle folders</td><td>All members</td><td>That circle</td><td><span class="pill open">suggested</span></td></tr>
+      <tr><td>Board minutes and bylaws</td><td>All members</td><td>Current Board</td><td><span class="pill done">decided</span></td></tr>
+      <tr><td>Rosters, rides list</td><td>All members</td><td>Its keeper</td><td><span class="pill done">decided</span></td></tr>
+      <tr><td>Intake</td><td>All members</td><td>All members can add</td><td><span class="pill open">suggested</span></td></tr>
+      <tr><td>Bedside reports</td><td colspan="2">Bedside coordinator decides</td><td><span class="pill open">open</span></td></tr>
     </tbody>
   </table></div>
-  <h3>Protocols</h3>
   <ul>
-    <li><b>Links don't open doors.</b> A link to a file works only for someone who already has access to its folder. You can paste library links in emails to members without worry.</li>
-    <li><b>"Anyone with the link" stays off.</b> That setting opens a file to the whole internet. Most of the old Groups.io files were set this way, which is how they could be copied. The library won't use it.</li>
-    <li><b>One file, many places: use a shortcut.</b> If a file belongs in two folders, keep the real file in one and put a Drive shortcut in the other. A shortcut never gives access by itself.</li>
-    <li><b>People outside TSEB</b> (facility staff, presenters) are not added to the library. Send them a copy instead.</li>
-  </ul>
-  <h3>Still being weighed</h3>
-  <p>Two ways to manage access as people join and leave circles. Neither is decided; Hadas and Iris will choose.</p>
-  <ul>
-    <li><b>A Google Group per circle</b> (for example, a music-circle address). Share the folder with the group, and a person's access follows when they join or leave.</li>
-    <li><b>A separate Shared Drive per circle.</b> Very simple permissions, but harder to search across circles and awkward to move files between them. A middle path: one library for everything, plus one small separate drive only for the most sensitive material.</li>
+    <li><b>Links are safe to share inside TSEB:</b> they open only for people who already have access.</li>
+    <li><b>A file used in two places</b> gets a shortcut in the second place, not a second copy.</li>
+    <li><b>People outside TSEB</b> aren't added to the library; send them a copy.</li>
   </ul>
   <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.hy5jbo3kj4pp">Questions or comments on this section →</a></p>
 </section>
 
-<section id="adding">
-  <h2><span class="num">5</span>How a member's files get added</h2>
-  <p>Hadas's Groups.io files were the first set. The same steps will be used for each of the other members.</p>
-  <figure>
-    <svg viewBox="0 0 760 150" role="img" aria-labelledby="add-t">
-      <title id="add-t">Six steps from a member's files to the library.</title>
-      <defs><marker id="ah3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="arrowhead"/></marker></defs>
-      <g>
-        <rect class="box" x="4" y="30" width="112" height="84" rx="2"/><text class="t b" x="60" y="58" text-anchor="middle">1 Gather</text><text class="t s" x="60" y="78" text-anchor="middle">export or</text><text class="t s" x="60" y="93" text-anchor="middle">shared folder</text>
-        <path class="line" d="M116 72 L 126 72" marker-end="url(#ah3)"/>
-        <rect class="box" x="130" y="30" width="112" height="84" rx="2"/><text class="t b" x="186" y="58" text-anchor="middle">2 Upload</text><text class="t s" x="186" y="78" text-anchor="middle">into Google</text><text class="t s" x="186" y="93" text-anchor="middle">Drive</text>
-        <path class="line" d="M242 72 L 252 72" marker-end="url(#ah3)"/>
-        <rect class="box accent" x="256" y="30" width="112" height="84" rx="2"/><text class="t b" x="312" y="58" text-anchor="middle">3 Sort</text><text class="t s" x="312" y="78" text-anchor="middle">AI proposes a</text><text class="t s" x="312" y="93" text-anchor="middle">folder for each</text>
-        <path class="line" d="M368 72 L 378 72" marker-end="url(#ah3)"/>
-        <rect class="box" x="382" y="30" width="112" height="84" rx="2"/><text class="t b" x="438" y="58" text-anchor="middle">4 Place</text><text class="t s" x="438" y="78" text-anchor="middle">files moved,</text><text class="t s" x="438" y="93" text-anchor="middle">links copied</text>
-        <path class="line" d="M494 72 L 504 72" marker-end="url(#ah3)"/>
-        <rect class="box" x="508" y="30" width="112" height="84" rx="2"/><text class="t b" x="564" y="58" text-anchor="middle">5 Review</text><text class="t s" x="564" y="78" text-anchor="middle">member answers</text><text class="t s" x="564" y="93" text-anchor="middle">a short doc</text>
-        <path class="line" d="M620 72 L 630 72" marker-end="url(#ah3)"/>
-        <rect class="box" x="634" y="30" width="122" height="84" rx="2"/><text class="t b" x="695" y="58" text-anchor="middle">6 Settle</text><text class="t s" x="695" y="78" text-anchor="middle">changes made,</text><text class="t s" x="695" y="93" text-anchor="middle">duplicates resolved</text>
-      </g>
-    </svg>
-    <figcaption>The member decides; the AI only proposes.</figcaption>
-  </figure>
-  <h3>The steps in words</h3>
-  <ol class="steps">
-    <li><b>Gather.</b> The member sends a Groups.io export, or shares their TSEB folder from their own Drive with Jeff (viewing is enough).</li>
-    <li><b>Upload.</b> An export is unzipped and dragged into Google Drive. Word and Excel files turn into Google Docs and Sheets on the way in.</li>
-    <li><b>Sort.</b> An AI helper reads each file's name and its old Groups.io note and proposes a folder in the outline, with a reason. It marks anything it is unsure of.</li>
-    <li><b>Place.</b> Files are moved into their folders. Google Docs that Groups.io only linked to are copied in, so they no longer depend on one person's account. Short Groups.io notes are added to the file name in brackets.</li>
-    <li><b>Review.</b> The member gets a short Google Doc named "_For <i>their name</i>" with questions, duplicates and anything that couldn't be copied. They write their answers under each item.</li>
-    <li><b>Settle.</b> Their answers are carried out, and anything unresolved is listed in Open questions below.</li>
-  </ol>
-  <div class="note">Originals are never changed. Groups.io and each member's own Drive stay exactly as they were, so any step can be undone.</div>
-  <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.zgen7h57se3p">Questions or comments on this section →</a></p>
-</section>
-
-<section id="naming">
-  <h2><span class="num">6</span>Naming and tidying rules</h2>
-  <ul>
-    <li><b>Put the date first, as year, month, day.</b> "2025.10.30 Business Meeting Minutes" lines up in order. "Minutes Oct 30" and "Biz notes final" do not. <span class="pill done">agreed</span></li>
-    <li><b>Let the folder say what is current.</b> Words like "updated", "corrected", "v3" and "final" stop being true when the next version appears. Keep the live file in a Current folder and move the old one to Archive. <span class="pill done">agreed</span></li>
-    <li><b>One copy of each file.</b> When two copies turn up, keep the newer or approved one and remove the other. If unsure, ask the owner.</li>
-    <li><b>PDFs can stay PDFs.</b> The roster, for example, stays a PDF so only its keeper can change it.</li>
-    <li><b>Word templates.</b> A few outreach letters are meant to be downloaded and edited in Word. Any Google Doc can be saved as Word with File → Download → Microsoft Word. Whether to also keep the original Word files is an open question.</li>
-    <li><b>Folder notes.</b> Like Groups.io, Google Drive folders have a description you can fill in (right-click the folder, then Folder information or Details).</li>
-  </ul>
-  <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.e6jy6vdok8ik">Questions or comments on this section →</a></p>
-</section>
-
 <section id="sensitive">
-  <h2><span class="num">7</span>Sensitive material</h2>
-  <div class="note warn"><b>Bedside singing reports may mention patients, and TSEB abides by HIPAA.</b> They belong to the Music Circle and are written by the bedside coordinator. For now they are held outside the shared library, in a folder only Jeff can open, until the coordinator decides who may read them. Nobody read their contents while building the library, and they are kept out of any AI work.</div>
-  <h3>Protocols</h3>
+  <h2><span class="num">5</span>Sensitive material</h2>
+  <div class="note warn"><b>Bedside reports may mention patients, and TSEB abides by HIPAA.</b> They are held outside the shared library, in a folder only Jeff can open, until the bedside coordinator decides who may read them. Nobody read them while building the library, and AI tools stay out of them.</div>
   <ul>
-    <li><b>Bedside reports</b> belong in Music Circle → Bedside singing reports, in a folder limited to the people the coordinator chooses. The bedside coordinator decides who may read them. A version shared at a business meeting should have patient details removed.</li>
-    <li><b>Rosters and member lists</b> are the member directory: members may view, only the roster keeper changes them, and past rosters are kept as history.</li>
-    <li><b>Passwords and logins</b> don't belong in meeting notes. One old set of minutes contains a login for a retired website; it should be blanked out.</li>
-    <li><b>Watch inherited access.</b> Every folder inside a shared folder is shared too. A restricted folder must sit outside the shared area, or be set to limited access once the library is in TSEB's Workspace.</li>
-    <li><b>Nothing sensitive goes into an AI tool</b> unless the people responsible have agreed. An AI service is not covered by Google's health-privacy agreement by default.</li>
+    <li>Every folder inside a shared folder is shared too, so restricted material must sit apart or be set to limited access.</li>
+    <li>Rosters are the member directory: members view, only the roster keeper edits.</li>
+    <li>Passwords don't belong in meeting notes. One old set of minutes has a retired website login that should be blanked out.</li>
   </ul>
   <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.631bn1122er1">Questions or comments on this section →</a></p>
 </section>
 
-<section id="summaries">
-  <h2><span class="num">8</span>AI summaries of meeting notes</h2>
-  <p>Meeting notes are the largest part of the library, about 90 files in many styles. To make them easier to search, each one now has a short summary written by AI.</p>
-  <ul>
-    <li><b>Google Doc minutes:</b> the summary sits in a shaded box at the very top of the document.</li>
-    <li><b>PDF minutes:</b> a Google Doc sits beside each PDF, named "… (text + AI summary)". It has the summary on top and the full text of the PDF below. The PDF itself is unchanged.</li>
-    <li>Every summary lists <b>topics discussed</b> and <b>decisions made</b>, and is clearly marked as written by AI on a given date. The original notes are never changed.</li>
-    <li>For a group that keeps all its notes in one running document, the summary gives one line per meeting.</li>
-    <li>Bedside reports are never summarized.</li>
-  </ul>
-  <div class="note">Summaries can contain mistakes. When something matters, check the original notes below the summary.</div>
-  <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.iirlxknrvmp">Questions or comments on this section →</a></p>
-</section>
-
 <section id="ai">
-  <h2><span class="num">9</span>Using AI helpers</h2>
-  <p>AI tools did the heavy sorting for the first set of files, and can answer questions like "when did we decide on rehearsal stipends?" by reading the library.</p>
-  <h3>Which tools</h3>
+  <h2><span class="num">6</span>AI in the library</h2>
   <ul>
-    <li><b>Claude</b> (from Anthropic) sorted the files, copied the linked documents and wrote the summaries. It can move many files at once.</li>
-    <li><b>Gemini</b> comes built into Google Workspace. It is handy for everyday questions, but in testing it could not sort or move files in bulk.</li>
+    <li><b>Summaries:</b> every set of meeting notes has a short AI summary of topics and decisions, marked with the date. PDFs have a companion Google Doc beside them. The original notes are never changed, so check them when it matters.</li>
+    <li><b>Filing:</b> AI sorts what's dropped in Intake. It proposes; a person decides anything uncertain.</li>
+    <li><b>Rules for any AI helper:</b> it acts only as the person using it, links every file its answer relies on, never shares or deletes, labels what it writes, and stays out of bedside reports.</li>
+    <li><b>Tools:</b> Claude does the bulk filing and summaries. Gemini, built into Google Workspace, is handy for everyday questions.</li>
   </ul>
-  <h3>Rules for any AI helper</h3>
-  <ul>
-    <li>It works only through the access of the person using it, and never shares or deletes anything on its own.</li>
-    <li>It labels anything it writes as AI-generated, with the date.</li>
-    <li>It stays out of bedside reports and doesn't copy rosters into other places.</li>
-    <li>It proposes; a person decides.</li>
-  </ul>
-  <h3>An idea under discussion</h3>
-  <p>Keep these rules, the folder outline and the step-by-step recipe as ordinary Google Docs in a small "About this library" folder. Any AI that can read the library would then follow the same rules. Only admins would be able to edit that folder, because AI tools follow written instructions.</p>
   <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.hawijx7ubgzo">Questions or comments on this section →</a></p>
 </section>
 
 <section id="decisions">
-  <h2><span class="num">10</span>Decisions so far</h2>
-  <div class="table-wrap"><table>
-    <thead><tr><th>When</th><th>Decision</th><th>By</th></tr></thead>
-    <tbody>
-      <tr><td>Sept 2026</td><td>The folder outline (A–I) is the plan for the library.</td><td>All circles</td></tr>
-      <tr><td>Sept 29</td><td>Most files go straight from members' Drives to the library. Groups.io matters only for material found nowhere else.</td><td>Jeff, Hadas</td></tr>
-      <tr><td>Oct 9</td><td>Start with Hadas's Groups.io export. Build the library in Jeff's Drive until TSEB's Workspace is ready.</td><td>Jeff, Hadas</td></tr>
-      <tr><td>Oct 9</td><td>Nothing is deleted or shared without approval. Originals stay where they are.</td><td>Jeff</td></tr>
-      <tr><td>Oct 13</td><td>Rosters stay PDFs. Members view; only the roster keeper edits. Past rosters kept.</td><td>Hadas</td></tr>
-      <tr><td>Oct 13</td><td>Board minutes and bylaws: all members view, current Board edits.</td><td>Hadas</td></tr>
-      <tr><td>Oct 13</td><td>Rides list open to all members, read-only.</td><td>Hadas</td></tr>
-      <tr><td>Oct 13</td><td>Inclusivity documents split between the Accessibility, Diversity and Community Building teams.</td><td>Hadas</td></tr>
-      <tr><td>Oct 13</td><td>Ellen Robinson's workshop folder sits directly under Workshop Team.</td><td>Hadas</td></tr>
-      <tr><td>Oct 13</td><td>Dynamic Governance Lite lives in the Leadership Circle folder, with a link in Finance.</td><td>Hadas</td></tr>
-      <tr><td>Oct 13</td><td>Duplicates: keep the newer or approved copy (budgets, minutes, songbook instructions).</td><td>Hadas</td></tr>
-      <tr><td>Oct 13</td><td>Date-first names, and Current/Archive folders, as house rules.</td><td>Hadas</td></tr>
-      <tr><td>Oct 13</td><td>AI summaries on meeting notes, clearly labelled.</td><td>Hadas, Jeff</td></tr>
-      <tr><td>Oct 13</td><td>Bedside reports belong to the Music Circle. TSEB abides by HIPAA.</td><td>Hadas</td></tr>
-    </tbody>
-  </table></div>
-  <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.wdueixjp9kmw">Questions or comments on this section →</a></p>
-</section>
-
-<section id="open">
-  <h2><span class="num">11</span>Open questions</h2>
+  <h2><span class="num">7</span>Decisions and open questions</h2>
+  <h3>Decided</h3>
+  <ul>
+    <li>The folder plan (A–I) is the library's layout. <i>All circles, Sept 2026</i></li>
+    <li>Build in Jeff's Drive until Workspace is ready; nothing deleted or shared without approval. <i>Oct 9</i></li>
+    <li>Rosters stay PDFs; Board minutes and bylaws open to all members; rides list open, read-only. <i>Hadas, Oct 13</i></li>
+    <li>Date-first file names; "Current" and "Archive" folders instead of "final" or "v3". <i>Hadas, Oct 13</i></li>
+    <li>Duplicates: keep the newer or approved copy. <i>Hadas, Oct 13</i></li>
+    <li>AI summaries on meeting notes, clearly labelled. <i>Hadas and Jeff, Oct 13</i></li>
+    <li>Bedside reports belong to the Music Circle; TSEB abides by HIPAA. <i>Hadas, Oct 13</i></li>
+  </ul>
+  <h3>Open</h3>
   <div class="table-wrap"><table>
     <thead><tr><th>Question</th><th>Who decides</th></tr></thead>
     <tbody>
-      <tr><td>Which roles may read bedside reports, and should the coordinator copy them into the library herself?</td><td>Bedside coordinator</td></tr>
-      <tr><td>One bedside report (Nov–Dec 2024 and Jan 2025) is still not shared.</td><td>Bedside coordinator</td></tr>
-      <tr><td>The Groups.io link for the TLC meeting of August 1, 2026 points to the wrong document. Where are the real notes?</td><td>Leadership Circle</td></tr>
+      <tr><td>Who may read bedside reports; one (Nov 2024 – Jan 2025) still not shared</td><td>Bedside coordinator</td></tr>
+      <tr><td>Where are the real notes for the TLC meeting of Aug 1, 2026?</td><td>Leadership Circle</td></tr>
       <tr><td>Keep only the "corrected" 2025 finance summaries?</td><td>Finance owner</td></tr>
-      <tr><td>Put the original Word files back for the outreach letter templates?</td><td>Hadas</td></tr>
-      <tr><td>Rename the existing files so they start with the date?</td><td>Hadas</td></tr>
-      <tr><td>Keep the roster as one always-current Google Sheet, or as PDF snapshots?</td><td>Roster keeper</td></tr>
-      <tr><td>Google Groups per circle, or a separate drive per circle?</td><td>Hadas, Iris</td></tr>
-      <tr><td>A budget for an AI account, so more than one person can run this work.</td><td>File-sharing team (Oct 18)</td></tr>
-      <tr><td>Make the rides list a document drivers can add themselves to.</td><td>Membership Circle</td></tr>
+      <tr><td>Keep Word originals of the outreach letter templates?</td><td>Hadas</td></tr>
+      <tr><td>Google Groups per circle, or a drive per circle?</td><td>Hadas, Iris</td></tr>
+      <tr><td>A budget for an AI account</td><td>File-sharing team, Oct 18</td></tr>
     </tbody>
   </table></div>
-  <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.w5d7yww9mfuu">Questions or comments on this section →</a></p>
-</section>
-
-<section id="progress">
-  <h2><span class="num">12</span>Progress and next steps</h2>
-  <div class="table-wrap"><table>
-    <thead><tr><th>Step</th><th>Status</th></tr></thead>
-    <tbody>
-      <tr><td>Folder outline built in Google Drive (95 folders)</td><td><span class="pill done">done</span></td></tr>
-      <tr><td>Hadas's Groups.io files placed (222 files, 90 linked documents copied)</td><td><span class="pill done">done</span></td></tr>
-      <tr><td>AI summaries added to meeting notes (about 86)</td><td><span class="pill done">done</span></td></tr>
-      <tr><td>Hadas's decisions carried out</td><td><span class="pill done">done</span></td></tr>
-      <tr><td>TSEB's Google Workspace set up</td><td><span class="pill next">Iris, about Oct 23</span></td></tr>
-      <tr><td>Move the library into a TSEB Shared Drive and set folder access</td><td><span class="pill next">after Workspace</span></td></tr>
-      <tr><td>Kit's files</td><td><span class="pill next">next</span></td></tr>
-      <tr><td>Members with the largest collections, then everyone else</td><td><span class="pill next">after Kit</span></td></tr>
-    </tbody>
-  </table></div>
-  <p>Complete coverage isn't needed to make a useful start. Members with large collections, or who are comfortable with technology, go first. Everyone else gets simple, low-stress help.</p>
-  <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.mgxecs3ec7xn">Questions or comments on this section →</a></p>
+  <h3>Next</h3>
+  <p>Iris sets up TSEB's Workspace (about Oct 23), then the library moves there and folder access is set. Kit's files come next, then the members with the largest collections.</p>
+  <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.wdueixjp9kmw">Questions or comments on this section →</a></p>
 </section>
 
 <section id="words">
-  <h2><span class="num">13</span>Words we use</h2>
+  <h2><span class="num">8</span>Words we use</h2>
   <dl class="gloss">
-    <dt>Google Drive</dt><dd>Google's online storage for documents, spreadsheets, PDFs, audio and more.</dd>
-    <dt>My Drive</dt><dd>A person's own area in Google Drive. Files there belong to that person.</dd>
-    <dt>Google Workspace</dt><dd>Google's service for organizations. TSEB is getting it free as a nonprofit. It gives TSEB its own accounts and storage.</dd>
-    <dt>Shared Drive</dt><dd>Storage owned by the organization rather than a person. Files stay even when people leave.</dd>
-    <dt>Folder access</dt><dd>Permission to open a folder and everything in it. Levels are view, comment, edit and manage.</dd>
-    <dt>"Anyone with the link"</dt><dd>A sharing setting that lets anyone on the internet open a file if they have its link. The library doesn't use it.</dd>
-    <dt>Shortcut</dt><dd>A pointer to a file, placed in a second folder. Opening it opens the real file. It doesn't grant access.</dd>
-    <dt>Google Group</dt><dd>A named list of people with one email address. Folders can be shared with a group instead of with each person.</dd>
-    <dt>Groups.io</dt><dd>The email-group service TSEB uses, which also has a file area.</dd>
-    <dt>Export</dt><dd>A download of everything in the Groups.io file area, as one zip file.</dd>
-    <dt>Sidecar file</dt><dd>A small ".json" file that came with each item in the export, holding its Groups.io note, dates and link. Used for sorting, then set aside.</dd>
-    <dt>Manifest</dt><dd>A spreadsheet listing every file that was added, where it went, and its original note and link.</dd>
-    <dt>Companion doc</dt><dd>A Google Doc placed beside a PDF, holding the PDF's text and an AI summary.</dd>
-    <dt>AI summary</dt><dd>A short list of topics and decisions written by an AI tool, labelled as such, at the top of meeting notes.</dd>
-    <dt>AI helper</dt><dd>A tool such as Claude or Gemini that can read and organize files for the person using it.</dd>
-    <dt>Connector</dt><dd>The link that lets an AI helper reach a service like Google Drive, using the person's own sign-in.</dd>
+    <dt>Intake</dt><dd>The folder where anyone drops new files for filing.</dd>
+    <dt>Google Workspace</dt><dd>Google's service for organizations, free for TSEB as a nonprofit.</dd>
+    <dt>Shared Drive</dt><dd>Storage owned by TSEB rather than a person, so files stay when people leave.</dd>
+    <dt>Shortcut</dt><dd>A pointer to a file placed in a second folder. It doesn't grant access.</dd>
+    <dt>Google Group</dt><dd>A named list of people with one email address; folders can be shared with it.</dd>
+    <dt>Groups.io</dt><dd>The email-group service TSEB uses, which also had a file area.</dd>
+    <dt>AI summary</dt><dd>A short, labelled list of topics and decisions at the top of meeting notes.</dd>
+    <dt>Companion doc</dt><dd>A Google Doc beside a PDF, holding its text and an AI summary.</dd>
     <dt>HIPAA</dt><dd>A U.S. law protecting people's health information.</dd>
-    <dt>Circle</dt><dd>A group responsible for one area of TSEB's work: Leadership (TLC), Communications, Finance, Membership or Music.</dd>
-    <dt>TLC</dt><dd>Threshold Leadership Circle.</dd>
-    <dt>Archives</dt><dd>Folder H, for older material that no current circle owns, such as business meetings before 2026.</dd>
+    <dt>Circle</dt><dd>A group responsible for one area: Leadership (TLC), Communications, Finance, Membership or Music.</dd>
   </dl>
   <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.a5m5gb2fqja9">Questions or comments on this section →</a></p>
-</section>
-
-<section id="links">
-  <h2><span class="num">14</span>Links</h2>
-  <p>These open only for people with access to the library.</p>
-  <div class="cards">
-    <div class="card"><b>TSEB Library</b><a href="https://drive.google.com/drive/folders/1wiXzm1CPQGpaUWhbvn0Ks03SD0EMzbuI">Open the library folder</a></div>
-    <div class="card"><b>_START HERE</b><a href="https://docs.google.com/document/d/1kyb_ywtez7uVWvU7Xua6EayGy70D8xfM7IQrSSvYUHI/edit">Two-minute introduction</a></div>
-    <div class="card"><b>Questions and comments</b><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit">One tab per topic in this guide</a></div>
-    <div class="card"><b>_For Hadas</b><a href="https://docs.google.com/document/d/1lXLE4AfGrrAOIISBY6eVYVPRpoP-7GPw7atBJisxw-0/edit">Questions, answers and replies</a></div>
-    <div class="card"><b>Manifest</b><a href="https://docs.google.com/spreadsheets/d/18LsqC6TzR52sje2wJ_4v1bJl2fkvzGSC9HOZOJqPZkc/edit">Every file from the first export</a></div>
-    <div class="card"><b>Folder outline</b><a href="https://docs.google.com/document/d/1woMBnUpEx33Eiz2nLNb1YH07ZoohxUDPvlVKNvub7J0/edit">The circle-approved plan</a></div>
-  </div>
-  <p class="feedback"><a href="https://docs.google.com/document/d/1DibIwgLgc12V3TPyRey9dV_jzhb4A3W62BdHbX6sdco/edit?tab=t.heulacz14gb">Anything else? Leave a note →</a></p>
 </section>
 
 </main>
