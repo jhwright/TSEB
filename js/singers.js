@@ -213,7 +213,7 @@ TSEB.singers = {
 
     // Fetch upcoming gigs for this singer (separately, non-blocking)
     var { data: gs } = await TSEB.sb.from('gig_singers')
-      .select('gig:gigs(id, gig_date, gig_time, institution:institutions(name))')
+      .select('gig:gigs(id, gig_date, gig_time, notes, institution:institutions(name))')
       .eq('singer_id', singerId);
 
     var today = TSEB.util.todayStr();
@@ -230,7 +230,7 @@ TSEB.singers = {
           var dt = new Date(g.gig_date + 'T00:00:00');
           var monthShort = dt.toLocaleDateString('en-US', { month: 'short' });
           var day = dt.getDate();
-          var venue = g.institution ? g.institution.name : '—';
+          var venue = TSEB.util.gigVenueName(g, '—');
           var timeStr = g.gig_time ? TSEB.util.fmtTime(g.gig_time) : '';
           return '<div style="display:flex; gap:12px; padding:10px 0; border-bottom:1px dotted var(--rule); align-items:baseline; cursor:pointer;" onclick="TSEB.schedule.showGigDetail(\'' + g.id + '\')">' +
             '<div style="width:36px; text-align:center; flex-shrink:0;">' +
