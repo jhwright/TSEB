@@ -22,3 +22,11 @@ The [scheduling app](https://jhwright.github.io/TSEB/) is a working prototype wi
 5. Keep the existing rides record until the chosen replacement is checked and adopted.
 
 Visible failures should remain visible. Retain originals and corrections; the named coordinator repairs incorrect offers or assignments. The separately authorized backend restoration is complete. No ride features, new schedules, data edits, or permission changes were made. Further development and adoption require TSEB’s decision.
+
+## Prototype check and test fixtures
+
+Four SAMPLE — TEST ONLY gigs are retained for Oct 28 and Nov 4, 11, and 18, 2026. At Jeff’s request they use existing facilities and three existing singers each, including one anchor. These are examples, not real bookings. The two initial synthetic venue fixtures remain inactive. Existing bookings are unchanged.
+
+PR #14 repaired the CARTO watermark by using OpenStreetMap Standard tiles. It also keeps SAMPLE visible across schedule, details and singer upcoming views when the explicit test-only note marker is present. The deployed scripts match commit 3c0938a. UI creation, editing, reload persistence, calendar navigation, agenda, geographic map tiles and singer assignment views were checked.
+
+Before real use, fix UTC-based date defaults (the form showed the next day during Pacific evening), review member access and polish the workflows. Map pins use approximate ZIP centroids. Current evidence and human owners remain in issue #12. No driver features or real invitations were added.
