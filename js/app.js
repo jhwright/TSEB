@@ -123,6 +123,13 @@ TSEB.util.todayStr = function() {
   return new Date().toISOString().split('T')[0];
 };
 
+// Keep demonstration bookings recognizable even when they use an existing venue.
+TSEB.util.gigVenueName = function(gig, fallback) {
+  var name = (gig.institution && gig.institution.name) || fallback || 'Unknown venue';
+  var isSample = /^SAMPLE\s*[—-]\s*TEST ONLY\b/i.test(gig.notes || '');
+  return isSample && !/^SAMPLE\b/i.test(name) ? 'SAMPLE — ' + name : name;
+};
+
 TSEB.util.isOverdue = function(d) {
   if (!d) return false;
   return new Date(d) < new Date(new Date().toDateString());

@@ -191,7 +191,7 @@ TSEB.schedule = {
     var dow = dt.toLocaleDateString('en-US', { weekday: 'short' });
     var day = dt.getDate();
     var timeStr = g.gig_time ? TSEB.util.fmtTime(g.gig_time) : '';
-    var venue = g.institution ? g.institution.name : 'Unknown venue';
+    var venue = TSEB.util.gigVenueName(g);
     var singerCount = (g.gig_singers || []).length;
     var meta = (timeStr ? timeStr : '') +
       (timeStr && singerCount ? ' &middot; ' : '') +
@@ -267,7 +267,7 @@ TSEB.schedule = {
     var day = dt.getDate();
     var dow = dt.toLocaleDateString('en-US', { weekday: 'long' });
     var timeStr = g.gig_time ? TSEB.util.fmtTime(g.gig_time) : '';
-    var venue = g.institution ? g.institution.name : 'Unknown venue';
+    var venue = TSEB.util.gigVenueName(g);
     var rec = TSEB.util.recurrenceLabel(g.recurrence) || '';
     var meta = (timeStr ? timeStr : '') +
       (timeStr && rec ? ' &middot; ' : '') +
@@ -345,9 +345,8 @@ TSEB.schedule = {
     }).slice(0, 6);
 
     var map = L.map(el, { zoomControl: false, attributionControl: true }).setView([37.84, -122.26], 11);
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; OSM, &copy; CartoDB',
-      subdomains: 'abcd',
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       maxZoom: 19
     }).addTo(map);
 
@@ -535,7 +534,7 @@ TSEB.schedule = {
       '<div class="detail-body">' +
         '<div class="detail-hero">' +
           '<div class="detail-eyebrow">Singing at</div>' +
-          '<h1 class="detail-title">' + TSEB.util.esc(inst.name || 'Gig') + '</h1>' +
+          '<h1 class="detail-title">' + TSEB.util.esc(TSEB.util.gigVenueName(gig, 'Gig')) + '</h1>' +
         '</div>' +
 
         '<div class="sched-tl-list" style="padding:0; margin-bottom:18px;">' +
