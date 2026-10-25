@@ -140,7 +140,7 @@ The aesthetic is flat. Two exceptions:
 
 - **No raster images.** All visuals are inline SVG glyphs or Leaflet tiles.
 - **Sign-in glyph:** Concentric circles + crosshairs + italic "ts" centered.
-- **Map tiles:** CartoDB Light. Custom `divIcon` pins with italic display number + smcaps date.
+- **Map tiles:** OpenStreetMap Standard (CARTO keyless tiles now show an API-key watermark). Custom `divIcon` pins with italic display number + smcaps date.
 
 ## Decisions Log
 
